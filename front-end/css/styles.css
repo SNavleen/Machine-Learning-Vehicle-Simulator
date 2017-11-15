@@ -1,0 +1,35 @@
+body {	
+	font-family: 'Roboto', sans-serif;
+}
+
+div.center {
+  width: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#control-panel {
+    float: left;
+    margin-left: 2em;
+    width: 15%;
+    height: 50em;
+    background-color: #eff0f1;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+#map-canvas {
+	background-color: #eff0f1;
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: 2em;
+    float: right;
+    width: 80%;
+    height: 50em;
+    border: 2px solid black;
+    border-radius: 10px;
+    display: inline-block;
+}
