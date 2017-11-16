@@ -21,7 +21,7 @@
 				canvasContext = canvas.getContext('2d');
 
 				//sets the frame rate for the website
-				var fps = 60;
+				var fps = 1;
 				//sets the refresh interval for the website and how fast the objects get refreshed 
 				setInterval(refresh, 1000/fps);
 
@@ -37,6 +37,13 @@
 				drawRect(0,0, canvas.width,canvas.height, 'white'); // clear screen
 				drawGrid();
 				drawCars();
+				var socket = io.connect('/');
+			    socket.emit('event', {message: "Hey this is a message from cilent"});
+			    socket.on('event',function(data){	 
+			    	canvasContext.font="30px Verdana";     
+			    	var abc = data.outputToFront;
+				    canvasContext.fillText("test " + abc, 600, 200);
+				});
 			}
 
 			function drawCars(){
