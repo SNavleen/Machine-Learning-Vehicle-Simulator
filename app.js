@@ -8,8 +8,19 @@ io.on('connection', function(client){
 	client.on('event',function(data){
         console.log('Client sent info: ', data.message);
     });
+    var a = 0;
+    while(a < 100){
+    	client.emit('event',{outputToFront: a});
+		a++;
+	}
 	client.on('disconnect',function(){});
 });
+
+
+
+//hile(i < 1000){
+
+//}
 
 app.use(express.static(__dirname + '/public'));
 
