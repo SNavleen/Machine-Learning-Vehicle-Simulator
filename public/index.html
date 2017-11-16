@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="stylesheets/style.css">
     <link rel="shortcut icon" href="./images/favicon.ico" />  
   </head>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect('/');
+    socket.emit('event', {message: "Hey this is a message from cilent"});
+  </script>
   <body>
     <div class="center"><h1 style="text-align:center;">Distributed Smart Car Algorithm Simulation</h1></div>
     <canvas id="canvas" width="800" height="600" ></canvas>

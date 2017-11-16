@@ -8,7 +8,8 @@
   "dependencies": {
     "cfenv": "^1.0.4",
     "express": "4.13.x",
-    "nodemon": "^1.12.1"
+    "nodemon": "^1.12.1",
+    "socket.io": "^2.0.4"
   },
   "repository": {},
   "engines": {
