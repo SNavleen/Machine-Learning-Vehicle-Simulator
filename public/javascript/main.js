@@ -21,7 +21,9 @@
 				canvasContext = canvas.getContext('2d');
 
 				//sets the frame rate for the website
+
 				var fps = 1;
+
 				//sets the refresh interval for the website and how fast the objects get refreshed 
 				setInterval(refresh, 1000/fps);
 
