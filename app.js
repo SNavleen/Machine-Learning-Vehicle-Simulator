@@ -1,5 +1,4 @@
 var express = require('express');
-require('angular');
 var cfenv = require('cfenv');
 
 var app = express();

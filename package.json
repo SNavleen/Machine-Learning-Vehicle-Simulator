@@ -6,7 +6,6 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "angular": "^1.6.6",
     "cfenv": "^1.0.4",
     "express": "4.13.x",
     "nodemon": "^1.12.1"
