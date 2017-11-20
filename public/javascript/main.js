@@ -6,14 +6,12 @@
 			for (var i = 0; i < gridSize; i++) {
   				gridArray[i] = new Array(gridSize);
 			}
-			var numberOfCars = 500;
+			var numberOfCars = 10;
 			var carArray = new Array(numberOfCars); 
 
 			for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
-				var colour = getRandomColor();
-  				carArray[i] = {xStart:0,yStart:0,xDestination:0,yDestination:0,xPosition:0,yPosition:0,carColour:colour};
+				randomPosition(i);
 			}
-			randomPosition();
 
 			//function for what happens when the page loads
 			window.onload = function() {
@@ -22,7 +20,7 @@
 
 				//sets the frame rate for the website
 
-				var fps = 1;
+				var fps = 60;
 
 				//sets the refresh interval for the website and how fast the objects get refreshed 
 				setInterval(refresh, 1000/fps);
@@ -39,17 +37,11 @@
 				drawRect(0,0, canvas.width,canvas.height, 'white'); // clear screen
 				drawGrid();
 				drawCars();
-				var socket = io.connect('/');
-			    socket.emit('event', {message: "Hey this is a message from cilent"});
-			    socket.on('event',function(data){	 
-			    	canvasContext.font="30px Verdana";     
-			    	var abc = data.outputToFront;
-				    canvasContext.fillText("test " + abc, 600, 200);
-				});
 			}
 
 			function drawCars(){
 				for (var i = 0; i < numberOfCars; i++) {
+					console.log(carArray[i] + "draw cars");
 					drawRect(carArray[i].xPosition,carArray[i].yPosition,30,20,carArray[i].carColour);
 				}
 			}
@@ -89,36 +81,16 @@
 				}
 			}
 
-			function randomPosition(){
-				for (var i = 0; i < numberOfCars; i++) {
-				
-					var x = Math.floor(Math.random() * 6);
-					var y = Math.floor(Math.random() * 6);
+			function randomPosition(i){
 
-					carArray[i].xDestination = x;
-					carArray[i].yDestination = y;
-
-					var x1 = Math.floor(Math.random() * 6);
-					var y1 = Math.floor(Math.random() * 6);
-
-					carArray[i].xStart = x1;
-					carArray[i].yStart = y1;
-					
-					carArray[i].xPosition= 100*x1;
-					carArray[i].yPosition= 100*y1;
-				}
+					var socket = io.connect('/');
+			    	socket.on('event',function(data){
+			    		console.log(data);
+			    		carArray[i]=data;	  
+					});
 			}
 			//function to draw the bricks
 			function drawRect(topLeftX,topLeftY, boxWidth,boxHeight, fillColor) {
 				canvasContext.fillStyle = fillColor;
 				canvasContext.fillRect(topLeftX,topLeftY, boxWidth,boxHeight);
-			}
-
-			function getRandomColor() {
-			    var letters = '0123456789ABCDEF';
-			    var colour = '#';
-			    for (var i = 0; i < 6; i++ ) {
-			        colour += letters[Math.floor(Math.random() * 16)];
-			    }
-			    return colour;
 			}
