@@ -9,9 +9,12 @@
 			var numberOfCars = 10;
 			var carArray = new Array(numberOfCars); 
 
-			for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
-				randomPosition(i);
+			function carInilization(callback){
+				for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
+					randomPosition(i);
+				}
 			}
+			
 
 			//function for what happens when the page loads
 			window.onload = function() {
@@ -41,14 +44,12 @@
 
 			function drawCars(){
 				for (var i = 0; i < numberOfCars; i++) {
-					console.log(carArray[i] + "draw cars");
 					drawRect(carArray[i].xPosition,carArray[i].yPosition,30,20,carArray[i].carColour);
 				}
 			}
 
 			function movement(){
 				for (var i = 0; i < numberOfCars; i++) {
-
 					if (carArray[i].xStart <carArray[i].xDestination){
 						carArray[i].xPosition= carArray[i].xPosition + 5;
 						carArray[i].xStart = carArray[i].xPosition/100;
@@ -68,6 +69,7 @@
 				}
 			}
 
+
 			function drawGrid(){
 				var i = 1;
 				while (i <gridSize){
@@ -82,7 +84,6 @@
 			}
 
 			function randomPosition(i){
-
 					var socket = io.connect('/');
 			    	socket.on('event',function(data){
 			    		console.log(data);
