@@ -5,13 +5,13 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function(client){
-	client.on('event',function(data){
-    console.log('Client sent info: ', data.message);
+    client.on('event',function(data){
+        console.log('Client sent info: ', data.message);
     });
 
     client.emit('event',randomizeCarPosition());
 
-	client.on('disconnect',function(){});
+    client.on('disconnect',function(){});
 });
 
 function randomizeCarPosition(){
@@ -28,7 +28,7 @@ function randomizeCarPosition(){
 
     car.xStart = x1;
     car.yStart = y1;
-    
+
     car.xPosition= 100*x1;
     car.yPosition= 100*y1;
 
