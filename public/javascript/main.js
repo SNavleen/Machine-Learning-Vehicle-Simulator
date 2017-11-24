@@ -1,4 +1,3 @@
-
 var canvas
 var canvasContext;
 var gridSize = 5; 
@@ -9,11 +8,9 @@ for (var i = 0; i < gridSize; i++) {
 var numberOfCars = 10;
 var carArray = new Array(numberOfCars); 
 
-function carInilization(callback){
     for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
         randomPosition(i);
     }
-}
 
 
 //function for what happens when the page loads
