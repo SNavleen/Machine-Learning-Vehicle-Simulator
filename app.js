@@ -6,7 +6,11 @@ var io = require('socket.io')(server);
 var carObject = require('./models/carObject.js')
 
 io.on('connection', function(client){
-    client.emit('event', generateDumbCar());
+
+    client.emit('RandomizeCarPosition',generateDumbCar());
+
+    client.on('DumbCarMovement',CarMovement(data));
+    
     client.on('disconnect',function(){});
 });
 
@@ -34,6 +38,11 @@ function getRandomColor() {
         colour += letters[Math.floor(Math.random() * 16)];
     }
     return colour;
+}
+
+function CarMovement(data){
+    
+
 }
 
 

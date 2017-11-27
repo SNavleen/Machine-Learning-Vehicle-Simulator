@@ -5,10 +5,10 @@ var gridArray = new Array(gridSize); //unused at the moment
 for (var i = 0; i < gridSize; i++) {
     gridArray[i] = new Array(gridSize);
 }
-var numberOfCars = 1;
-var carArray = new Array(numberOfCars);
+var numberOfCars = 10;
+var carArray = new Array(numberOfCars); 
 
-for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects
+for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
     randomPosition(i);
 }
 
@@ -47,6 +47,8 @@ function drawCars(){
 
 function movement(){
     for (var i = 0; i < numberOfCars; i++) {
+    	socket.emit('DumbCarMovement',carArray[i]);
+    	
         if (carArray[i].xStart <carArray[i].xDestination){
             carArray[i].xPosition= carArray[i].xPosition + 5;
             carArray[i].xStart = carArray[i].xPosition/100;
@@ -82,9 +84,8 @@ function drawGrid(){
 
 function randomPosition(i){
     var socket = io.connect('/');
-    socket.on('event', function(data){
+    socket.on('RandomizeCarPosition',function(data){
         console.log(data);
-
         carArray[i]=data;
     });
 }
