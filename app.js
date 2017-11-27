@@ -3,36 +3,28 @@ var cfenv = require('cfenv');
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var carObject = require('./models/carObject.js')
 
 io.on('connection', function(client){
-    client.on('event',function(data){
-        console.log('Client sent info: ', data.message);
-    });
-
-    client.emit('event',randomizeCarPosition());
-
+    client.emit('event', generateDumbCar());
     client.on('disconnect',function(){});
 });
 
-function randomizeCarPosition(){
-    var colour = getRandomColor();
-    var car = {xStart:0,yStart:0,xDestination:0,yDestination:0,xPosition:0,yPosition:0,carColour:colour};
+function generateDumbCar(){
+  var carColour = getRandomColor();
+  var carType = "Dumb";
+  var start = randomizeCarPos();
+  var end = randomizeCarPos();
+  let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
+
+  return car;
+}
+
+function randomizeCarPos(){
     var x = Math.floor(Math.random() * 6);
     var y = Math.floor(Math.random() * 6);
 
-    car.xDestination = x;
-    car.yDestination = y;
-
-    var x1 = Math.floor(Math.random() * 6);
-    var y1 = Math.floor(Math.random() * 6);
-
-    car.xStart = x1;
-    car.yStart = y1;
-
-    car.xPosition= 100*x1;
-    car.yPosition= 100*y1;
-
-    return car;
+    return {x: x, y: y};
 }
 
 function getRandomColor() {
