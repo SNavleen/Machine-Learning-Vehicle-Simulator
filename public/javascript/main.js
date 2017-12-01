@@ -5,12 +5,8 @@ var gridArray = new Array(gridSize); //unused at the moment
 for (var i = 0; i < gridSize; i++) {
     gridArray[i] = new Array(gridSize);
 }
-var numberOfCars = 10;
+var numberOfCars = 1;
 var carArray = new Array(numberOfCars); 
-
-for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
-    randomPosition(i);
-}
 
 
 //function for what happens when the page loads
@@ -20,7 +16,7 @@ window.onload = function() {
 
     //sets the frame rate for the website
 
-    var fps = 60;
+    var fps = 1;
 
     //sets the refresh interval for the website and how fast the objects get refreshed
     setInterval(refresh, 1000/fps);
@@ -39,36 +35,6 @@ function display() {
     drawCars();
 }
 
-function drawCars(){
-    for (var i = 0; i < numberOfCars; i++) {
-        drawRect(carArray[i].xPosition,carArray[i].yPosition,30,20,carArray[i].carColour);
-    }
-}
-
-function movement(){
-    for (var i = 0; i < numberOfCars; i++) {
-    	socket.emit('DumbCarMovement',carArray[i]);
-    	
-        if (carArray[i].xStart <carArray[i].xDestination){
-            carArray[i].xPosition= carArray[i].xPosition + 5;
-            carArray[i].xStart = carArray[i].xPosition/100;
-        }
-        else if(carArray[i].xStart >carArray[i].xDestination){
-            carArray[i].xPosition= carArray[i].xPosition - 5;
-            carArray[i].xStart = carArray[i].xPosition/100;
-        }
-        else if(carArray[i].yStart < carArray[i].yDestination){
-            carArray[i].yPosition = carArray[i].yPosition + 5;
-            carArray[i].yStart = carArray[i].yPosition/100;
-        }
-        else if(carArray[i].yStart > carArray[i].yDestination){
-            carArray[i].yPosition = carArray[i].yPosition - 5;
-            carArray[i].yStart = carArray[i].yPosition/100;
-        }
-    }
-}
-
-
 function drawGrid(){
     var i = 1;
     while (i <gridSize){
@@ -82,13 +48,24 @@ function drawGrid(){
     }
 }
 
-function randomPosition(i){
+function drawCars(){
     var socket = io.connect('/');
-    socket.on('RandomizeCarPosition',function(data){
-        console.log(data);
-        carArray[i]=data;
+    socket.on('DumbCarMovement',function(data){
+    console.log(data);
+    for (var i = 0; i < numberOfCars; i++) {
+        carArray[i]=data.car;
+        drawRect(carArray[i]._xPos,carArray[i]._yPos,30,20,carArray[i].carColour);
+    }
     });
 }
+
+// function randomPosition(i){
+//     var socket = io.connect('/');
+//     socket.on('RandomizeCarPosition',function(data){
+//         console.log(data);
+//         carArray[i]=data;
+//     });
+// }
 //function to draw the bricks
 function drawRect(topLeftX,topLeftY, boxWidth,boxHeight, fillColor) {
     canvasContext.fillStyle = fillColor;

@@ -5,14 +5,15 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var carObject = require('./models/carObject.js')
 
-io.on('connection', function(client){
+var numberOfCars = 1;
+var carArray = new Array(numberOfCars); 
 
-    client.emit('RandomizeCarPosition',generateDumbCar());
-
-    client.on('DumbCarMovement',CarMovement(data));
-    
-    client.on('disconnect',function(){});
-});
+for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
+    carArray[i] = new carObject;
+    carArray[i] = generateDumbCar();
+    carArray[i]._xPos = carArray[i].xStart *100;
+    carArray[i]._yPos = carArray[i].yStart *100;
+}
 
 function generateDumbCar(){
   var carColour = getRandomColor();
@@ -40,9 +41,34 @@ function getRandomColor() {
     return colour;
 }
 
-function CarMovement(data){
-    
+io.on('connection', function(client){
 
+    client.emit('DumbCarMovement',DumbCarMovement());
+
+    client.on('disconnect',function(){});
+});
+
+
+function DumbCarMovement(){
+    for (var i = 0; i < numberOfCars; i++) {
+        if (carArray[i].xStart <carArray[i].xDestination){
+            carArray[i]._xPos= carArray[i]._xPos + 5;
+            carArray[i].xStart = carArray[i]._xPos/100;
+        }
+        else if(carArray[i].xStart >carArray[i].xDestination){
+            carArray[i]._xPos= carArray[i]._xPos - 5;
+            carArray[i].xStart = carArray[i]._xPos/100;
+        }
+        else if(carArray[i].yStart < carArray[i].yDestination){
+            carArray[i]._yPos = carArray[i]._yPos + 5;
+            carArray[i].yStart = carArray[i]._yPos/100;
+        }
+        else if(carArray[i].yStart > carArray[i].yDestination){
+            carArray[i]._yPos = carArray[i]._yPos - 5;
+            carArray[i].yStart = carArray[i]._yPos/100;
+        }
+    }
+    return {car:carArray};
 }
 
 
