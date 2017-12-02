@@ -6,7 +6,7 @@ for (var i = 0; i < gridSize; i++) {
     gridArray[i] = new Array(gridSize);
 }
 var numberOfCars = 1;
-var carArray = new Array(numberOfCars); 
+var carArray = new Array(numberOfCars);
 
 
 //function for what happens when the page loads
@@ -16,7 +16,7 @@ window.onload = function() {
 
     //sets the frame rate for the website
 
-    var fps = 1;
+    var fps = 50;
 
     //sets the refresh interval for the website and how fast the objects get refreshed
     setInterval(refresh, 1000/fps);
@@ -52,10 +52,11 @@ function drawCars(){
     var socket = io.connect('/');
     socket.on('DumbCarMovement',function(data){
     console.log(data);
-    for (var i = 0; i < numberOfCars; i++) {
-        carArray[i]=data.car;
-        drawRect(carArray[i]._xPos,carArray[i]._yPos,30,20,carArray[i].carColour);
-    }
+    drawRect(data._xPos,data._yPos,30,20,data.carColour);
+    //for (var i = 0; i < numberOfCars; i++) {
+        //carArray[i]=data;
+        //drawRect(carArray[i]._xPos,carArray[i]._yPos,30,20,carArray[i].carColour);
+    //}
     });
 }
 

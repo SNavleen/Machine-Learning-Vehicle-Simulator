@@ -6,9 +6,9 @@ var io = require('socket.io')(server);
 var carObject = require('./models/carObject.js')
 
 var numberOfCars = 1;
-var carArray = new Array(numberOfCars); 
+var carArray = new Array(numberOfCars);
 
-for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects 
+for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects
     carArray[i] = new carObject;
     carArray[i] = generateDumbCar();
     carArray[i]._xPos = carArray[i].xStart *100;
@@ -68,7 +68,7 @@ function DumbCarMovement(){
             carArray[i].yStart = carArray[i]._yPos/100;
         }
     }
-    return {car:carArray};
+    return carArray[0];
 }
 
 
