@@ -3,36 +3,33 @@ var cfenv = require('cfenv');
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var carObject = require('./models/carObject.js')
 
-io.on('connection', function(client){
-    client.on('event',function(data){
-        console.log('Client sent info: ', data.message);
-    });
+var numberOfCars = 1;
+var carArray = new Array(numberOfCars);
 
-    client.emit('event',randomizeCarPosition());
+for (var i = 0; i < numberOfCars; i++) {//initializes all the car objects
+    carArray[i] = new carObject;
+    carArray[i] = generateDumbCar();
+    carArray[i]._xPos = carArray[i].xStart *100;
+    carArray[i]._yPos = carArray[i].yStart *100;
+}
 
-    client.on('disconnect',function(){});
-});
+function generateDumbCar(){
+  var carColour = getRandomColor();
+  var carType = "Dumb";
+  var start = randomizeCarPos();
+  var end = randomizeCarPos();
+  let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
 
-function randomizeCarPosition(){
-    var colour = getRandomColor();
-    var car = {xStart:0,yStart:0,xDestination:0,yDestination:0,xPosition:0,yPosition:0,carColour:colour};
+  return car;
+}
+
+function randomizeCarPos(){
     var x = Math.floor(Math.random() * 6);
     var y = Math.floor(Math.random() * 6);
 
-    car.xDestination = x;
-    car.yDestination = y;
-
-    var x1 = Math.floor(Math.random() * 6);
-    var y1 = Math.floor(Math.random() * 6);
-
-    car.xStart = x1;
-    car.yStart = y1;
-
-    car.xPosition= 100*x1;
-    car.yPosition= 100*y1;
-
-    return car;
+    return {x: x, y: y};
 }
 
 function getRandomColor() {
@@ -42,6 +39,36 @@ function getRandomColor() {
         colour += letters[Math.floor(Math.random() * 16)];
     }
     return colour;
+}
+
+io.on('connection', function(client){
+
+    client.emit('DumbCarMovement',DumbCarMovement());
+
+    client.on('disconnect',function(){});
+});
+
+
+function DumbCarMovement(){
+    for (var i = 0; i < numberOfCars; i++) {
+        if (carArray[i].xStart <carArray[i].xDestination){
+            carArray[i]._xPos= carArray[i]._xPos + 5;
+            carArray[i].xStart = carArray[i]._xPos/100;
+        }
+        else if(carArray[i].xStart >carArray[i].xDestination){
+            carArray[i]._xPos= carArray[i]._xPos - 5;
+            carArray[i].xStart = carArray[i]._xPos/100;
+        }
+        else if(carArray[i].yStart < carArray[i].yDestination){
+            carArray[i]._yPos = carArray[i]._yPos + 5;
+            carArray[i].yStart = carArray[i]._yPos/100;
+        }
+        else if(carArray[i].yStart > carArray[i].yDestination){
+            carArray[i]._yPos = carArray[i]._yPos - 5;
+            carArray[i].yStart = carArray[i]._yPos/100;
+        }
+    }
+    return carArray[0];
 }
 
 
