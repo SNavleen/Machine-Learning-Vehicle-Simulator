@@ -19,5 +19,5 @@ function refresh() {
 function display() {
     canvasContext.clearRect(0,0, canvas.width,canvas.height); // clear screen
     drawGrid();
-    //drawCars();
+    drawCars();
 }

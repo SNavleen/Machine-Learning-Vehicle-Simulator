@@ -4,11 +4,12 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var carDisplay = require('./views/carDisplay.js')
+var carDisplay = require('./views/generateCars.js')
+var carDisplay = require('./views/carCreation.js')
 
 
 io.on('connection', function(client){
-    //client.emit('DumbCarDisplay', carDisplay.main());
+    client.emit('DumbCarDisplay', carDisplay.main());
     client.on('disconnect',function(){});
 });
 
