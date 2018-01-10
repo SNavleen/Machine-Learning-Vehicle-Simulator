@@ -1,8 +1,4 @@
 module.exports = class carObject{
-  // private var xStart, yStart;
-  // private var xDestination, yDestination;
-  // private var xPos, yPos;
-  // private var carColour, carType;
 
   constructor(xStart, yStart, xDestination, yDestination, carColour, carType){
     this.xStart = xStart;
