@@ -1,4 +1,6 @@
-var carObject = require('../models/carObject.js')
+module.exports = {generateDumbCar};
+
+var carObject = require('../models/carObject.js');
 
 function generateDumbCar(){
   var carColour = getRandomColor();
@@ -6,6 +8,8 @@ function generateDumbCar(){
   var start = randomizeCarPos();
   var end = randomizeCarPos();
   let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
+  car._xPos = start.x;
+  car._yPos = start.y;
 
   return car;
 }
@@ -25,6 +29,14 @@ function getRandomColor() {
     }
     return colour;
 }
+
+
+
+
+
+
+
+
 
 // function DumbCarMovement(){
 //     for (var i = 0; i < numberOfCars; i++) {
