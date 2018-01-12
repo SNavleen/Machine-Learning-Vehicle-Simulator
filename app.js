@@ -9,6 +9,7 @@ var carCreation = require('./views/carCreation.js')
 carCreation.createDumbCars();
 
 io.on('connection', function(client){
+    client.emit('RunCar', carCreation.DumbCarMovement());
     client.emit('DumbCarArray', carCreation.getCarArr());
     client.on('disconnect',function(){});
 });
