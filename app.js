@@ -4,14 +4,16 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-// var generateCars = import('./views/generateCars.js')
-// var carCreation = import('./views/carCreation.js')
 
+var carCreation = require('./views/carCreation.js')
+carCreation.createDumbCars();
 
 io.on('connection', function(client){
-    // client.emit('DumbCarDisplay', generateCars.main());
+    client.emit('DumbCarArray', carCreation.getCarArr());
     client.on('disconnect',function(){});
 });
+
+
 
 app.use(express.static(__dirname + '/public'));
 var appEnv = cfenv.getAppEnv();
