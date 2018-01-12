@@ -1,6 +1,9 @@
 var carObject = require('../models/carObject.js')
 var generateCars = require('./views/generateCars.js')
 
+  var numberOfCars = 1;
+  var carArray = new Array(numberOfCars);
+
 function main(){
   var numberOfCars = 1;
   var carArray = new Array(numberOfCars);
