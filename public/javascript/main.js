@@ -14,7 +14,7 @@ window.onload = function() {
 
 //calls the movement of the objects function and redisplays the objects
 function refresh() {
-    requestAnimationFrame(display);
+    requestAnimationFrame(refresh);
     primaryCtx.save(); //Freeze redraw
     drawGrid();
     drawCars();
