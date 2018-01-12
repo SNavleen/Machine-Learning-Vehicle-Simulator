@@ -1,40 +1,31 @@
-var canvas = document.getElementById('canvas');
-var canvasContext = canvas.getContext('2d');
+var primaryCtx = document.getElementById("canvas").getContext("2d");
+var secondaryCanvas = document.createElement("canvas"),
+      secondaryCtx = secondaryCanvas.getContext("2d");
+
+(function drawFrame() {
+
+})();
+
 
 //function for what happens when the page loads
 window.onload = function() {
     //sets the frame rate for the website
-    var fps = 50;
+    var fps = 120;
 
     //sets the refresh interval for the website and how fast the objects get refreshed
-    setInterval(refresh, 10000/fps);
+    setInterval(refresh, 1000/fps);
 }
 
 //calls the movement of the objects function and redisplays the objects
 function refresh() {
-    display();
+  display();
 }
 
 //how everything should be displayed
 function display() {
-    canvasContext.clearRect(0,0, canvas.width,canvas.height); // clear screen
-    drawGrid();
-    drawCars();
-}
-
-function drawRect(topLeftX,topLeftY, boxWidth,boxHeight, fillColor) {
-    canvasContext.fillStyle = fillColor;
-    canvasContext.fillRect(topLeftX,topLeftY, boxWidth,boxHeight);
-}
-
-function drawCars(){
-    var socket = io();
-    socket.on('DumbCarArray',function(data){
-    console.log(data);
-    drawRect(data._xPos*100,data._yPos*100,30,20,data.carColour);
-    //for (var i = 0; i < numberOfCars; i++) {
-        //carArray[i]=data;
-        //drawRect(carArray[i]._xPos,carArray[i]._yPos,30,20,carArray[i].carColour);
-    //}
-    });
+  requestAnimationFrame(display);
+  primaryCtx.save(); //Freeze redraw
+  drawGrid();
+  drawCars();
+  primaryCtx.restore(); //And now do the redraw
 }

@@ -6,8 +6,8 @@ function drawGrid(){
     while (i < gridSize){
         var j = 1;
         while (j < gridSize){
-            canvasContext.strokeStyle= "black";
-            canvasContext.strokeRect((i-1)*100,(j-1)*100,200,200);
+            primaryCtx.strokeStyle= "black";
+            primaryCtx.strokeRect((i-1)*100,(j-1)*100,200,200);
             j = j+1
         }
         i = i+1;

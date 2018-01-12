@@ -5,7 +5,6 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 
-
 var carCreation = require('./views/carCreation.js')
 carCreation.createDumbCars();
 
