@@ -1,6 +1,5 @@
 function drawCars(){
     var socket = io();
-    socket.on('RunCar',function(data){});
     socket.on('DumbCarArray',function(data){
       console.log(data);
       for (var i = 0; i < data.length; i++) {
@@ -8,4 +7,6 @@ function drawCars(){
         primaryCtx.fillRect(data[i]._xPos*100,data[i]._yPos*100,30,20);
       }
     });
+    socket.on('RunCar',function(data){});
+
 }
