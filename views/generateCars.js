@@ -10,7 +10,8 @@ function generateDumbCar(){
   let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
   car._xPos = start.x;
   car._yPos = start.y;
-
+  //console.log("Create car");
+  
   return car;
 }
 

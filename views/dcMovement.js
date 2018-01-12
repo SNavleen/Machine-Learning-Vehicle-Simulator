@@ -1,10 +1,12 @@
-var generateCars = require('./views/carCreation.js')
+var carCreation = require('./views/carCreation.js')
 
 
-
+//setCarArr
 //assume i have this
-var carArray;
+//var carArray;
 //var speed;
+var carArray = carCreation.getCarArr();
+carCreation.setCarArr(DumbCarMovement);
 
 function DumbCarMovement(){
     for (var i = 0; i < numberOfCars; i++) {  
@@ -28,5 +30,5 @@ function DumbCarMovement(){
             carArray[i].yStart = carArray[i]._yPos/100;
         }
     }
-    return carArray[0];
+    return carArray;
 }

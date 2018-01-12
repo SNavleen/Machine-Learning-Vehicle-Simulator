@@ -1,4 +1,5 @@
 var roads = require('/models.roadObject.js')
+console.log("ewruygfsioudfghviasdjfoisdf");
 //module.exports = class mapObject{
 	var city = new array(25);
 	function createBaseCity(){
@@ -57,7 +58,7 @@ var roads = require('/models.roadObject.js')
 		city[0] = new roads(4,2,4,3);
 		city[1] = new roads(4,3,4,4);
 
-
+}
 
 
 
