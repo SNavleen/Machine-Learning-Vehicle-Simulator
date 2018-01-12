@@ -16,6 +16,7 @@ window.onload = function() {
 function refresh() {
     requestAnimationFrame(refresh);
     primaryCtx.save(); //Freeze redraw
+    //primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
     drawCars();
     primaryCtx.restore(); //And now do the redraw
