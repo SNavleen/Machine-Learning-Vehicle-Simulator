@@ -10,7 +10,8 @@ function generateDumbCar(){
   let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
   car._xPos = start.x;
   car._yPos = start.y;
-
+  //console.log("Create car");
+  
   return car;
 }
 
@@ -29,33 +30,3 @@ function getRandomColor() {
     }
     return colour;
 }
-
-
-
-
-
-
-
-
-
-// function DumbCarMovement(){
-//     for (var i = 0; i < numberOfCars; i++) {
-//         if (carArray[i].xStart <carArray[i].xDestination){
-//             carArray[i]._xPos= carArray[i]._xPos + 5;
-//             carArray[i].xStart = carArray[i]._xPos/100;
-//         }
-//         else if(carArray[i].xStart >carArray[i].xDestination){
-//             carArray[i]._xPos= carArray[i]._xPos - 5;
-//             carArray[i].xStart = carArray[i]._xPos/100;
-//         }
-//         else if(carArray[i].yStart < carArray[i].yDestination){
-//             carArray[i]._yPos = carArray[i]._yPos + 5;
-//             carArray[i].yStart = carArray[i]._yPos/100;
-//         }
-//         else if(carArray[i].yStart > carArray[i].yDestination){
-//             carArray[i]._yPos = carArray[i]._yPos - 5;
-//             carArray[i].yStart = carArray[i]._yPos/100;
-//         }
-//     }
-//     return carArray[0];
-// }

@@ -4,6 +4,7 @@ var generateCars = require('./generateCars.js');
 var numberOfCars = 5;
 var carArray = new Array(numberOfCars);
 
+
 function createDumbCars(){
   //initializes all the car
   for (var i = 0; i < numberOfCars; i++) {

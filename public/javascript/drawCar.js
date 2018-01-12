@@ -7,4 +7,6 @@ function drawCars(){
         primaryCtx.fillRect(data[i]._xPos*100,data[i]._yPos*100,30,20);
       }
     });
+    socket.on('RunCar',function(data){});
+
 }
