@@ -3,6 +3,7 @@ var generateCars = require('./generateCars.js');
 
 var numberOfCars = 5;
 var carArray = new Array(numberOfCars);
+var frontendCarArray = new Array(numberOfCars);
 
 
 function createDumbCars(){
@@ -13,10 +14,17 @@ function createDumbCars(){
   }
 }
 
+function getFrontendCarArr(){
+  for (var i = 0; i < numberOfCars; i++) {
+      frontendCarArray[i] = {_xPos: carArray[i]._xPos, _yPos: carArray[i]._yPos, _orientation: carArray[i]._orientation}
+  }
+  return frontendCarArray;
+}
+
 function getCarArr(){
   return carArray;
 }
 function setCarArr(cars){
   carArray = cars;
 }
-module.exports = {createDumbCars, getCarArr, setCarArr};
+module.exports = {createDumbCars, getCarArr, setCarArr, getFrontendCarArr};
