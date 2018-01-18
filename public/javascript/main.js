@@ -6,9 +6,10 @@ var secondaryCanvas = document.createElement("canvas"),
 //function for what happens when the page loads
 window.onload = function() {
     //sets the frame rate for the website
-    var fps = 120;
+    var fps = 1;
     //sets the refresh interval for the website and how fast the objects get refreshed
     //setInterval(refresh, 1000/fps);
+    //refresh();
     drawGrid(); // temporarily removed refresh call until we have proper data sending
     drawCars();
 }
