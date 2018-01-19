@@ -15,9 +15,25 @@ function generateDumbCar(){
 }
 
 function randomizeCarPos(){
-    var x = Math.floor(Math.random() * 6);
-    var y = Math.floor(Math.random() * 6);
-
+    if(Math.floor(Math.random() * 2)== 0){
+      var x = Math.floor(Math.random() * 6);
+      if(Math.floor(Math.random() * 2)== 0){
+        var y =0;
+      }
+      else{
+        var y = 5;
+      }
+  }
+    else{
+      var y = Math.floor(Math.random() * 6);
+      if(Math.floor(Math.random() * 2)== 0){
+        var x =0;
+      }
+      else{
+        var x = 5;
+      }
+    }
+  
     return {x: x, y: y};
 }
 
