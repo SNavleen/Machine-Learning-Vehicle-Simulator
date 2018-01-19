@@ -34,17 +34,17 @@ function drawCars(){
             //console.log("orientation: " + data[i]._orientation);
             //var orientation = 20; //orientation will be changed to the cars orientation that nav will send
             if (data[i]._orientation == 0) {
-                primaryCtx.drawImage(dc_image_0, data[i]._xPos*100, data[i]._yPos*100-15);
+                primaryCtx.drawImage(dc_image_0, data[i]._xPos*100, data[i]._yPos*100,40,20);
             }
             else if (data[i]._orientation == 90) {
-                primaryCtx.drawImage(dc_image_90, data[i]._xPos*100-15, data[i]._yPos*100);
+                primaryCtx.drawImage(dc_image_90, data[i]._xPos*100, data[i]._yPos*100,20,40);
             }
             else if (data[i]._orientation == 180) {
-                primaryCtx.drawImage(dc_image_180, data[i]._xPos*100, data[i]._yPos*100-15);
+                primaryCtx.drawImage(dc_image_180, data[i]._xPos*100, data[i]._yPos*100-20,40,20);
             }
 
             else if (data[i]._orientation == 270) {
-                primaryCtx.drawImage(dc_image_270, data[i]._xPos*100-15, data[i]._yPos*100);
+                primaryCtx.drawImage(dc_image_270, data[i]._xPos*100-20, data[i]._yPos*100,20,40);
             }
 
             //primaryCtx.drawImage(dc_image_0, data[i]._xPos*100, data[i]._yPos*100-15);

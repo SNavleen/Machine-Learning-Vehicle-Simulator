@@ -1,7 +1,7 @@
 var carObject = require('../models/carObject.js');
 var generateCars = require('./generateCars.js');
 
-var numberOfCars = 20;
+var numberOfCars = 15;
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
 
