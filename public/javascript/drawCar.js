@@ -26,7 +26,12 @@ function drawCars(){
 
         for (var i = 0; i < data.length; i++) {
           	//primaryCtx.save();
-            //primaryCtx.rotate(data[i]._orientation * Math.PI/180);
+            //var x = Math.PI/180;
+            //var y = 0 *x;
+            //console.log(y);
+            //primaryCtx.translate(data[i]._xPos*100, data[i]._yPos*100-15);
+            //primaryCtx.rotate(y);
+            //console.log("orientation: " + data[i]._orientation);
             //var orientation = 20; //orientation will be changed to the cars orientation that nav will send
             if (data[i]._orientation == 0) {
                 primaryCtx.drawImage(dc_image_0, data[i]._xPos*100, data[i]._yPos*100-15);
@@ -42,8 +47,16 @@ function drawCars(){
                 primaryCtx.drawImage(dc_image_270, data[i]._xPos*100-15, data[i]._yPos*100);
             }
 
-            //primaryCtx.fillRect(data[i]._xPos*100,data[i]._yPos*100,30,20);
-           // primaryCtx.restore();
+            //primaryCtx.drawImage(dc_image_0, data[i]._xPos*100, data[i]._yPos*100-15);
+            //primaryCtx.restore();
         }
     });
 }
+
+/*function rotate_point(pointX, pointY, originX, originY, angle) {
+    angle = angle * Math.PI / 180.0;
+    return {
+        x: Math.cos(angle) * (pointX-originX) - Math.sin(angle) * (pointY-originY) + originX,
+        y: Math.sin(angle) * (pointX-originX) + Math.cos(angle) * (pointY-originY) + originY
+    };
+}*/
