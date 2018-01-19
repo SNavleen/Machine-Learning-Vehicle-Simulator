@@ -25,15 +25,19 @@ io.on('connection', function(client){
 	    for (var i = 0; i < carArray.length; i++) {
 			if (carArray[i]._xPos < carArray[i].xDestination){
 			    carArray[i]._xPos= carArray[i]._xPos + 1;
+			    carArray[i]._orientation = 0;
 			}
 			else if(carArray[i]._xPos > carArray[i].xDestination){
 			    carArray[i]._xPos= carArray[i]._xPos - 1;
+			    carArray[i]._orientation = 180;
 			}
 			else if(carArray[i]._yPos < carArray[i].yDestination){
 			    carArray[i]._yPos = carArray[i]._yPos + 1;
+			    carArray[i]._orientation = 270;
 			}
 			else if(carArray[i]._yPos > carArray[i].yDestination){
 			    carArray[i]._yPos = carArray[i]._yPos - 1;
+			    carArray[i]._orientation = 90;
 			}
 
 			// Checking whether all cars have reached destination
