@@ -11,7 +11,7 @@ var carArray = carCreation.getCarArr();
 
 io.on('connection', function(client){
 	// Emit initial car positions
-    client.emit('DumbCarArray', carCreation.getCarArr());
+    client.emit('DumbCarArray', carCreation.getFrontendCarArr());
     console.log("Initial Dumb Car Array Sent");
     
     // Variables for tracking if all cars have reached destination
@@ -48,7 +48,7 @@ io.on('connection', function(client){
 
 		// Updates the carArray with new positions and sends data to client
 		carCreation.setCarArr(carArray);
-		client.emit('DumbCarArray', carCreation.getCarArr());
+		client.emit('DumbCarArray', carCreation.getFrontendCarArr());
 		console.log("Dumb Car Array Sent");
 	}, 800); // How often the server updates the client
 
