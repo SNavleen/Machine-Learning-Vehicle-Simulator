@@ -39,7 +39,7 @@ function randomizeCarPos(){
       else{
         var x = 5;
       }
-    }
+    } 
   */
     return {x: x, y: y};
 
