@@ -8,6 +8,8 @@ function generateDumbCar(){
   var start = randomizeCarPos();
   var end = randomizeCarPos();
   let car = new carObject(start.x, start.y, end.x, end.y, carColour, carType);
+ // let car = new carObject(5, 5, 3, 5, carColour, carType);
+
   car._xPos = start.x;
   car._yPos = start.y;
 
@@ -33,8 +35,9 @@ function randomizeCarPos(){
         var x = 5;
       }
     }
-  
+    console.log("Car positions", x , y);
     return {x: x, y: y};
+
 }
 
 function getRandomColor() {

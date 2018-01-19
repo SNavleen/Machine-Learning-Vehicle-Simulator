@@ -9,6 +9,7 @@ module.exports = class carObject{
     this.carType = carType;
 
     this.orientation = 0;
+    this.speed = 0;
     this.xPos = 0;
     this.yPos = 0;
   }
@@ -25,6 +26,10 @@ module.exports = class carObject{
     return this._orientation;
   }
 
+  get speed(){
+    return this._speed;
+  }
+
   set xPos(value){
     this._xPos = value;
   }
@@ -35,5 +40,9 @@ module.exports = class carObject{
 
   set orientation(value){
     this._orientation = value;
+  }
+
+  set speed(value){
+    this._speed = value; 
   }
 }
