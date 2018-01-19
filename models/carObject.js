@@ -43,6 +43,6 @@ module.exports = class carObject{
   }
 
   set speed(value){
-    this._speed = value; 
+    this._speed = value;
   }
 }

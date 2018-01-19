@@ -11,9 +11,8 @@ function DumbCarMovement(){
     	 var speed = carArray[i]._speed*1000;
      	 parseInt(speed,10);
 
-
-    	  console.log("x",carArray[i]._xPos,"y",carArray[i]._yPos,"speed:",carArray[i]._speed);
-    	  console.log("xdes",carArray[i].xDestination,"ydes",carArray[i].yDestination,"speed:",carArray[i]._speed);
+  	  console.log("x",carArray[i]._xPos,"y",carArray[i]._yPos,"speed:",carArray[i]._speed);
+  	  console.log("xdes",carArray[i].xDestination,"ydes",carArray[i].yDestination,"speed:",carArray[i]._speed);
 
     	var achivedX = true;
     	var achivedY = true;
@@ -44,6 +43,7 @@ function DumbCarMovement(){
   //       		carArray[i]._speed = carArray[i]._speed - 0.01;
   //       		dest = true;
   //       	}
+  //      }
 		// 	if(carArray[i]._yPos > carArray[i].yDestination){
 		// 		carArray[i]._yPos= carArray[i]._yPos - carArray[i]._speed;
 		// 	}
