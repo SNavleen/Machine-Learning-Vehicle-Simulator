@@ -1,23 +1,20 @@
-var canvas = document.getElementById('canvas');
-var canvasContext = canvas.getContext('2d');
+var primaryCtx = document.getElementById("canvas").getContext("2d");
+//var secondaryCanvas = document.createElement("canvas"), secondaryCtx = secondaryCanvas.getContext("2d");
 
-//function for what happens when the page loads
+
+//Initally draw the gride and cars on page load
 window.onload = function() {
-    //sets the frame rate for the website
-    var fps = 50;
-
-    //sets the refresh interval for the website and how fast the objects get refreshed
-    setInterval(refresh, 10000/fps);
+    drawGrid();
+    drawCars();
 }
 
+/*
 //calls the movement of the objects function and redisplays the objects
 function refresh() {
-    display();
-}
-
-//how everything should be displayed
-function display() {
-    canvasContext.clearRect(0,0, canvas.width,canvas.height); // clear screen
+    requestAnimationFrame(refresh);
+    primaryCtx.save(); //Freeze redraw
+    //primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
-    //drawCars();
-}
+    drawCars();
+    primaryCtx.restore(); //And now do the redraw
+}*/
