@@ -8,6 +8,8 @@ module.exports = class carObject{
     this.carColour = carColour;
     this.carType = carType;
 
+    this.speed = 0;
+
     this.orientation = 0;
     this.xPos = 0;
     this.yPos = 0;
@@ -20,7 +22,9 @@ module.exports = class carObject{
   get yPos(){
     return this._yPos;
   }
-
+get speed(){
+  return this._speed;
+}
   get orientation(){
     return this._orientation;
   }
@@ -31,6 +35,9 @@ module.exports = class carObject{
 
   set yPos(value){
     this._yPos = value;
+  }
+  set speed(value){
+    this._speed = value;
   }
 
   set orientation(value){
