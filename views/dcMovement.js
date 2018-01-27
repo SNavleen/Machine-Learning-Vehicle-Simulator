@@ -61,13 +61,11 @@ module.exports = function(io) {
                         carArray[i]._speed = precisionRound(speed - 0.01, 3);
                         carDecelerating = true;
                     }
-                    // Checks if the car is moving left or right
+                    // Checks if the car needs to move left or right
                     if (xpos > xdes) {
-                        carArray[i]._orientation = 180;
                         carArray[i]._xPos = precisionRound(xpos - speed, 3);
                     }
-                    else {
-                        carArray[i]._orientation = 0;
+                    else if (xpos < xdes) {
                         carArray[i]._xPos = precisionRound(xpos + speed, 3);
                     }
                     carFinished = false;
@@ -81,11 +79,8 @@ module.exports = function(io) {
                     // If the car is heading north
                     if (ypos > ydes) {
                         // Conditional for when the car is starting north but hasn't yet fully turned
-                        //carArray[i]._yPos = precisionRound(ypos - speed, 3);
                         if (carArray[i]._orientation != 90) {
-                            //speedflag = true;
-                            carArray[i]._speed = 0.001; // Turning speed
-                            //speed = 0.001111111111;
+                            carArray[i]._speed = 0.005; // Turning speed
 
                             // Checks if the car needs to turn left heading north
                             if (carArray[i]._orientation >= 0 && carArray[i]._orientation < 90) {
@@ -96,14 +91,6 @@ module.exports = function(io) {
                                 carArray[i]._orientation = carArray[i]._orientation - 10;
                             }
                         }
-                        /*
-                        // Temp removal, ask Paul (Used different approach to only speed up after turning)
-                        else if (speedflag == true) {
-                            carArray[i]._speed = 0.01;
-                            speed = 0.01;
-                            carArray[i]._orientation = 90;
-                            speedflag = false;
-                        }*/
 
                         // Car Ready to accelerate
                         else {
@@ -115,7 +102,7 @@ module.exports = function(io) {
                     // If the car is heading south
                     else {
                         if (carArray[i]._orientation != 270) {
-                            carArray[i]._speed = 0.001;
+                            carArray[i]._speed = 0.005;
 
                             // Allows for right turns heading south by setting orientation from 0 to 360
                             if (carArray[i]._orientation == 0) {

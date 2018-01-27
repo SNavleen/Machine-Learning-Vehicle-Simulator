@@ -5,8 +5,8 @@ function drawCars(){
     var socket = io();
 
     socket.on('DumbCarArray',function(data){
-    	console.log("Dumb Car Array Received");
-        console.log(data);
+        // Prints out recieved DC array to console
+        //console.log(data);
         primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
         drawGrid();
 
@@ -34,13 +34,16 @@ function drawCars(){
                 xPos = data[i]._xPos*100-30;
                 yPos = data[i]._yPos*100;
             }
+            else {
+                xPos = data[i]._xPos*100;
+                yPos = data[i]._yPos*100;
+            }
             drawRotatedCar(xPos,yPos,40,20,data[i]._orientation);
         }
     });
 }
 function drawRotatedCar(x, y, width, height, degrees) {
 
-    console.log("made it");
     // first save the untranslated/unrotated context
     primaryCtx.save();
 

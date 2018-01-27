@@ -11,6 +11,11 @@ function generateDumbCar(){
   car._xPos = start.x;
   car._yPos = start.y;
 
+  // Initalizes cars starting orientation (since atm it's either going left or right it automatically sets this here)
+  // This might need to change eventually because it's a bit of a work around (ask Paul for further explanation)
+  if (start.x > end.x) { car._orientation = 180; }
+  else { car._orientation = 0; }
+
   return car;
 }
 
