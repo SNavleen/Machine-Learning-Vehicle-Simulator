@@ -11,8 +11,8 @@ function drawCars(){
         drawGrid();
 
         for (var i = 0; i < data.length; i++) {
-            var xPos= data[i]._xPos*100;
-            var yPos= data[i]._yPos*100;
+            var xPos;
+            var yPos;
             //to make the cars rotate for all angles and rotate when its turning
             //we can just change these if states to acount for 0-90 then 90-180 etc.
             if (data[i]._orientation == 0) {

@@ -18,8 +18,6 @@ function randomizeCarPos(){
   var x = Math.floor(Math.random() * 6);
   var y = Math.floor(Math.random() * 6);
   
-  // Temp removal for bug fixes
-  
     if(Math.floor(Math.random() * 2)== 0){
       var x = Math.floor(Math.random() * 6);
       if(Math.floor(Math.random() * 2)== 0){
