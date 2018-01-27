@@ -17,8 +17,7 @@ function precisionRound(number, precision) {
     return Math.round(number * factor) / factor;
 }
 
-// TODO Fix this comment
-// The minimumSlowDownDistance function is an addition factorial that returns the addition factorial value of a given number
+// Returns an additonal factorial of a given number (used to determine the stopping distance of the car)
 var minimumSlowDownDistance = function (currentSpeed) {
     var totalStoppingDistance = 0;
     currentSpeed = precisionRound(currentSpeed, 2);
@@ -36,11 +35,10 @@ module.exports = function(io) {
         // Emit initial car positions
         dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
 
-        //var carFinished = true;
-        //var speedflag = false; // TODO Figure this out
+        var carFinished = true; // Used to determine when a car has reached it's destination
 
         // Loop for moving all dumb cars on an interval
-        var dcMovementLoop = setInterval(function() { // Temporarily using interval to display cars moving carDeceleratingly
+        var dcMovementLoop = setInterval(function() { // Temporarily using interval to display cars moving slowly
             // This loop checks each car in carArray and moves it closer towards its destination
             for (var i = 0; i < carArray.length; i++) {
                 var xpos = precisionRound(carArray[i]._xPos,3);
@@ -49,8 +47,7 @@ module.exports = function(io) {
                 var ydes = precisionRound(carArray[i].yDestination,3);
                 var speed = precisionRound(carArray[i]._speed,3);
 
-                // determines if a car has reached its destination or not
-                //carFinished = true; // TODO Figure this out
+                carFinished = true; // determines if a car has reached its destination or not
 
                 var carDecelerating = false;
 
@@ -94,7 +91,7 @@ module.exports = function(io) {
 
                         // Car Ready to accelerate
                         else {
-                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate
+                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate (see comment below)
                         }
 
                         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 3);
@@ -119,7 +116,7 @@ module.exports = function(io) {
                         }
                         // Car Ready to accelerate
                         else {
-                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate
+                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate need to implement speed cap (but saving this for another branch)
                         }
 
                         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
@@ -127,17 +124,16 @@ module.exports = function(io) {
                     carFinished = false;
                 }
 
-                
-                // Temp removal, ask Paul (no need to decelerate on y ATM, will need to change in future)
                 if (carArray[i]._speed < 0.05 && carDecelerating == false) {
                     carArray[i]._speed = precisionRound(speed + 0.01, 3);
                 }
             }
 
-            /*if (carFinished == true) {
-                console.log("SPLICE NOW");
-                //carArray.splice(i,1);
-            }*/
+            // TODO This works but isn't fully connected to the front end
+            // Also we may have to handle this slightly differently we need to ensure the array stays dynamic with only the cars that are currently on the map
+            if (carFinished == true) {
+                carArray.splice(i,1);
+            }
 
             // Updates the carArray with new positions and sends data to client
             carCreation.setCarArr(carArray);
