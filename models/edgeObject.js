@@ -29,12 +29,18 @@ function readNodeFile(){
 }
 
 module.exports = class edgeObject{
-  constructor(edgeId, startNodeId, endNodeId, capacity, speedLimit){
+  constructor(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type){
 		readNodeFile();
 		this.edgeId = edgeId;
 		this.startNodeId = startNodeId;
 		this.endNodeId = endNodeId;
 		this.capacity = capacity;
+		this.length = length;
+		this.freeFlowTime = freeFlowTime;
+		this.b = b;
+		this.power = power;
 		this.speedLimit = speedLimit;
+		this.toll = toll;
+		this.type = type;
   }
 }
