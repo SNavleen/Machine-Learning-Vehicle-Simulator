@@ -11,3 +11,6 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 });
 
 var dcMovement = require('./views/dcMovement.js')(io);
+var edgeObject = require('./models/edgeObject.js');
+
+var map = new edgeObject();

@@ -22,9 +22,9 @@ module.exports = class carObject{
   get yPos(){
     return this._yPos;
   }
-get speed(){
-  return this._speed;
-}
+  get speed(){
+    return this._speed;
+  }
   get orientation(){
     return this._orientation;
   }
