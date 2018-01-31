@@ -1,11 +1,11 @@
 module.exports = class carObject{
 
-  constructor(xStart, yStart, xDestination, yDestination, carColour, carType){
+  constructor(carID, xStart, yStart, xDestination, yDestination, carType) {
+    this.carID = carID;
     this.xStart = xStart;
     this.yStart = yStart;
     this.xDestination = xDestination;
     this.yDestination = yDestination;
-    this.carColour = carColour;
     this.carType = carType;
 
     this.speed = 0;
@@ -15,31 +15,33 @@ module.exports = class carObject{
     this.yPos = 0;
   }
 
+  get carID(){
+    return this.carID;
+  }
   get xPos(){
     return this._xPos;
   }
-
   get yPos(){
     return this._yPos;
   }
-get speed(){
-  return this._speed;
-}
+  get speed(){
+    return this._speed;
+  }
   get orientation(){
     return this._orientation;
   }
-
+  set carID(value){
+    this._carID = value;
+  }
   set xPos(value){
     this._xPos = value;
   }
-
   set yPos(value){
     this._yPos = value;
   }
   set speed(value){
     this._speed = value;
   }
-
   set orientation(value){
     this._orientation = value;
   }
