@@ -1,3 +1,5 @@
+//https://hackernoon.com/how-to-implement-dijkstras-algorithm-in-javascript-abdfd1702d04
+//https://gist.github.com/stella-yc/49a7b96679ab3bf06e26421fc81b5636#file-dijkstra-js
 const problem = {
   start: {A: 5, B: 2},
   A: {C: 4, D: 2},
