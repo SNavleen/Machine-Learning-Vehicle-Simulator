@@ -1,6 +1,6 @@
 var edgeObject = require('./edgeObject.js');
 var edgeArray = new Array();
-function readEdgeFile(){
+function readEdgeFile(cb){
 	var fs = require('fs');
 	var readline = require('readline');
 	var stream = require('stream');
@@ -9,13 +9,13 @@ function readEdgeFile(){
 	var outstream = new stream;
 	var rl = readline.createInterface(instream, outstream);
 	var edgeId = 0;
-	rl.on('line', function(line) {
+	rl.on('line', function(line){
 		line = line.toString();
 	  var arr = line.split(" ");
 		if(arr[0] != "<NUMBER" && arr[0] != "<FIRST" && arr[0] != "<END" && arr[0] != "~" ){
 			arr = arr[0].split("\t");
 
-			if(arr[1] != "undefined"){
+			if(arr[1] != undefined){
 				// edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type
 				var startNodeId = arr[1];
 				var endNodeId = arr[2];
@@ -30,20 +30,29 @@ function readEdgeFile(){
 				var edge = new edgeObject(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type);
 				// console.log(edge);
 				edgeArray.push(edge);
+				// console.log(edgeArray[0]);
+				edgeId ++;
 			}
 		}
-		edgeId ++;
 	});
 
-	rl.on('close', function() {
-	  // for(var i = 0; i < nodeArray.length; i++){
-		// 	console.log(nodeArray[i]);
+	rl.on('close', function(){
+		cb();
+	  // for(var i = 0; i < 3; i++){
+		// 	console.log(edgeArray[i]);
 		// }
 	});
 }
 
+// console.log(edgeArray[0]);
 module.exports = class graphObject{
   constructor(){
-		readEdgeFile();
+		var cb = ()=>{
+			console.log(edgeArray[6]);
+			var orientation = edgeArray[6]._orientation;
+			console.log(orientation);
+		};
+		readEdgeFile(cb);
+
   }
 }

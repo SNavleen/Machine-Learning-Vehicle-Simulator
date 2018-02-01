@@ -1,6 +1,6 @@
 var nodeObject = require('./nodeObject.js');
 var nodeArray = new Array();
-function readNodeFile(){
+function readNodeFile(cb){
 	var fs = require('fs');
 	var readline = require('readline');
 	var stream = require('stream');
@@ -9,7 +9,7 @@ function readNodeFile(){
 	var outstream = new stream;
 	var rl = readline.createInterface(instream, outstream);
 
-	rl.on('line', function(line) {
+	rl.on('line', function(line){
 		line = line.toString();
 	  var arr = line.split(" ")[0].split("\t");
 		var nodeId = arr[0];
@@ -21,16 +21,25 @@ function readNodeFile(){
 		}
 	});
 
-	rl.on('close', function() {
+	rl.on('close', function(){
+		cb();
 	  // for(var i = 0; i < nodeArray.length; i++){
 		// 	console.log(nodeArray[i]);
 		// }
 	});
 }
+function orientationOfEdge(node1, node2){
+	// console.log(node1);
+	return nodeArray[node1];
+}
 
 module.exports = class edgeObject{
   constructor(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type){
-		readNodeFile();
+		if(nodeArray == undefined){
+			var cb = ()=>{
+			};
+			readNodeFile(cb);
+		}
 		this.edgeId = edgeId;
 		this.startNodeId = startNodeId;
 		this.endNodeId = endNodeId;
@@ -42,5 +51,14 @@ module.exports = class edgeObject{
 		this.speedLimit = speedLimit;
 		this.toll = toll;
 		this.type = type;
+		
+		this._orientation = orientationOfEdge(this.startNodeId, this.endNodeId);
+		// console.log(this._orientation);
+
   }
+
+	get orientation(){
+		// this._orientation = orientationOfEdge(this.startNodeId, this.endNodeId);
+		return this._orientation;
+	}
 }
