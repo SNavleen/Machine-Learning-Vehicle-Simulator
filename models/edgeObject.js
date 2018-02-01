@@ -1,32 +1,23 @@
 var nodeObject = require('./nodeObject.js');
 var nodeArray = new Array();
-function readNodeFile(cb){
+function readNodeFile(){
 	var fs = require('fs');
-	var readline = require('readline');
-	var stream = require('stream');
-
-	var instream = fs.createReadStream('./map/SiouxFalls_node.tntp');
-	var outstream = new stream;
-	var rl = readline.createInterface(instream, outstream);
-
-	rl.on('line', function(line){
-		line = line.toString();
-	  var arr = line.split(" ")[0].split("\t");
-		var nodeId = arr[0];
-		var x = arr[1];
-		var y = arr[2];
-		if(arr[0] != "Node"){
+	var file = "./map/SiouxFalls_node.tntp";
+	var lines = fs.readFileSync(file).toString();
+  var line = lines.split("\n");
+	for(var i = 0; i < line.length; i++){
+		var word = line[i].split("\t");
+		// console.log(word);
+		var nodeId = word[0];
+		var x = word[1];
+		var y = word[2];
+		if(word[0] != "Node" && word[0] != ''){
 			var node = new nodeObject(nodeId, x, y);
+			// console.log(node);
 			nodeArray.push(node);
 		}
-	});
-
-	rl.on('close', function(){
-		cb();
-	  // for(var i = 0; i < nodeArray.length; i++){
-		// 	console.log(nodeArray[i]);
-		// }
-	});
+	}
+	// return nodeArray;
 }
 function orientationOfEdge(node1, node2){
 	// console.log(node1);
@@ -35,11 +26,6 @@ function orientationOfEdge(node1, node2){
 
 module.exports = class edgeObject{
   constructor(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type){
-		if(nodeArray == undefined){
-			var cb = ()=>{
-			};
-			readNodeFile(cb);
-		}
 		this.edgeId = edgeId;
 		this.startNodeId = startNodeId;
 		this.endNodeId = endNodeId;
@@ -51,7 +37,9 @@ module.exports = class edgeObject{
 		this.speedLimit = speedLimit;
 		this.toll = toll;
 		this.type = type;
-		
+		if(nodeArray.length < 1){
+			readNodeFile();
+		}
 		this._orientation = orientationOfEdge(this.startNodeId, this.endNodeId);
 		// console.log(this._orientation);
 
