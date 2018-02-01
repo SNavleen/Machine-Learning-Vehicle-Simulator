@@ -20,9 +20,17 @@ function readNodeFile(){
 	// return nodeArray;
 }
 function orientationOfEdge(node1, node2){
-	// console.log(node1);
-	return nodeArray[node1];
+	var deltaX = nodeArray[node2].x - nodeArray[node1].x;
+	var deltaY = nodeArray[node2].y - nodeArray[node1].y;
+	var rad = Math.atan2(deltaY, deltaX);
+
+	var deg = rad * (180 / Math.PI)
+	// console.log(deg);
+	return deg;
+	// console.log(nodeArray[node1]);
+	// return nodeArray[node1-1];
 }
+
 
 module.exports = class edgeObject{
   constructor(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type){
@@ -40,7 +48,7 @@ module.exports = class edgeObject{
 		if(nodeArray.length < 1){
 			readNodeFile();
 		}
-		this._orientation = orientationOfEdge(this.startNodeId, this.endNodeId);
+		this._orientation = orientationOfEdge(this.startNodeId - 1, this.endNodeId - 1);
 		// console.log(this._orientation);
 
   }
