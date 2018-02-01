@@ -19,6 +19,7 @@ function readNodeFile(){
 	}
 	// return nodeArray;
 }
+// Set the orientation of the edge
 function orientationOfEdge(node1, node2){
 	var deltaX = nodeArray[node2].x - nodeArray[node1].x;
 	var deltaY = nodeArray[node2].y - nodeArray[node1].y;

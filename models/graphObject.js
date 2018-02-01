@@ -13,7 +13,7 @@ function readEdgeFile(){
 			var word = line[i].split("\t");
 			// console.log(word);
 			if(word[1] != undefined){
-			// 	// edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type
+				// edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type
 				var startNodeId = word[1];
 				var endNodeId = word[2];
 				var capacity = word[3];
@@ -24,8 +24,10 @@ function readEdgeFile(){
 				var speedLimit = word[8];
 				var toll = word[9];
 				var type = word[10];
+				// Create an edge object
 				var edge = new edgeObject(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type);
 				// console.log(edge);
+				// Add the edge to array
 				edgeArray.push(edge);
 				// console.log(edgeArray[0]);
 				edgeId ++;
