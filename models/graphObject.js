@@ -8,7 +8,6 @@ function readEdgeFile(){
 	var edgeId = 0;
 	// console.log(line);
 	for(var i = 0; i < line.length; i++){
-		// console.log(line[i].includes("NUMBER"));
 		// console.log(line[i]);
 		if(!line[i].startsWith("<") && !line[i].startsWith("~")){
 			var word = line[i].split("\t");
@@ -39,6 +38,17 @@ function readEdgeFile(){
 module.exports = class graphObject{
   constructor(){
 		readEdgeFile();
-
   }
+
+	insertCarToEdge(carId, edgeId, colNum){
+		edgeArray[edgeId-1].addCarToEdge(carId, colNum);
+		console.log(edgeArray[edgeId-1]);
+	}
+	removeCarFromEdge(carId, edgeId, colNum){
+		edgeArray[edgeId-1].removeCarFromEdge(carId, colNum);
+		console.log(edgeArray[edgeId-1]);
+	}
+	getCarsOnEdge(edgeId){
+		return edgeArray[edgeId-1]._listOfCars;
+	}
 }

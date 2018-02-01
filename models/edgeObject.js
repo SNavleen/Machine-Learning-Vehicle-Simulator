@@ -48,13 +48,28 @@ module.exports = class edgeObject{
 		if(nodeArray.length < 1){
 			readNodeFile();
 		}
+
 		this._orientation = orientationOfEdge(this.startNodeId - 1, this.endNodeId - 1);
 		// console.log(this._orientation);
+		this._listOfCars = new Array();
 
   }
 
 	get orientation(){
-		// this._orientation = orientationOfEdge(this.startNodeId, this.endNodeId);
 		return this._orientation;
+	}
+	get listOfCars(){
+		console.log(this._listOfCars);
+		return this._listOfCars;
+	}
+
+	addCarToEdge(carId, colNum){
+		this._listOfCars.push(carId);
+	}
+	removeCarFromEdge(carId, colNum){
+		var index = this._listOfCars.indexOf(carId);
+		if (index > -1) {
+	    this._listOfCars.splice(index, 1);
+		}
 	}
 }
