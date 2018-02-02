@@ -12,6 +12,10 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 
 var dcMovement = require('./views/dcMovement.js')(io);
 
+var test = require('./views/frontEndMapCreation.js');
+
+test.sendMapToFront();
+
 // HOW to use map object
 // var graphObject = require('./models/graphObject.js');
 
