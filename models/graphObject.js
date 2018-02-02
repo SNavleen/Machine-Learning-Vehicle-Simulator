@@ -1,5 +1,8 @@
 var edgeObject = require('./edgeObject.js');
+var edgeWeightObject = require('./edgeWeightObject.js');
 var edgeArray = new Array();
+var edgeWeightArray = new Array();
+edgeWeightArray.push(new Array());
 function readEdgeFile(){
 	var fs = require('fs');
 	var file = "./map/SiouxFalls_net.tntp";
@@ -29,11 +32,20 @@ function readEdgeFile(){
 				// console.log(edge);
 				// Add the edge to array
 				edgeArray.push(edge);
-				// console.log(edgeArray[0]);
+
+				// Create an edge weight object
+				var edgeWeight = new edgeWeightObject(endNodeId, length);
+				// console.log(edgeWeight);
+				// Add the edge to array
+				if(edgeWeightArray[startNodeId] == undefined){
+					edgeWeightArray.push(new Array());
+				}
+				edgeWeightArray[startNodeId].push(edgeWeight);
 				edgeId ++;
 			}
 		}
 	}
+	// console.log(edgeWeightArray);
 }
 
 // console.log(edgeArray[0]);

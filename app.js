@@ -13,9 +13,9 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 var dcMovement = require('./views/dcMovement.js')(io);
 
 // HOW to use map object
-// var graphObject = require('./models/graphObject.js');
+var graphObject = require('./models/graphObject.js');
 
-// var map = new graphObject();
+var map = new graphObject();
 // map.insertCarToEdge(1,2,0);
 // map.insertCarToEdge(2,2,0);
 // map.insertCarToEdge(3,2,0);
