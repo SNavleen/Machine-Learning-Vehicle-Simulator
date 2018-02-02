@@ -1,3 +1,8 @@
+module.exports = function(io) {
+	io.on('connection', function(mapSocket) {
+		mapSocket.emit('mapArray', sendMapToFront());
+    });
+};
 function sendMapToFront(){
 	var graphObject = require('../models/graphObject.js');
 	var map = new graphObject();
@@ -19,7 +24,7 @@ function sendMapToFront(){
 		frontEndMap.len = edgeObj.length;
 
 		frontEndMapArray[i] = frontEndMap;
-		console.log(frontEndMap);
 	}
+	return frontEndMapArray;
 }
 module.exports = {sendMapToFront};
