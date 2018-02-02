@@ -33,10 +33,32 @@ function generateDumbCar(){
 
 // TODO This randomization will have to be adjusted once djkistras in implemented
 function randomizeCarPos() {
-  var x = Math.floor(Math.random() * 6);
-  var y = Math.floor(Math.random() * 6);
+  //get StartX
+  //get EdgeArray
+  var edgeArrayLen = map.getNumOfEdges();
+  var EdgeID = (Math.floor(Math.random()*edgeArrayLen));
 
-  return {x: x, y: y};
+
+  var A = [map.getStartX(EdgeID),map.getStartY(EdgeID)];
+  var B = [map.getEndX(EdgeID),map.getEndY(EdgeID)];
+  var m = slope(A, B);
+  var b = intercept(A, m);
+
+  var coordinates = [];
+  for (var x = A[0]; x <= B[0]; x= x+0.5) {
+    var y = m * x + b;
+    coordinates.push([x, y]);
+  }
+
+  var occupancy = map.getCardsOnEdge(EdgeID);
+  console.log(coordinates);
+  var spawn = coordinates[Math.floor(Math.random()*coordinates.length)];
+
+
+  // var x = Math.floor(Math.random() * 6);
+  // var y = Math.floor(Math.random() * 6);
+
+  return {x: spawn[0], y: spawn[1]};
 }
 
 function getFrontendCarArr(){
@@ -54,6 +76,24 @@ function getCar(carID) {
   }
   return "Error in carCreation.js";
 }
+function slope(a, b) {
+    if (a[0] == b[0]) {
+        return null;
+    }
+
+    return (b[1] - a[1]) / (b[0] - a[0]);
+}
+function intercept(point, slope) {
+    if (slope === null) {
+        // vertical line
+        return point[0];
+    }
+
+    return point[1] - slope * point[0];
+}
+
+
+
 
 function getCarArr(){
   return carArray;
