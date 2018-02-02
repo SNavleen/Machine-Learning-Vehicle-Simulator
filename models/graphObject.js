@@ -42,6 +42,21 @@ module.exports = class graphObject{
 		readEdgeFile();
   }
 
+	getStartNode(edgeId){
+		return edgeArray[edgeId].getStartNode();
+	}
+	getEndNode(edgeId){
+		return edgeArray[edgeId].getEndNode();
+	}
+	getEdgeArray(){
+		return edgeArray;
+	}
+	getNumOfEdges(){
+		return edgeArray.length;
+	}
+	getEdgeObject(edgeId){
+		return edgeArray[edgeId];
+	}
 	insertCarToEdge(carId, edgeId, colNum){
 		edgeArray[edgeId-1].addCarToEdge(carId, colNum);
 		console.log(edgeArray[edgeId-1]);

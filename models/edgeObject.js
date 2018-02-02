@@ -64,6 +64,12 @@ module.exports = class edgeObject{
 		return this._listOfCars;
 	}
 
+	getStartNode(){
+		return nodeArray[this.startNodeId-1];
+	}
+	getEndNode(){
+		return nodeArray[this.endNodeId-1];
+	}
 	addCarToEdge(carId, colNum){
 		this._listOfCars.push(carId);
 	}

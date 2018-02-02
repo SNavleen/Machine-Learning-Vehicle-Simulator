@@ -11,10 +11,10 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 });
 
 var dcMovement = require('./views/dcMovement.js')(io);
-var graphObject = require('./models/graphObject.js');
-
 
 // HOW to use map object
+// var graphObject = require('./models/graphObject.js');
+
 // var map = new graphObject();
 // map.insertCarToEdge(1,2,0);
 // map.insertCarToEdge(2,2,0);
@@ -22,3 +22,13 @@ var graphObject = require('./models/graphObject.js');
 //
 // map.removeCarFromEdge(2,2,0);
 // console.log(map.getCarsOnEdge(2));
+// var startNode = map.getStartNode(0);
+// var endNode = map.getEndNode(0);
+// var arr = map.getEdgeArray();
+// var numEdges = map.getNumOfEdges();
+// var edgeObj = map.getEdgeObject(0);
+// console.log(startNode);
+// console.log(endNode);
+// console.log(arr);
+// console.log(numEdges);
+// console.log(edgeObj);
