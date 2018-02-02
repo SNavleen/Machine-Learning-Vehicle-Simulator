@@ -44,6 +44,14 @@ function accelerate(carID) {
     return false;
 }
 
+// Determines the distance between two cars
+function euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY) {
+    var xDifference = difference(currentCarX, checkedCarX);
+    var yDifference = difference(currentCarY, checkedCarY);
+    var distance = Math.sqrt(xDifference * xDifference + yDifference * yDifference);
+    return distance;
+}
+
 // Checks the distance of the nearest vehicle on a cars current road
 function collisionAvoidanceCheck(carID, edgeID) {
     var currentCar = carCreation.getCar(carID);
@@ -51,45 +59,47 @@ function collisionAvoidanceCheck(carID, edgeID) {
 
     var currentCarX = currentCar._xPos;
     var currentCarY = currentCar._yPos;
-    var checkedCarX;
-    var checkedCarY;
+    var checkedCarX = 0;
+    var checkedCarY = 0;
 
     var shortestDistance = Number.MAX_SAFE_INTEGER; // resets the distance to max
 
     // Check against each car currently on edge
     for (var i = 0; i < carsOnEdge.length; i++) {
-        // TODO Notes are in notebook
-        // Only need to check cars with a larger x
-        if (currentCar._orientation == 0) {
+        // Makes sure not to check itself
+        if (currentCar._carID != carsOnEdge[i]._carID) {
+            checkedCarX = carsOnEdge[i]._xPos;
+            checkedCarY = carsOnEdge[i]._yPos;
 
-        }
+            // Only need to check cars with a larger x
+            if (currentCar._orientation == 0) {
+                if (currentCarX < checkedCarX) {
+                    currentDistance = euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY);
+                }
+            }
+            // Only need to check cars with a smaller x
+            else if (currentCar._orientation == 180) {
+                if (currentCarX > checkedCarX) {
+                    currentDistance = euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY);
+                }
+            }
+            // Only need to check cars with a smaller y
+            else if (currentCar._orientation > 0 && currentCar._orientation < 180) {
+                if (currentCarY > checkedCarY) {
+                    currentDistance = euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY);
+                }
+            }
+            // Only need to check cars with a larger y
+            else if (currentCar._orientation > 180) {
+                if (currentCarY < checkedCarY) {
+                    currentDistance = euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY);
+                }
+            }
 
-        // only need to check cars witha smaller x
-        else if (currentCar._orientation == 180) {
-
-        }
-        // Only need to check cars with a smaller y
-        else if (currentCar._orientation > 0 && currentCar._orientation < 180) {
-
-        }
-        // Only need to check cars with a larger y
-        else if (currentCar._orientation > 180) {
-
-        }
-
-        // TODO these two statements need to go into the about if statements
-        var checkedCarX = carsOnEdge[i]._xPos;
-        var checkedCarY = carsOnEdge[i]._yPos;
-
-        var xDifference = difference(currentCarX, checkedCarX);
-        var yDifference = difference(currentCarY, checkedCarY);
-
-        // Determines the distance between two cars
-        var currentDistance = Math.sqrt(xDifference * xDifference + yDifference * yDifference);
-
-        // Determines the shortest distance in the edge relative to the current car
-        if (currentDistance < shortestDistance) {
-            shortestDistance = currentDistance
+            // Determines the shortest distance in the edge relative to the current car
+            if (currentDistance < shortestDistance) {
+                shortestDistance = currentDistance;
+            }
         }
     }
     return shortestDistance;
