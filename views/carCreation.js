@@ -1,7 +1,6 @@
 var carObject = require('../models/carObject.js');
-//var generateCars = require('./generateCars.js');
 
-var numberOfCars = 10;
+var numberOfCars = 5;
 var currentCarID = 0;
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
@@ -47,6 +46,15 @@ function getFrontendCarArr(){
   return frontendCarArray;
 }
 
+function getCar(carID) {
+  for (var i = 0; i < carArray.length; i++) {
+    if (carArray[i]._carID == carID) {
+      return carArray[i];
+    }
+  }
+  return "Error in carCreation.js";
+}
+
 function getCarArr(){
   return carArray;
 }
@@ -55,4 +63,4 @@ function setCarArr(cars){
   carArray = cars;
 }
 
-module.exports = {createDumbCars, getCarArr, setCarArr, getFrontendCarArr};
+module.exports = {createDumbCars, getCarArr, setCarArr, getFrontendCarArr, getCar};

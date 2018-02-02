@@ -29,6 +29,18 @@ var minimumSlowDownDistance = function (currentSpeed) {
     return totalStoppingDistance;
 }
 
+// Function for returning cars to current roads speed limit
+// TODO Need to add in road specific speed (instead of 0.05), may need a new function for this (Paul needs ask Nav)
+function accelerate(carID) {
+    if (carCreation.getCar(carID)._speed < 0.05) {
+        carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed + 0.01;
+    }
+    else {
+        carCreation.getCar(carID)._speed = 0.05;
+    }
+    return false;
+}
+
 // This functions allows io from app.js to be used
 module.exports = function(io) {
     io.on('connection', function(dcSocket) {
@@ -53,26 +65,30 @@ module.exports = function(io) {
 
                 // checks if the car needs to move along the xaxis
                 if (difference(xpos,xdes) > 0.0001) {
+                    /*
                     // Determines if the car is reaching it's x destination
                     if (difference(xpos,xdes) <= minimumSlowDownDistance(speed)) {
                         carArray[i]._speed = precisionRound(speed - 0.01, 3);
                         carDecelerating = true;
-                    }
+                    }*/
                     // Checks if the car needs to move left or right
                     if (xpos > xdes) {
+                        accelerate(carArray[i]._carID);
                         carArray[i]._xPos = precisionRound(xpos - speed, 3);
                     }
                     else if (xpos < xdes) {
+                        accelerate(carArray[i]._carID);
                         carArray[i]._xPos = precisionRound(xpos + speed, 3);
                     }
                     carFinished = false;
                 }
                 else if (difference(ypos,ydes) > 0.0001) {
+                    /*
                     // Determines if the car is reaching it's y destination
                     if (difference(ypos,ydes) <= minimumSlowDownDistance(speed)) {
                         carArray[i]._speed = precisionRound(speed - 0.01, 3);
                         carDecelerating = true;
-                    }
+                    }*/
                     // If the car is heading north
                     if (ypos > ydes) {
                         // Conditional for when the car is starting north but hasn't yet fully turned
@@ -91,7 +107,7 @@ module.exports = function(io) {
 
                         // Car Ready to accelerate
                         else {
-                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate (see comment below)
+                            accelerate(carArray[i]._carID);
                         }
 
                         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 3);
@@ -116,21 +132,16 @@ module.exports = function(io) {
                         }
                         // Car Ready to accelerate
                         else {
-                            carArray[i]._speed = precisionRound(speed + 0.01, 3); // TODO Will continue to accelerate need to implement speed cap (but saving this for another branch)
+                            accelerate(carArray[i]._carID);
                         }
 
                         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
                     }
                     carFinished = false;
                 }
-
-                if (carArray[i]._speed < 0.05 && carDecelerating == false) {
-                    carArray[i]._speed = precisionRound(speed + 0.01, 3);
-                }
             }
 
             // TODO This works but isn't fully connected to the front end
-            // Also we may have to handle this slightly differently we need to ensure the array stays dynamic with only the cars that are currently on the map
             if (carFinished == true) {
                 carArray.splice(i,1);
             }
