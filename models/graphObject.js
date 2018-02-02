@@ -63,6 +63,9 @@ module.exports = class graphObject{
 	getEdgeArray(){
 		return edgeArray;
 	}
+	getEdgeWeightArray(){
+		return edgeWeightArray;
+	}
 	getNumOfEdges(){
 		return edgeArray.length;
 	}
