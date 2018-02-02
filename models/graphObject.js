@@ -3,7 +3,6 @@ var edgeWeightObject = require('./edgeWeightObject.js');
 
 var edgeArray = new Array();
 var edgeWeightArray = new Array();
-edgeWeightArray.push(new Array());
 
 function readEdgeFile(){
 	var fs = require('fs');
