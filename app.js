@@ -21,7 +21,6 @@ var dcMovement = require('./views/dcMovement.js')(io);
 // map.insertCarToEdge(3,2,0);
 //
 // map.removeCarFromEdge(2,2,0);
-<<<<<<< HEAD
 // console.log(map.getCarsOnEdge(2));
 // var startNode = map.getStartNode(0);
 // var endNode = map.getEndNode(0);
@@ -33,6 +32,4 @@ var dcMovement = require('./views/dcMovement.js')(io);
 // console.log(arr);
 // console.log(numEdges);
 // console.log(edgeObj);
-=======
 // console.log(map.getCarsOnEdge(2));
->>>>>>> aaccbd879e469a2ec13524f9b06ef6232b6b0dc2
