@@ -63,7 +63,9 @@ module.exports = class edgeObject{
 		console.log(this._listOfCars);
 		return this._listOfCars;
 	}
-
+	getNumOfNodes(){
+		return nodeArray.length;
+	}
 	getStartNode(){
 		return nodeArray[this.startNodeId-1];
 	}
