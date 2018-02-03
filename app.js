@@ -28,10 +28,11 @@ for (var i = 1; i < test.length; i++){
 	var id2Length = test[i][1].weight;
 	map[i] = {[id1]:id1Length,[id2]:id2Length};
 }
+console.log(map);
 
 var graph = new dik.Graph(map);
 
-var test = graph.findShortestPath('1', '3');
+var test = graph.findShortestPath('10', '11');
 
 console.log(test);
 
