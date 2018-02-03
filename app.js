@@ -12,6 +12,30 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 
 var dcMovement = require('./views/dcMovement.js')(io);
 
+var dik = require('./views/dijkstras.js');
+
+var graphObject = require('./models/graphObject.js');
+
+var object = new graphObject();
+
+var test = object.getEdgeWeightArray()
+
+var map = {};
+for (var i = 1; i < test.length; i++){
+	var id1 = test[i][0].nodeId;
+	var id1Length = test[i][0].weight;
+	var id2 = test[i][1].nodeId;
+	var id2Length = test[i][1].weight;
+	map[i] = {[id1]:id1Length,[id2]:id2Length};
+}
+
+var graph = new dik.Graph(map);
+
+var test = graph.findShortestPath('1', '3');
+
+console.log(test);
+
+
 // HOW to use map object
 // var graphObject = require('./models/graphObject.js');
 

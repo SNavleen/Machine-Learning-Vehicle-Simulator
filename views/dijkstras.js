@@ -1,74 +1,146 @@
-//https://hackernoon.com/how-to-implement-dijkstras-algorithm-in-javascript-abdfd1702d04
-//https://gist.github.com/stella-yc/49a7b96679ab3bf06e26421fc81b5636#file-dijkstra-js
-const problem = {
-  start: {A: 5, B: 2},
-  A: {C: 4, D: 2},
-  B: {A: 8, D: 7},
-  C: {D: 6, finish: 3},
-  D: {finish: 1},
-  finish: {}
-};
+var Graph = (function (undefined) {
 
-const lowestCostNode = (costs, processed) => {
-  return Object.keys(costs).reduce((lowest, node) => {
-    if (lowest === null || costs[node] < costs[lowest]) {
-      if (!processed.includes(node)) {
-        lowest = node;
+  var extractKeys = function (obj) {
+    var keys = [], key;
+    for (key in obj) {
+        Object.prototype.hasOwnProperty.call(obj,key) && keys.push(key);
+    }
+    return keys;
+  }
+
+  var sorter = function (a, b) {
+    return parseFloat (a) - parseFloat (b);
+  }
+
+  var findPaths = function (map, start, end, infinity) {
+    infinity = infinity || Infinity;
+
+    var costs = {},
+        open = {'0': [start]},
+        predecessors = {},
+        keys;
+
+    var addToOpen = function (cost, vertex) {
+      var key = "" + cost;
+      if (!open[key]) open[key] = [];
+      open[key].push(vertex);
+    }
+
+    costs[start] = 0;
+
+    while (open) {
+      if(!(keys = extractKeys(open)).length) break;
+
+      keys.sort(sorter);
+
+      var key = keys[0],
+          bucket = open[key],
+          node = bucket.shift(),
+          currentCost = parseFloat(key),
+          adjacentNodes = map[node] || {};
+
+      if (!bucket.length) delete open[key];
+
+      for (var vertex in adjacentNodes) {
+          if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
+          var cost = adjacentNodes[vertex],
+              totalCost = cost + currentCost,
+              vertexCost = costs[vertex];
+
+          if ((vertexCost === undefined) || (vertexCost > totalCost)) {
+            costs[vertex] = totalCost;
+            addToOpen(totalCost, vertex);
+            predecessors[vertex] = node;
+          }
+        }
       }
     }
-    return lowest;
-  }, null);
-};
 
-// function that returns the minimum cost and path to reach Finish
-const dijkstra = (graph) => {
-
-  // track lowest cost to reach each node
-  const costs = Object.assign({finish: Infinity}, graph.start);
-
-  // track paths
-  const parents = {finish: null};
-  for (let child in graph.start) {
-    parents[child] = 'start';
-  }
-
-  // track nodes that have already been processed
-  const processed = [];
-
-  let node = lowestCostNode(costs, processed);
-
-  while (node) {
-    let cost = costs[node];
-    let children = graph[node];
-    for (let n in children) {
-      let newCost = cost + children[n];
-      if (!costs[n]) {
-        costs[n] = newCost;
-        parents[n] = node;
-      }
-      if (costs[n] > newCost) {
-        costs[n] = newCost;
-        parents[n] = node;
-      }
+    if (costs[end] === undefined) {
+      return null;
+    } else {
+      return predecessors;
     }
-    processed.push(node);
-    node = lowestCostNode(costs, processed);
+
   }
 
-  let optimalPath = ['finish'];
-  let parent = parents.finish;
-  while (parent) {
-    optimalPath.push(parent);
-    parent = parents[parent];
+  var extractShortest = function (predecessors, end) {
+    var nodes = [],
+        u = end;
+
+    while (u !== undefined) {
+      nodes.push(u);
+      u = predecessors[u];
+    }
+
+    nodes.reverse();
+    return nodes;
   }
-  optimalPath.reverse();
 
-  const results = {
-    distance: costs.finish,
-    path: optimalPath
-  };
+  var findShortestPath = function (map, nodes) {
+    var start = nodes.shift(),
+        end,
+        predecessors,
+        path = [],
+        shortest;
 
-  return results;
-};
+    while (nodes.length) {
+      end = nodes.shift();
+      predecessors = findPaths(map, start, end);
 
-console.log(dijkstra(problem));
+      if (predecessors) {
+        shortest = extractShortest(predecessors, end);
+        if (nodes.length) {
+          path.push.apply(path, shortest.slice(0, -1));
+        } else {
+          return path.concat(shortest);
+        }
+      } else {
+        return null;
+      }
+
+      start = end;
+    }
+  }
+
+  var toArray = function (list, offset) {
+    try {
+      return Array.prototype.slice.call(list, offset);
+    } catch (e) {
+      var a = [];
+      for (var i = offset || 0, l = list.length; i < l; ++i) {
+        a.push(list[i]);
+      }
+      return a;
+    }
+  }
+
+  var Graph = function (map) {
+    this.map = map;
+  }
+
+  Graph.prototype.findShortestPath = function (start, end) {
+    if (Object.prototype.toString.call(start) === '[object Array]') {
+      return findShortestPath(this.map, start);
+    } else if (arguments.length === 2) {
+      return findShortestPath(this.map, [start, end]);
+    } else {
+      return findShortestPath(this.map, toArray(arguments));
+    }
+  }
+
+  Graph.findShortestPath = function (map, start, end) {
+    if (Object.prototype.toString.call(start) === '[object Array]') {
+      return findShortestPath(map, start);
+    } else if (arguments.length === 3) {
+      return findShortestPath(map, [start, end]);
+    } else {
+      return findShortestPath(map, toArray(arguments, 1));
+    }
+  }
+
+  return Graph;
+
+})();
+
+module.exports = {Graph};
