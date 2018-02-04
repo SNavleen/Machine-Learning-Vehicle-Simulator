@@ -20,21 +20,34 @@ var object = new graphObject();
 
 var test = object.getEdgeWeightArray()
 
+function extend(obj, src) {
+    for (var key in src) {
+        if (src.hasOwnProperty(key)) obj[key] = src[key];
+    }
+    return obj;
+}
+
+
 var map = {};
 for (var i = 1; i < test.length; i++){
-	var id1 = test[i][0].nodeId;
-	var id1Length = test[i][0].weight;
-	var id2 = test[i][1].nodeId;
-	var id2Length = test[i][1].weight;
-	map[i] = {[id1]:id1Length,[id2]:id2Length};
+	var x = {};
+	for(var j = 0; j< test[i].length; j++){
+		var id1 = test[i][j].nodeId;
+		var id1Length = test[i][j].weight;
+		var a = {[id1]:id1Length};
+		x = extend(x,a);
+	}
+	map[i] = x;
 }
 console.log(map);
 
 var graph = new dik.Graph(map);
 
-var test = graph.findShortestPath('10', '11');
+var test1 = graph.findShortestPath('1', '2');
 
-console.log(test);
+console.log(test1);
+
+//console.log(test);
 
 
 // HOW to use map object
