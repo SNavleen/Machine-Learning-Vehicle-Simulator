@@ -1,10 +1,12 @@
 module.exports = function(io){
 	io.on('connection', function(mapSocket){
-		console.log(mapSocket);
+		// console.log(mapSocket);
     if(!mapSocket.sentMydata){
 			mapSocket.emit('mapArray', sendMapToFront());
       mapSocket.sentMydata = true;
     }
+
+		mapSocket.on('disconnect', function (){ });
   });
 };
 function sendMapToFront(){
@@ -18,8 +20,7 @@ function sendMapToFront(){
 												StartxPos: map.getStartNode(i).x,
 												StartyPos: map.getStartNode(i).y,
 											  EndxPos: map.getEndNode(i).x,
-												EndyPos: map.getEndNode(i).y,
-												len: map.getEdgeObject(i).length
+												EndyPos: map.getEndNode(i).y
 											};
 		// console.log(frontEndMap);
 		frontEndMapArray.push(frontEndMap);

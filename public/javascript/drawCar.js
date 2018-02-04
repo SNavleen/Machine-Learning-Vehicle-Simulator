@@ -8,7 +8,7 @@ function drawCars(){
         // Prints out recieved DC array to console
         //console.log(data);
         primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrid();
+        drawMap();
 
         for (var i = 0; i < data.length; i++) {
             var xPos;
