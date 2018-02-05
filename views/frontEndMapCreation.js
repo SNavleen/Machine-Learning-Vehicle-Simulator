@@ -1,6 +1,5 @@
 module.exports = function(io){
 	io.on('connection', function(mapSocket){
-		// console.log(mapSocket);
     if(!mapSocket.sentMydata){
 			mapSocket.emit('mapArray', sendMapToFront());
       mapSocket.sentMydata = true;
@@ -17,12 +16,11 @@ function sendMapToFront(){
 	var frontEndMapArray = new Array();
 	for(var i = 0; i < numEdges; i++){
 		var frontEndMap = {
-												StartxPos: map.getStartNode(i).x,
-												StartyPos: map.getStartNode(i).y,
-											  EndxPos: map.getEndNode(i).x,
-												EndyPos: map.getEndNode(i).y
-											};
-		// console.log(frontEndMap);
+		StartxPos: map.getStartNode(i).x,
+		StartyPos: map.getStartNode(i).y,
+	  	EndxPos: map.getEndNode(i).x,
+		EndyPos: map.getEndNode(i).y
+	};
 		frontEndMapArray.push(frontEndMap);
 	}
 	return frontEndMapArray;
