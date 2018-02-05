@@ -70,7 +70,7 @@ function getFrontendCarArr(){
 
 function getCar(carID) {
   for (var i = 0; i < carArray.length; i++) {
-    if (carArray[i]._carID == carID) {
+    if (carArray[i]._carID == carID) { // TODO The under score might need to be removed to access it properly
       return carArray[i];
     }
   }

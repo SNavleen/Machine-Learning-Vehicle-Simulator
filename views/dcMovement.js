@@ -6,6 +6,7 @@ var carArray = carCreation.getCarArr();
 
 // TODO See if io can be assigned to a var to move everything out of the export function
 // TODO Clean up code and remove everything out of socket function (only keep socket events)
+// TODO Create function to convert speed to km/h as an int
 
 // Calculates the absolute difference between two numbers
 var difference = function (a, b) {
@@ -36,7 +37,7 @@ function adjustSpeed(carID, desiredSpeed) {
         carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed + 0.01;
     }
     else if (carCreation.getCar(carID)._speed > desiredSpeed) {
-        carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed + 0.01;
+        carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed - 0.01;
     }
     return false;
 }

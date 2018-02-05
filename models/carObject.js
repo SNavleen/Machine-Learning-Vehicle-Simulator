@@ -15,9 +15,6 @@ module.exports = class carObject{
     this.yPos = 0;
   }
 
-  get carID(){
-    return this.carID;
-  }
   get xPos(){
     return this._xPos;
   }
@@ -29,9 +26,6 @@ module.exports = class carObject{
   }
   get orientation(){
     return this._orientation;
-  }
-  set carID(value){
-    this._carID = value;
   }
   set xPos(value){
     this._xPos = value;
