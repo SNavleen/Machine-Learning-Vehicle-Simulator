@@ -4,7 +4,6 @@ module.exports = function(io){
 			mapSocket.emit('mapArray', sendMapToFront());
       mapSocket.sentMydata = true;
     }
-
 		mapSocket.on('disconnect', function (){ });
   });
 };
