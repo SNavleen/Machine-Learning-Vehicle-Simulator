@@ -1,146 +1,105 @@
-var Graph = (function (undefined) {
+/**
+ * Basic priority queue implementation. If a better priority queue is wanted/needed,
+ * this code works with the implementation in google's closure library (https://code.google.com/p/closure-library/).
+ * Use goog.require('goog.structs.PriorityQueue'); and new goog.structs.PriorityQueue()
+ */
+function PriorityQueue () {
+  this._nodes = [];
 
-  var extractKeys = function (obj) {
-    var keys = [], key;
-    for (key in obj) {
-        Object.prototype.hasOwnProperty.call(obj,key) && keys.push(key);
-    }
-    return keys;
-  }
+  this.enqueue = function (priority, key) {
+    this._nodes.push({key: key, priority: priority });
+    this.sort();
+  };
+  this.dequeue = function () {
+    return this._nodes.shift().key;
+  };
+  this.sort = function () {
+    this._nodes.sort(function (a, b) {
+      return a.priority - b.priority;
+    });
+  };
+  this.isEmpty = function () {
+    return !this._nodes.length;
+  };
+}
 
-  var sorter = function (a, b) {
-    return parseFloat (a) - parseFloat (b);
-  }
+/**
+ * Pathfinding starts here
+ */
+function Graph(){
+  var INFINITY = 1/0;
+  this.vertices = {};
 
-  var findPaths = function (map, start, end, infinity) {
-    infinity = infinity || Infinity;
+  this.addVertex = function(name, edges){
+    this.vertices[name] = edges;
+  };
 
-    var costs = {},
-        open = {'0': [start]},
-        predecessors = {},
-        keys;
-
-    var addToOpen = function (cost, vertex) {
-      var key = "" + cost;
-      if (!open[key]) open[key] = [];
-      open[key].push(vertex);
-    }
-
-    costs[start] = 0;
-
-    while (open) {
-      if(!(keys = extractKeys(open)).length) break;
-
-      keys.sort(sorter);
-
-      var key = keys[0],
-          bucket = open[key],
-          node = bucket.shift(),
-          currentCost = parseFloat(key),
-          adjacentNodes = map[node] || {};
-
-      if (!bucket.length) delete open[key];
-
-      for (var vertex in adjacentNodes) {
-          if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
-          var cost = adjacentNodes[vertex],
-              totalCost = cost + currentCost,
-              vertexCost = costs[vertex];
-
-          if ((vertexCost === undefined) || (vertexCost > totalCost)) {
-            costs[vertex] = totalCost;
-            addToOpen(totalCost, vertex);
-            predecessors[vertex] = node;
-          }
-        }
-      }
-    }
-
-    if (costs[end] === undefined) {
-      return null;
-    } else {
-      return predecessors;
-    }
-
-  }
-
-  var extractShortest = function (predecessors, end) {
-    var nodes = [],
-        u = end;
-
-    while (u !== undefined) {
-      nodes.push(u);
-      u = predecessors[u];
-    }
-
-    nodes.reverse();
-    return nodes;
-  }
-
-  var findShortestPath = function (map, nodes) {
-    var start = nodes.shift(),
-        end,
-        predecessors,
+  this.shortestPath = function (start, finish) {
+    var nodes = new PriorityQueue(),
+        distances = {},
+        previous = {},
         path = [],
-        shortest;
+        smallest, vertex, neighbor, alt;
 
-    while (nodes.length) {
-      end = nodes.shift();
-      predecessors = findPaths(map, start, end);
+    for(vertex in this.vertices) {
+      if(vertex === start) {
+        distances[vertex] = 0;
+        nodes.enqueue(0, vertex);
+      }
+      else {
+        distances[vertex] = INFINITY;
+        nodes.enqueue(INFINITY, vertex);
+      }
 
-      if (predecessors) {
-        shortest = extractShortest(predecessors, end);
-        if (nodes.length) {
-          path.push.apply(path, shortest.slice(0, -1));
-        } else {
-          return path.concat(shortest);
+      previous[vertex] = null;
+    }
+
+    while(!nodes.isEmpty()) {
+      smallest = nodes.dequeue();
+
+      if(smallest === finish) {
+        path = [];
+
+        while(previous[smallest]) {
+          path.push(smallest);
+          smallest = previous[smallest];
         }
-      } else {
-        return null;
+
+        break;
       }
 
-      start = end;
-    }
-  }
-
-  var toArray = function (list, offset) {
-    try {
-      return Array.prototype.slice.call(list, offset);
-    } catch (e) {
-      var a = [];
-      for (var i = offset || 0, l = list.length; i < l; ++i) {
-        a.push(list[i]);
+      if(!smallest || distances[smallest] === INFINITY){
+        continue;
       }
-      return a;
+
+      for(neighbor in this.vertices[smallest]) {
+        alt = distances[smallest] + this.vertices[smallest][neighbor];
+
+        if(alt < distances[neighbor]) {
+          distances[neighbor] = alt;
+          previous[neighbor] = smallest;
+
+          nodes.enqueue(alt, neighbor);
+        }
+      }
     }
-  }
 
-  var Graph = function (map) {
-    this.map = map;
-  }
+    return path;
+  };
+}
 
-  Graph.prototype.findShortestPath = function (start, end) {
-    if (Object.prototype.toString.call(start) === '[object Array]') {
-      return findShortestPath(this.map, start);
-    } else if (arguments.length === 2) {
-      return findShortestPath(this.map, [start, end]);
-    } else {
-      return findShortestPath(this.map, toArray(arguments));
-    }
-  }
+module.exports={Graph}
+// var g = new Graph();
 
-  Graph.findShortestPath = function (map, start, end) {
-    if (Object.prototype.toString.call(start) === '[object Array]') {
-      return findShortestPath(map, start);
-    } else if (arguments.length === 3) {
-      return findShortestPath(map, [start, end]);
-    } else {
-      return findShortestPath(map, toArray(arguments, 1));
-    }
-  }
-
-  return Graph;
-
-})();
-
-module.exports = {Graph};
+// g.addVertex('A', {B: 7, C: 8});
+// g.addVertex('B', {A: 7, F: 2});
+// g.addVertex('C', {A: 8, F: 6, G: 4});
+// g.addVertex('D', {F: 8});
+// g.addVertex('E', {H: 1});
+// g.addVertex('F', {B: 2, C: 6, D: 8, G: 9, H: 3});
+// g.addVertex('G', {C: 4, F: 9});
+// g.addVertex('H', {E: 1, F: 3});
+//
+// console.log(g);
+// Log test, with the addition of reversing the path and prepending the first node so it's more readable
+// console.log(g.shortestPath('A', 'H').concat(['A']).reverse());

@@ -12,42 +12,22 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 
 var dcMovement = require('./views/dcMovement.js')(io);
 
-var dik = require('./views/dijkstras.js');
+// Dijkstras how to use
+// var graphObject = require('./models/graphObject.js')
+// var graph = new graphObject();
+// var edgeWeightMap = graph.getEdgeWeightMap();
+//
+// var dijkstras = require('./views/dijkstras.js')
+// var dikGraph = new dijkstras.Graph();
+// // var g = new dijkstras.;
+// //
+//
+// for(var i = 1; i <= Object.keys(edgeWeightMap).length; i++){
+//   // console.log(edgeWeightMap[i]);
+//   dikGraph.addVertex(i, edgeWeightMap[i]);
+// }
+// console.log(dikGraph.shortestPath('1', '24').concat(['1']).reverse());
 
-var graphObject = require('./models/graphObject.js');
-
-var object = new graphObject();
-
-var test = object.getEdgeWeightArray()
-
-function extend(obj, src) {
-    for (var key in src) {
-        if (src.hasOwnProperty(key)) obj[key] = src[key];
-    }
-    return obj;
-}
-
-
-var map = {};
-for (var i = 1; i < test.length; i++){
-	var x = {};
-	for(var j = 0; j< test[i].length; j++){
-		var id1 = test[i][j].nodeId;
-		var id1Length = test[i][j].weight;
-		var a = {[id1]:id1Length};
-		x = extend(x,a);
-	}
-	map[i] = x;
-}
-console.log(map);
-
-var graph = new dik.Graph(map);
-
-var test1 = graph.findShortestPath('1', '2');
-
-console.log(test1);
-
-//console.log(test);
 
 
 // HOW to use map object
