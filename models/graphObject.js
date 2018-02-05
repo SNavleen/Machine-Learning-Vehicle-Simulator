@@ -3,6 +3,7 @@ var edgeWeightObject = require('./edgeWeightObject.js');
 
 var edgeArray = new Array();
 var edgeWeightArray = new Array();
+var edgeWeightMap = {};
 
 function readEdgeFile(){
 	var fs = require('fs');
@@ -35,21 +36,23 @@ function readEdgeFile(){
 				// Add the edge to array
 				edgeArray.push(edge);
 
-				// Create an edge weight object
-				var edgeWeight = new edgeWeightObject(endNodeId, length);
-				// console.log(edgeWeight);
-				// Add the edge to array
-				// console.log(edgeWeightArray.length);
-				while(edgeWeightArray.length-1 != startNodeId){
-					edgeWeightArray.push(new Array());
+				// // Create an edge weight object
+				var newNode = {[endNodeId]: length};
+				if(edgeWeightMap[startNodeId] != undefined){
+					var id = Object.keys(edgeWeightMap[startNodeId]);
+					// console.log(len);
+						for(var j = 0; j < id.length; j++){
+							var idLength = edgeWeightMap[startNodeId][id[j]];
+							newNode[id[j]] = idLength;
+						}
+					// console.log(newNode);
 				}
-				edgeWeightArray[startNodeId].push(edgeWeight);
+				edgeWeightMap[startNodeId] = newNode;
 
 				edgeId ++;
 			}
 		}
 	}
-	// console.log(edgeWeightArray);
 }
 
 // console.log(edgeArray[0]);
@@ -67,8 +70,8 @@ module.exports = class graphObject{
 	getEdgeArray(){
 		return edgeArray;
 	}
-	getEdgeWeightArray(){
-		return edgeWeightArray;
+	getEdgeWeightMap(){
+		return edgeWeightMap;
 	}
 	getNumOfEdges(){
 		return edgeArray.length;
