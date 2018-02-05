@@ -3,6 +3,9 @@
  * this code works with the implementation in google's closure library (https://code.google.com/p/closure-library/).
  * Use goog.require('goog.structs.PriorityQueue'); and new goog.structs.PriorityQueue()
  */
+ 
+// https://github.com/mburst/dijkstras-algorithm/blob/master/dijkstras.js
+
 function PriorityQueue () {
   this._nodes = [];
 
@@ -89,17 +92,3 @@ function Graph(){
 }
 
 module.exports={Graph}
-// var g = new Graph();
-
-// g.addVertex('A', {B: 7, C: 8});
-// g.addVertex('B', {A: 7, F: 2});
-// g.addVertex('C', {A: 8, F: 6, G: 4});
-// g.addVertex('D', {F: 8});
-// g.addVertex('E', {H: 1});
-// g.addVertex('F', {B: 2, C: 6, D: 8, G: 9, H: 3});
-// g.addVertex('G', {C: 4, F: 9});
-// g.addVertex('H', {E: 1, F: 3});
-//
-// console.log(g);
-// Log test, with the addition of reversing the path and prepending the first node so it's more readable
-// console.log(g.shortestPath('A', 'H').concat(['A']).reverse());
