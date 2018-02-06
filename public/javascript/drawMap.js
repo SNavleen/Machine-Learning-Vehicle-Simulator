@@ -4,7 +4,7 @@ function drawMap(){
   if(map == undefined){
     var socket = io();
     socket.on('mapArray',function(data){
-        console.log(data);
+        //console.log(data);
         map = data;
     });
     if(map != undefined){
