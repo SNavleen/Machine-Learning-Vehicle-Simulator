@@ -4,7 +4,7 @@ var primaryCtx = document.getElementById("canvas").getContext("2d");
 
 //Initally draw the gride and cars on page load
 window.onload = function() {
-    drawGrid();
+    drawMap();
     drawCars();
 }
 
