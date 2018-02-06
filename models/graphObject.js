@@ -1,5 +1,10 @@
 var edgeObject = require('./edgeObject.js');
+var edgeWeightObject = require('./edgeWeightObject.js');
+
 var edgeArray = new Array();
+var edgeWeightArray = new Array();
+var edgeWeightMap = {};
+
 function readEdgeFile(){
 	var fs = require('fs');
 	var file = "./map/SiouxFalls_net.tntp";
@@ -24,12 +29,26 @@ function readEdgeFile(){
 				var speedLimit = word[8];
 				var toll = word[9];
 				var type = word[10];
+
 				// Create an edge object
 				var edge = new edgeObject(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type);
 				// console.log(edge);
 				// Add the edge to array
 				edgeArray.push(edge);
-				// console.log(edgeArray[0]);
+
+				// // Create an edge weight object
+				var newNode = {[endNodeId]: length};
+				if(edgeWeightMap[startNodeId] != undefined){
+					var id = Object.keys(edgeWeightMap[startNodeId]);
+					// console.log(len);
+						for(var j = 0; j < id.length; j++){
+							var idLength = edgeWeightMap[startNodeId][id[j]];
+							newNode[id[j]] = idLength;
+						}
+					// console.log(newNode);
+				}
+				edgeWeightMap[startNodeId] = newNode;
+
 				edgeId ++;
 			}
 		}
@@ -51,6 +70,9 @@ module.exports = class graphObject{
 	getEdgeArray(){
 		return edgeArray;
 	}
+	getEdgeWeightMap(){
+		return edgeWeightMap;
+	}
 	getNumOfEdges(){
 		return edgeArray.length;
 	}
@@ -59,11 +81,11 @@ module.exports = class graphObject{
 	}
 	insertCarToEdge(carId, edgeId, colNum){
 		edgeArray[edgeId-1].addCarToEdge(carId, colNum);
-		console.log(edgeArray[edgeId-1]);
+		// console.log(edgeArray[edgeId-1]);
 	}
 	removeCarFromEdge(carId, edgeId, colNum){
 		edgeArray[edgeId-1].removeCarFromEdge(carId, colNum);
-		console.log(edgeArray[edgeId-1]);
+		// console.log(edgeArray[edgeId-1]);
 	}
 	getCarsOnEdge(edgeId){
 		return edgeArray[edgeId-1]._listOfCars;
