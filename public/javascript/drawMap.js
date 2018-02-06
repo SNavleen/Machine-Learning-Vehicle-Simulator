@@ -1,15 +1,33 @@
-var gridSize = 5;
-
 //Draw the grid/map
-function drawGrid(){
-    var i = 1;
-    while (i < gridSize){
-        var j = 1;
-        while (j < gridSize){
-            primaryCtx.strokeStyle= "black";
-            primaryCtx.strokeRect((i-1)*100,(j-1)*100,200,200);
-            j = j+1
-        }
-        i = i+1;
+var map;
+function drawMap(){
+  if(map == undefined){
+    var socket = io();
+    socket.on('mapArray',function(data){
+        //console.log(data);
+        map = data;
+    });
+    if(map != undefined){
+      socket.close();
     }
+  }
+  try{
+    var i = 0;
+    while (i < map.length){
+      primaryCtx.strokeStyle= "black";
+      var StartxPos = map[i].StartxPos/1000,
+          StartyPos = map[i].StartyPos/1000,
+          EndxPos = map[i].EndxPos/1000,
+          EndyPos = map[i].EndyPos/1000;
+      // Reset the current path
+      primaryCtx.beginPath();
+      primaryCtx.moveTo(StartxPos, StartyPos);
+      primaryCtx.lineTo(EndxPos, EndyPos);
+      // Make the line visible
+      primaryCtx.stroke();
+      i ++;
+    }
+  }catch(e){
+    console.log(map);
+  }
 }

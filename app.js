@@ -12,3 +12,4 @@ server.listen(appEnv.port, '0.0.0.0', function() {
 
 // TODO Create map object like below and pass to any functions like io in dcMovement
 var dcMovement = require('./views/dcMovement.js')(io);
+var createMap = require('./views/frontEndMapCreation.js')(io);
