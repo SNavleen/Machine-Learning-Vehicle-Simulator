@@ -9,7 +9,7 @@ module.exports = function(io){
 };
 function sendMapToFront(){
 	var graphObject = require('../models/graphObject.js');
-	var map = new graphObject();
+	var map = new graphObject(); // TODO import map here from mapCreate
 	var numEdges = map.getNumOfEdges();
 
 	var frontEndMapArray = new Array();

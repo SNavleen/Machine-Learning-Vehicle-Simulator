@@ -1,4 +1,4 @@
-var graphObject = require('../models/graphObject.js');
+var map = require('../views/mapCreate.js');
 var carCreation = require('./carCreation.js')
 
 carCreation.createDumbCars();
@@ -53,7 +53,7 @@ function euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY) {
 // Checks the distance of the nearest vehicle on a cars current road
 function collisionAvoidanceCheck(carID) {
     var currentCar = carCreation.getCar(carID);
-    var carsOnEdge = getCarsOnEdge(currentCar._currentEdgeID);
+    var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeID);
 
     var currentCarX = currentCar._xPos;
     var currentCarY = currentCar._yPos;
@@ -120,7 +120,7 @@ module.exports = function(io) {
                 var xdes = precisionRound(carArray[i].xDestination,3);
                 var ydes = precisionRound(carArray[i].yDestination,3);
                 var speed = precisionRound(carArray[i]._speed,3); // TODO Remove if not being used
-                var closestVehicleDistance = collisionAvoidanceCheck(carArray[i]._carID); // Finds shortest distance
+                var closestVehicleDistance = collisionAvoidanceCheck(carArray[i].carID); // Finds shortest distance
 
                 carFinished = true; // determines if a car has reached its destination or not
 

@@ -1,6 +1,7 @@
 var carObject = require('../models/carObject.js');
+var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
-var numberOfCars = 5;
+var numberOfCars = 1;
 var currentCarID = 0;
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
@@ -33,6 +34,7 @@ function generateDumbCar(){
 
 // TODO This randomization will have to be adjusted once djkistras in implemented
 function randomizeCarPos() {
+  /* Temp removal, doesn't work at the moment (ask Paul)
   //get StartX
   //get EdgeArray
   var edgeArrayLen = map.getNumOfEdges();
@@ -59,6 +61,13 @@ function randomizeCarPos() {
   // var y = Math.floor(Math.random() * 6);
 
   return {x: spawn[0], y: spawn[1]};
+  */
+  var edgeArrayLen = map.getNumOfEdges();
+  var edgeID = (Math.floor(Math.random()*edgeArrayLen));
+
+  var x = Math.floor(Math.random() * 6);
+  var y = Math.floor(Math.random() * 6);
+  return {x: x, y: y};
 }
 
 function getFrontendCarArr(){
@@ -70,12 +79,13 @@ function getFrontendCarArr(){
 
 function getCar(carID) {
   for (var i = 0; i < carArray.length; i++) {
-    if (carArray[i]._carID == carID) { // TODO The under score might need to be removed to access it properly
+    if (carArray[i].carID == carID) {
       return carArray[i];
     }
   }
   return "Error in carCreation.js";
 }
+
 function slope(a, b) {
     if (a[0] == b[0]) {
         return null;

@@ -1,21 +1,26 @@
-var graphObject = require('./models/graphObject.js')
+var graphObject = require('../models/graphObject.js')
 var map = new graphObject();
 
-var dijkstras = require('./views/dijkstras.js')
+var dijkstras = require('../views/dijkstras.js')
 var dijkstrasGraph = new dijkstras.Graph();
 
+function getCarsOnEdge(edgeId) {
+	return graphObject.edgeArray[edgeId-1]._listOfCars;
+}
 
+function getNumOfEdges() {
+	return graphObject._edgeArray.length;
+}
 
 // HOW to use dijkstras
+var edgeWeightMap = map.getEdgeWeightMap();
+for(var i = 1; i <= Object.keys(edgeWeightMap).length; i++){
+	dijkstrasGraph.addVertex(i, edgeWeightMap[i]);
+}
 
-// var edgeWeightMap = map.getEdgeWeightMap();
-// for(var i = 1; i <= Object.keys(edgeWeightMap).length; i++){
-//   // console.log(edgeWeightMap[i]);
-//   dijkstrasGraph.addVertex(i, edgeWeightMap[i]);
-// }
-// console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
+//console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
-
+module.exports = {map, getCarsOnEdge, getNumOfEdges};
 
 // HOW to use map object
 

@@ -7,12 +7,12 @@ module.exports = class carObject{
     this.xDestination = xDestination;
     this.yDestination = yDestination;
     this.carType = carType;
-
+    
     this.speed = 0;
-
     this.orientation = 0;
     this.xPos = 0;
     this.yPos = 0;
+    this.currentEdgeID = null;
   }
 
   get xPos(){
@@ -27,6 +27,9 @@ module.exports = class carObject{
   get orientation(){
     return this._orientation;
   }
+  get currentEdgeID(){
+    return this._currentEdgeID;
+  }
   set xPos(value){
     this._xPos = value;
   }
@@ -38,5 +41,8 @@ module.exports = class carObject{
   }
   set orientation(value){
     this._orientation = value;
+  }
+  set currentEdgeID(value){
+    this._currentEdgeID = value;
   }
 }
