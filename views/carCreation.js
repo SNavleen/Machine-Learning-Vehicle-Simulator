@@ -19,7 +19,8 @@ function generateDumbCar(){
   var carType = "Dumb";
   var start = randomizeCarPos();
   var end = randomizeCarPos();
-  let car = new carObject(currentCarID, start.x, start.y, end.x, end.y, carType);
+  var route = map.dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse();
+  let car = new carObject(currentCarID, start.x, start.y, end.x, end.y, carType, route);
   currentCarID++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   car._xPos = start.x;
   car._yPos = start.y;
@@ -35,6 +36,8 @@ function generateDumbCar(){
 // TODO This randomization will have to be adjusted once djkistras in implemented
 function randomizeCarPos() {
   /* Temp removal, doesn't work at the moment (ask Paul)
+  // TODO This gets called twice
+  // TODO Must insert cars to edge
   //get StartX
   //get EdgeArray
   var edgeArrayLen = map.getNumOfEdges();
@@ -62,8 +65,6 @@ function randomizeCarPos() {
 
   return {x: spawn[0], y: spawn[1]};
   */
-  var edgeArrayLen = map.getNumOfEdges();
-  var edgeID = (Math.floor(Math.random()*edgeArrayLen));
 
   var x = Math.floor(Math.random() * 6);
   var y = Math.floor(Math.random() * 6);

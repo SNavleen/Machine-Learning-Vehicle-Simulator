@@ -103,6 +103,35 @@ function collisionAvoidanceCheck(carID) {
     return shortestDistance;
 }
 
+// This moves the current car onto the next edge in its route
+function switchEdge(carID) {
+    var edgeArray = map.getEdgeArray();
+    var currentCar = carCreation.getCar(carID);
+    var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeID).endNodeId;
+    var nextEdgeStart = currentEdgeEnd;
+    
+    // Finds the ID of the next node in the route
+    if (nextEdgeStart != currentCar.route[currentCar.route.length - 1]) {
+        var nextEdgeEnd = currentCar.route[currentCar.route.indexOf(nextEdgeStart) + 1];
+
+        // Scan through all edges to find the next one on the route
+        for (var i = 0; i < edgeArray.length; i++) {
+            // Switch to this edge
+            if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
+                map.removeCarFromEdge(currentCar.carID, currentCar._currentEdgeID, 0); // TODO Will have to update "0"
+                currentCar._currentEdgeID = edgeArray[i].edgeId;
+                map.insertCarToEdge(currentCar.carID, currentCar._currentEdgeID, 0); // TODO Will have to update "0"
+            }
+        }
+    }
+
+    else {
+        // TODO Car is done, handle this
+    }
+
+    return false;
+}
+
 // This functions allows io from app.js to be used
 module.exports = function(io) {
     io.on('connection', function(dcSocket) {
@@ -120,6 +149,7 @@ module.exports = function(io) {
                 var xdes = precisionRound(carArray[i].xDestination,3);
                 var ydes = precisionRound(carArray[i].yDestination,3);
                 var speed = precisionRound(carArray[i]._speed,3); // TODO Remove if not being used
+
                 var closestVehicleDistance = collisionAvoidanceCheck(carArray[i].carID); // Finds shortest distance
 
                 carFinished = true; // determines if a car has reached its destination or not
@@ -206,6 +236,6 @@ module.exports = function(io) {
             carCreation.setCarArr(carArray);
 
             dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-        }, 50); // How often the server updates the client
+        }, 1000); // How often the server updates the client
     });
 };

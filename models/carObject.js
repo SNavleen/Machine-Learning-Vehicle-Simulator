@@ -1,18 +1,19 @@
 module.exports = class carObject{
 
-  constructor(carID, xStart, yStart, xDestination, yDestination, carType) {
+  constructor(carID, xStart, yStart, xDestination, yDestination, carType, route) {
     this.carID = carID;
     this.xStart = xStart;
     this.yStart = yStart;
     this.xDestination = xDestination;
     this.yDestination = yDestination;
     this.carType = carType;
+    this.route = route;
     
     this.speed = 0;
     this.orientation = 0;
     this.xPos = 0;
     this.yPos = 0;
-    this.currentEdgeID = null;
+    this.currentEdgeID = 10; // TODO Change this back to null once Trevor has implemented random spawn
   }
 
   get xPos(){
