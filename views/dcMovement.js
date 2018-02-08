@@ -174,7 +174,7 @@ module.exports = function(io) {
                 if((difference(xpos,xdes)>0.00001) || (difference(ypos,ydes) > 0.00001)){
                   var EdgeID = carArray[i]._currentEdgeID;
                   var A = [carArray[i]._getX,carArray[i]._getY];
-                  var B = [map.getEndX(EdgeID),map.getEndY(EdgeID)];
+                  var B = [map.getEndNode(EdgeID).x,map.getEndNode(EdgeID).y];
                   var m = slope(A, B);
                   var b = intercept(A, m);
                   for (var x = A[0]; x <= B[0]; x= x+carArray[i]._speed) {

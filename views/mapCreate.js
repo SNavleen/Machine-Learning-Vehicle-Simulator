@@ -43,7 +43,7 @@ function getEndNode(edgeId){
 
 //console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
-module.exports = {dijkstrasGraph, getCarsOnEdge, getNumOfEdges, getEdgeObject, getEdgeArray, removeCarFromEdge, insertCarToEdge};
+module.exports = {dijkstrasGraph, getCarsOnEdge, getNumOfEdges, getEdgeObject, getEdgeArray, removeCarFromEdge, insertCarToEdge, getStartNode, getEndNode};
 
 // HOW to use map object
 

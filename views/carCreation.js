@@ -44,8 +44,8 @@ function randomizeCarPos() {
   var EdgeID = (Math.floor(Math.random()*edgeArrayLen));
 
 
-  var A = [map.getStartX(EdgeID),map.getStartY(EdgeID)];
-  var B = [map.getEndX(EdgeID),map.getEndY(EdgeID)];
+  var A = [map.getStartNode(EdgeID).x,map.getStartNode(EdgeID).y];
+  var B = [map.getEndNode(EdgeID).x,map.getEndNode(EdgeID).y];
   var m = slope(A, B);
   var b = intercept(A, m);
 
@@ -55,7 +55,7 @@ function randomizeCarPos() {
     coordinates.push([x, y]);
   }
 
-  var occupancy = map.getCardsOnEdge(EdgeID);
+  //var occupancy = map.getCarsOnEdge(EdgeID);
   console.log(coordinates);
   var spawn = coordinates[Math.floor(Math.random()*coordinates.length)];
 
