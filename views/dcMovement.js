@@ -131,6 +131,21 @@ function switchEdge(carID) {
 
     return false;
 }
+function slope(a, b) {
+    if (a[0] == b[0]) {
+        return null;
+    }
+
+    return (b[1] - a[1]) / (b[0] - a[0]);
+}
+function intercept(point, slope) {
+    if (slope === null) {
+        // vertical line
+        return point[0];
+    }
+
+    return point[1] - slope * point[0];
+}
 
 // This functions allows io from app.js to be used
 module.exports = function(io) {
@@ -171,18 +186,30 @@ module.exports = function(io) {
                 }
 
                 // checks if the car needs to move along the xaxis
+                var EdgeID = carArray[i]._currentEdgeID;
                 if((difference(xpos,xdes)>0.00001) || (difference(ypos,ydes) > 0.00001)){
-                  var EdgeID = carArray[i]._currentEdgeID;
-                  var A = [carArray[i]._getX,carArray[i]._getY];
-                  var B = [map.getEndNode(EdgeID).x,map.getEndNode(EdgeID).y];
-                  var m = slope(A, B);
-                  var b = intercept(A, m);
-                  for (var x = A[0]; x <= B[0]; x= x+carArray[i]._speed) {
-                    var y = m * x + b;
-                    coordinates.push([x, y]);
+                  if(map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270){
+                    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).x) + map.getEndNode(EdgeID).x; 
+                    var y = map.getStartNode(EdgeID).y;
                   }
-                  carArray[i]._setX = coordinates[0].x;
-                  carArray[i]._setY = coordinates[0].y;
+                  else if(map.getEdgeObject(EdgeID).orientation == 0 ||  map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180){
+                    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).y) + map.getEndNode(EdgeID).y; 
+                    var y = map.getStartNode(EdgeID).x;
+
+                  }
+                  else{
+                    var EdgeID = carArray[i]._currentEdgeID;
+                    var A = [carArray[i]._getX,carArray[i]._getY];
+                    var B = [map.getEndNode(EdgeID).x,map.getEndNode(EdgeID).y];
+                    var m = slope(A, B);
+                    var b = intercept(A, m);
+                    for (var x = A[0]; x <= B[0]; x= x+carArray[i]._speed) {
+                      var y = m * x + b;
+                      coordinates.push([x, y]);
+                    }
+                    carArray[i]._setX = coordinates[0].x;
+                    carArray[i]._setY = coordinates[0].y;
+                  }
                 }
                 //removed because obsolete 
                 // if (difference(xpos,xdes) > 0.0001) {

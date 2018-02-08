@@ -42,16 +42,31 @@ function randomizeCarPos() {
   //get EdgeArray
   var edgeArrayLen = map.getNumOfEdges();
   var EdgeID = (Math.floor(Math.random()*edgeArrayLen));
+  console.log(map.getEdgeObject(EdgeID).orientation);
+  if(map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270){
+    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).x) + map.getEndNode(EdgeID).x; 
+    var y = map.getStartNode(EdgeID).y;
+    return {x: x, y :y};
+  }
+  if(map.getEdgeObject(EdgeID).orientation == 0 ||  map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180){
+    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).y) + map.getEndNode(EdgeID).y; 
+    var y = map.getStartNode(EdgeID).x;
+    return {x: x, y :y};
+  }
 
-
-  var A = [map.getStartNode(EdgeID).x,map.getStartNode(EdgeID).y];
-  var B = [map.getEndNode(EdgeID).x,map.getEndNode(EdgeID).y];
+  var A = [map.getStartNode(10).x,map.getStartNode(10).y];
+  var B = [map.getEndNode(17).x,map.getEndNode(17).y];
   var m = slope(A, B);
   var b = intercept(A, m);
-
+  console.log(A[0],A[1]);
+  console.log(B[0],B[1]);
+  console.log(m);
+  console.log(b);
   var coordinates = [];
-  for (var x = A[0]; x <= B[0]; x= x+0.5) {
+
+  for (var x = A[0]; x <= B[0]; x= x+5000 ) {
     var y = m * x + b;
+   // console.log(x,y);
     coordinates.push([x, y]);
   }
 
