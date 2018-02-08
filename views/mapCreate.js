@@ -34,6 +34,12 @@ function insertCarToEdge(carId, edgeId, colNum) {
 	return map.insertCarToEdge(carId, edgeId, colNum);
 }
 
+function getStartNode(edgeId){
+	return map.getStartNode(edgeId);
+}
+function getEndNode(edgeId){
+	return map.getEndNode(edgeId);
+}
 
 //console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
