@@ -35,7 +35,7 @@ function generateDumbCar(){
 
 // TODO This randomization will have to be adjusted once djkistras in implemented
 function randomizeCarPos() {
-  /* Temp removal, doesn't work at the moment (ask Paul)
+  // Temp removal, doesn't work at the moment (ask Paul)
   // TODO This gets called twice
   // TODO Must insert cars to edge
   //get StartX
@@ -64,11 +64,11 @@ function randomizeCarPos() {
   // var y = Math.floor(Math.random() * 6);
 
   return {x: spawn[0], y: spawn[1]};
-  */
+  
 
-  var x = Math.floor(Math.random() * 6);
-  var y = Math.floor(Math.random() * 6);
-  return {x: x, y: y};
+  // var x = Math.floor(Math.random() * 6);
+  // var y = Math.floor(Math.random() * 6);
+  // return {x: x, y: y};
 }
 
 function getFrontendCarArr(){

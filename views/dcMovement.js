@@ -171,60 +171,74 @@ module.exports = function(io) {
                 }
 
                 // checks if the car needs to move along the xaxis
-                if (difference(xpos,xdes) > 0.0001) {
-                    // Checks if the car needs to move left or right
-                    if (xpos > xdes) {
-                        carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
-                    }
-                    else if (xpos < xdes) {
-                        carArray[i]._xPos = precisionRound(xpos + carArray[i]._speed, 3);
-                    }
-                    carFinished = false;
+                if((difference(xpos,xdes)>0.00001) || (difference(ypos,ydes) > 0.00001)){
+                  var EdgeID = carArray[i]._currentEdgeID;
+                  var A = [carArray[i]._getX,carArray[i]._getY];
+                  var B = [map.getEndX(EdgeID),map.getEndY(EdgeID)];
+                  var m = slope(A, B);
+                  var b = intercept(A, m);
+                  for (var x = A[0]; x <= B[0]; x= x+carArray[i]._speed) {
+                    var y = m * x + b;
+                    coordinates.push([x, y]);
+                  }
+                  carArray[i]._setX = coordinates[0].x;
+                  carArray[i]._setY = coordinates[0].y;
                 }
-                else if (difference(ypos,ydes) > 0.0001) {
-                    // If the car is heading north
-                    if (ypos > ydes) {
-                        // Conditional for when the car is starting north but hasn't yet fully turned
-                        if (carArray[i]._orientation != 90) {
-                            // TODO Temporarily just sets speed to 0
-                            carArray[i]._speed = 0; // Turning speed
+                //removed because obsolete 
+                // if (difference(xpos,xdes) > 0.0001) {
+                //     // Checks if the car needs to move left or right
+                //     if (xpos > xdes) {
+                //         carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
+                //     }
+                //     else if (xpos < xdes) {
+                //         carArray[i]._xPos = precisionRound(xpos + carArray[i]._speed, 3);
+                //     }
+                //     carFinished = false;
+                // }
+                // else if (difference(ypos,ydes) > 0.0001) {
+                //     // If the car is heading north
+                //     if (ypos > ydes) {
+                //         // Conditional for when the car is starting north but hasn't yet fully turned
+                //         if (carArray[i]._orientation != 90) {
+                //             // TODO Temporarily just sets speed to 0
+                //             carArray[i]._speed = 0; // Turning speed
 
-                            // Checks if the car needs to turn left heading north
-                            if (carArray[i]._orientation >= 0 && carArray[i]._orientation < 90) {
-                                carArray[i]._orientation = carArray[i]._orientation + 5;
-                            }
-                            // Check if car needs to turn right heading north
-                            else if (carArray[i]._orientation > 90 && carArray[i]._orientation <= 180) {
-                                carArray[i]._orientation = carArray[i]._orientation - 5;
-                            }
-                        }
+                //             // Checks if the car needs to turn left heading north
+                //             if (carArray[i]._orientation >= 0 && carArray[i]._orientation < 90) {
+                //                 carArray[i]._orientation = carArray[i]._orientation + 5;
+                //             }
+                //             // Check if car needs to turn right heading north
+                //             else if (carArray[i]._orientation > 90 && carArray[i]._orientation <= 180) {
+                //                 carArray[i]._orientation = carArray[i]._orientation - 5;
+                //             }
+                //         }
 
-                        carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 5);
-                    }
-                    // If the car is heading south
-                    else {
-                        if (carArray[i]._orientation != 270) {
-                            carArray[i]._speed = 0; // Turning speed
+                //         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 5);
+                //     }
+                //     // If the car is heading south
+                //     else {
+                //         if (carArray[i]._orientation != 270) {
+                //             carArray[i]._speed = 0; // Turning speed
 
-                            // Allows for right turns heading south by setting orientation from 0 to 360
-                            if (carArray[i]._orientation == 0) {
-                                carArray[i]._orientation = 360;
-                            }
-                            // TODO Will need to change orientation base on next roads orientation
-                            // Check if car needs to turn left heading south
-                            if (carArray[i]._orientation >= 180 && carArray[i]._orientation < 270) {
-                                carArray[i]._orientation = carArray[i]._orientation + 5;
-                            }
-                            // Check if car needs to turn right heading south
-                            else if (carArray[i]._orientation > 270 && carArray[i]._orientation <= 360) {
-                                carArray[i]._orientation = carArray[i]._orientation - 5;
-                            }
-                        }
+                //             // Allows for right turns heading south by setting orientation from 0 to 360
+                //             if (carArray[i]._orientation == 0) {
+                //                 carArray[i]._orientation = 360;
+                //             }
+                //             // TODO Will need to change orientation base on next roads orientation
+                //             // Check if car needs to turn left heading south
+                //             if (carArray[i]._orientation >= 180 && carArray[i]._orientation < 270) {
+                //                 carArray[i]._orientation = carArray[i]._orientation + 5;
+                //             }
+                //             // Check if car needs to turn right heading south
+                //             else if (carArray[i]._orientation > 270 && carArray[i]._orientation <= 360) {
+                //                 carArray[i]._orientation = carArray[i]._orientation - 5;
+                //             }
+                //         }
 
-                        carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
-                    }
-                    carFinished = false;
-                }
+                //         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
+                //     }
+            //         carFinished = false;
+            //     }
             }
 
             // TODO This works but isn't fully connected to the front end
