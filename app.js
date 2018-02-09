@@ -10,6 +10,8 @@ server.listen(appEnv.port, '0.0.0.0', function() {
     console.log("server starting on " + appEnv.url);
 });
 
+console.log(Math.abs(-5));
+
 //var map = require('./views/mapCreate.js');
 // TODO Create map object like below and pass to any functions like io in dcMovement
 var dcMovement = require('./views/dcMovement.js')(io);

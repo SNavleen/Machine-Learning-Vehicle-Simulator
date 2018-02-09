@@ -92,6 +92,9 @@ function randomizeCarPos() {
 
 function getFrontendCarArr(){
   for (var i = 0; i < numberOfCars; i++) {
+      console.log("Car Array [i] xpos",carArray[i]._xPos);
+      console.log("Car Array [i] ypos",carArray[i]._yPos);
+
       frontendCarArray[i] = {_xPos: carArray[i]._xPos, _yPos: carArray[i]._yPos, _orientation: carArray[i]._orientation}
   }
   return frontendCarArray;

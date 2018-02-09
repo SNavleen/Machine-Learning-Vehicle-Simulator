@@ -160,6 +160,8 @@ module.exports = function(io) {
             // This loop checks each car in carArray and moves it closer towards its destination
             for (var i = 0; i < carArray.length; i++) {
                 var xpos = precisionRound(carArray[i]._xPos,3);
+                console.log("xpos",xpos);
+                console.log("xpos2",carArray[i]._xPos);
                 var ypos = precisionRound(carArray[i]._yPos,3);
                 var xdes = precisionRound(carArray[i].xDestination,3);
                 var ydes = precisionRound(carArray[i].yDestination,3);
@@ -188,10 +190,10 @@ module.exports = function(io) {
                 // checks if the car needs to move along the xaxis
                 var EdgeID = carArray[i]._currentEdgeID;
                 if((difference(xpos,xdes)>0.00001) || (difference(ypos,ydes) > 0.00001)){
-                                          console.log("TEST1");
+                                         // console.log("TEST1");
 
                   if(map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270){
-                                             console.log("TEST2");
+                                            // console.log("TEST2");
 
                      if (ypos > ydes) {
                          carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 3);
@@ -202,7 +204,7 @@ module.exports = function(io) {
                     
                   }
                   else if(map.getEdgeObject(EdgeID).orientation == 0 ||  map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180){
-                                            console.log("TEST3");
+                                            //console.log("TEST3");
 
                      if (xpos > xdes) {
                          carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
@@ -226,6 +228,7 @@ module.exports = function(io) {
                     carArray[i]._setY = coordinates[0].y;
                   }
                 }
+
                 //removed because obsolete 
                 // if (difference(xpos,xdes) > 0.0001) {
                 //     // Checks if the car needs to move left or right
@@ -279,16 +282,20 @@ module.exports = function(io) {
 
                 //         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
                 //     }
-            //         carFinished = false;
+                     carFinished = false;
             //     }
-            }
-
+            
+            console.log(carArray[i]._xPos,carArray[i]._yPos);
+          }
             // TODO This works but isn't fully connected to the front end
             if (carFinished == true) {
                 carArray.splice(i,1);
             }
-
+          
             // Updates the carArray with new positions and sends data to client
+            //carArray[0]= [247301,510000];
+                       carArray[0]= [50,50];
+
             carCreation.setCarArr(carArray);
 
             dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());

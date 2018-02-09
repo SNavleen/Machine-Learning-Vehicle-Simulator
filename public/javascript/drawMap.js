@@ -13,6 +13,8 @@ function drawMap(){
   }
   try{
     var i = 0;
+
+    console.log("map length:",map.length);
     while (i < map.length){
       primaryCtx.strokeStyle= "black";
       var StartxPos = map[i].StartxPos/1000,
@@ -25,9 +27,9 @@ function drawMap(){
       primaryCtx.lineTo(EndxPos, EndyPos);
       // Make the line visible
       primaryCtx.stroke();
-      i ++;
+      i++;
     }
   }catch(e){
-    console.log(map);
+    console.log(e);
   }
 }
