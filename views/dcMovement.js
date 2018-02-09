@@ -188,13 +188,28 @@ module.exports = function(io) {
                 // checks if the car needs to move along the xaxis
                 var EdgeID = carArray[i]._currentEdgeID;
                 if((difference(xpos,xdes)>0.00001) || (difference(ypos,ydes) > 0.00001)){
+                                          console.log("TEST1");
+
                   if(map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270){
-                    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).x) + map.getEndNode(EdgeID).x; 
-                    var y = map.getStartNode(EdgeID).y;
+                                             console.log("TEST2");
+
+                     if (ypos > ydes) {
+                         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 3);
+                     }
+                     else if (ypos < ydes) {
+                         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
+                    }
+                    
                   }
                   else if(map.getEdgeObject(EdgeID).orientation == 0 ||  map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180){
-                    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).y) + map.getEndNode(EdgeID).y; 
-                    var y = map.getStartNode(EdgeID).x;
+                                            console.log("TEST3");
+
+                     if (xpos > xdes) {
+                         carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
+                     }
+                     else if (xpos < xdes) {
+                         carArray[i]._xPos = precisionRound(xpos + carArray[i]._speed, 3);
+                    }
 
                   }
                   else{

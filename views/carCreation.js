@@ -44,14 +44,18 @@ function randomizeCarPos() {
   var EdgeID = (Math.floor(Math.random()*edgeArrayLen));
   console.log(map.getEdgeObject(EdgeID).orientation);
   if(map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270){
-    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).x) + map.getEndNode(EdgeID).x; 
-    var y = map.getStartNode(EdgeID).y;
+    console.log("end node y",map.getEndNode(EdgeID).y, "start node y", map.getStartNode(EdgeID).y);
+    var y = Math.floor(Math.random() * map.getEndNode(EdgeID).y + map.getStartNode(EdgeID).y); 
+    var x = map.getStartNode(EdgeID).x;
+    console.log(x,y);
     return {x: x, y :y};
   }
   if(map.getEdgeObject(EdgeID).orientation == 0 ||  map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180){
-    var x = Math.floor(Math.random() * map.getStartNode(EdgeID).y) + map.getEndNode(EdgeID).y; 
-    var y = map.getStartNode(EdgeID).x;
+    var x = Math.floor(Math.random() * map.getEndNode(EdgeID).x + map.getStartNode(EdgeID).x); 
+    var y = map.getStartNode(EdgeID).y;
+    console.log(x,y);
     return {x: x, y :y};
+
   }
 
   var A = [map.getStartNode(10).x,map.getStartNode(10).y];
