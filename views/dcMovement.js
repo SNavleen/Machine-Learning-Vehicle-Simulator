@@ -288,13 +288,14 @@ module.exports = function(io) {
             console.log(carArray[i]._xPos,carArray[i]._yPos);
           }
             // TODO This works but isn't fully connected to the front end
-            if (carFinished == true) {
-                carArray.splice(i,1);
-            }
+            // if (carFinished == true) {
+            //     carArray.splice(i,1);
+            // }
           
             // Updates the carArray with new positions and sends data to client
             //carArray[0]= [247301,510000];
-                         carArray[0]= [50,50];
+                        carArray[0]._xPos = 3;
+                        carArray[0]._yPos = 2;
 
             carCreation.setCarArr(carArray);
 
