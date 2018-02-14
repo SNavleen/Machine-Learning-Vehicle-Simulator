@@ -294,7 +294,7 @@ module.exports = function(io) {
           
             // Updates the carArray with new positions and sends data to client
             //carArray[0]= [247301,510000];
-                       carArray[0]= [50,50];
+                         carArray[0]= [50,50];
 
             carCreation.setCarArr(carArray);
 
