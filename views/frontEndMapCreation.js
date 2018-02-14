@@ -18,7 +18,8 @@ function sendMapToFront(){
 		StartxPos: map.getStartNode(i).x,
 		StartyPos: map.getStartNode(i).y,
 	  	EndxPos: map.getEndNode(i).x,
-		EndyPos: map.getEndNode(i).y
+		EndyPos: map.getEndNode(i).y,
+		orientation: map.getOrientationOfEdge(i)
 	};
 		frontEndMapArray.push(frontEndMap);
 	}
