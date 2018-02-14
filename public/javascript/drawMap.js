@@ -27,7 +27,7 @@ function drawMap(){
       primaryCtx.lineTo(EndxPos, EndyPos);
       // Make the line visible
       primaryCtx.stroke();
-      i++;
+      i ++;
     }
   }catch(e){
     console.log(e);

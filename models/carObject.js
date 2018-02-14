@@ -13,7 +13,7 @@ module.exports = class carObject{
     this.orientation = 0;
     this.xPos = 0;
     this.yPos = 0;
-    this.currentEdgeID = 10; // TODO Change this back to null once Trevor has implemented random spawn
+    this.currentEdgeID = 0; // TODO Change this back to null once Trevor has implemented random spawn
   }
 
   get xPos(){
