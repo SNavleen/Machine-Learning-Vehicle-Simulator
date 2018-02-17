@@ -90,6 +90,7 @@ module.exports = class graphObject {
     // console.log(edgeArray[edgeId-1]);
   }
   getCarsOnEdge(edgeId) {
+    // console.log(edgeId);
     return edgeArray[edgeId - 1]._listOfCars;
   }
 }

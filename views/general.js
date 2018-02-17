@@ -43,10 +43,18 @@ function intercept(A, m) {
   return b;
 }
 
+// Input
+// a: first value
+// b: second value
+function difference(a, b) {
+  return Math.abs(a - b);
+}
+
 module.exports = {
   randInterval,
   max,
   min,
   slope,
-  intercept
+  intercept,
+  difference
 }

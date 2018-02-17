@@ -3,7 +3,7 @@ var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
 var numberOfCars = 1;
-var currentCarID = 0;
+var currentCarId = 0;
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
 
@@ -18,8 +18,8 @@ function createDumbCars() {
 
 function generateDumbCar() {
   var edgeArrayLen = map.getNumOfEdges();
-  var edgeIdStart = general.randInterval(1, edgeArrayLen);
-  // var edgeIdStart = 51;
+  // var edgeIdStart = general.randInterval(1, edgeArrayLen);
+  var edgeIdStart = 51;
   var edgeIdEnd = general.randInterval(1, edgeArrayLen);
   // var edgeIdEnd = 30;
   var edgeObj = map.getEdgeObject(edgeIdStart);
@@ -30,12 +30,12 @@ function generateDumbCar() {
   var start = randomizeCarPos(edgeIdStart);
   var end = randomizeCarPos(edgeIdEnd);
   var route = map.dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse();
-  let car = new carObject(currentCarID, start.x, start.y, end.x, end.y, carType, route);
+  let car = new carObject(currentCarId, start.x, start.y, end.x, end.y, carType, route);
   car._xPos = start.x;
   car._yPos = start.y;
   car._orientation = map.getEdgeObject(edgeIdStart).orientation;
-  car._currentEdgeID = edgeIdStart;
-  map.insertCarToEdge(currentCarID, edgeIdStart, 0);
+  car._currentEdgeId = edgeIdStart;
+  map.insertCarToEdge(currentCarId, edgeIdStart, 0);
 
   // Initalizes cars starting orientation (since atm it's either going left or right it automatically sets this here)
   // This might need to change eventually because it's a bit of a work around (ask Paul for further explanation)
@@ -45,14 +45,13 @@ function generateDumbCar() {
   //   car._orientation = 0;
   // }
 
-  console.log("edgeObj: ", edgeObj);
+  // console.log("edgeObj: ", edgeObj);
   console.log("carObject: ", car);
-  currentCarID++; // This will need to be removed from dumbcar and applied to all vehicle spawns
+  currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   return car;
 }
 
 function randomizeCarPos(edgeId) {
-  // Temp removal, doesn't work at the moment (ask Paul)
   // Get the (x, y) of the startNode
   var edgeStartNode = map.getStartNode(edgeId);
   // Get the (x, y) of the endNode
@@ -111,9 +110,9 @@ function getFrontendCarArr() {
   return frontendCarArray;
 }
 
-function getCar(carID) {
+function getCar(carId) {
   for (var i = 0; i < carArray.length; i++) {
-    if (carArray[i].carID == carID) {
+    if (carArray[i].carId == carId) {
       return carArray[i];
     }
   }

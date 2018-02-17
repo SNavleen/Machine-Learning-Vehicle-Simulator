@@ -1,5 +1,6 @@
 var map = require('../views/mapCreate.js');
-var carCreation = require('./carCreation.js')
+var carCreation = require('./carCreation.js');
+var general = require('../views/general.js');
 
 carCreation.createDumbCars();
 var carArray = carCreation.getCarArr();
@@ -7,11 +8,8 @@ var carArray = carCreation.getCarArr();
 // TODO See if io can be assigned to a var to move everything out of the export function
 // TODO Clean up code and remove everything out of socket function (only keep socket events)
 // TODO Create function to convert speed to km/h as an int
+// TODO: move all the general functions to be used by all files in views in general.js (precisionRound, euclideanDistance, etc.)
 
-// Calculates the absolute difference between two numbers
-var difference = function(a, b) {
-  return Math.abs(a - b);
-}
 
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
@@ -32,14 +30,14 @@ var minimumSlowDownDistance = function(currentSpeed) {
 }
 
 // Function for adjusting cars to specified speed
-function adjustSpeed(carID, desiredSpeed) {
+function adjustSpeed(carId, desiredSpeed) {
 
-  if (carCreation.getCar(carID)._speed < desiredSpeed) {
-    carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed + 10;
-    //console.log("Speed 1 :",carCreation.getCar(carID)._speed);
-  } else if (carCreation.getCar(carID)._speed > desiredSpeed) {
-    carCreation.getCar(carID)._speed = carCreation.getCar(carID)._speed - 10;
-    //console.log("Speed 2:",carCreation.getCar(carID)._speed);
+  if (carCreation.getCar(carId)._speed < desiredSpeed) {
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 10;
+    //console.log("Speed 1 :",carCreation.getCar(carId)._speed);
+  } else if (carCreation.getCar(carId)._speed > desiredSpeed) {
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 10;
+    //console.log("Speed 2:",carCreation.getCar(carId)._speed);
 
   }
   return false;
@@ -47,16 +45,16 @@ function adjustSpeed(carID, desiredSpeed) {
 
 // Determines the distance between two cars
 function euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY) {
-  var xDifference = difference(currentCarX, checkedCarX);
-  var yDifference = difference(currentCarY, checkedCarY);
+  var xDifference = general.difference(currentCarX, checkedCarX);
+  var yDifference = general.difference(currentCarY, checkedCarY);
   var distance = Math.sqrt(xDifference * xDifference + yDifference * yDifference);
   return distance;
 }
 
 // Checks the distance of the nearest vehicle on a cars current road
-function collisionAvoidanceCheck(carID) {
-  var currentCar = carCreation.getCar(carID);
-  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeID);
+function collisionAvoidanceCheck(carId) {
+  var currentCar = carCreation.getCar(carId);
+  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeId);
   var currentCarX = currentCar._xPos;
   var currentCarY = currentCar._yPos;
   var checkedCarX = 0;
@@ -67,7 +65,7 @@ function collisionAvoidanceCheck(carID) {
   // Check against each car currently on edge
   for (var i = 0; i < carsOnEdge.length; i++) {
     // Makes sure not to check itself
-    if (currentCar._carID != carsOnEdge[i]._carID) {
+    if (currentCar._carId != carsOnEdge[i]._carId) {
       checkedCarX = carsOnEdge[i]._xPos;
       checkedCarY = carsOnEdge[i]._yPos;
 
@@ -106,10 +104,10 @@ function collisionAvoidanceCheck(carID) {
 }
 
 // This moves the current car onto the next edge in its route
-function switchEdge(carID) {
+function switchEdge(carId) {
   var edgeArray = map.getEdgeArray();
-  var currentCar = carCreation.getCar(carID);
-  var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeID).endNodeId;
+  var currentCar = carCreation.getCar(carId);
+  var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeId).endNodeId;
   var nextEdgeStart = currentEdgeEnd;
 
   // Finds the ID of the next node in the route
@@ -120,9 +118,9 @@ function switchEdge(carID) {
     for (var i = 0; i < edgeArray.length; i++) {
       // Switch to this edge
       if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
-        map.removeCarFromEdge(currentCar.carID, currentCar._currentEdgeID, 0); // TODO Will have to update "0"
-        currentCar._currentEdgeID = edgeArray[i].edgeId;
-        map.insertCarToEdge(currentCar.carID, currentCar._currentEdgeID, 0); // TODO Will have to update "0"
+        map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+        currentCar._currentEdgeId = edgeArray[i].edgeId;
+        map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
       }
     }
   } else {
@@ -132,22 +130,104 @@ function switchEdge(carID) {
   return false;
 }
 
-function slope(a, b) {
-  if (a[0] == b[0]) {
-    return null;
+
+
+
+function moveCar(carInfo) {
+  // Get car information from the object
+  var carId = carInfo.carId;
+  var xPos = precisionRound(carInfo._xPos, 3);
+  var yPos = precisionRound(carInfo._yPos, 3);
+  var xDestination = precisionRound(carInfo.xDestination, 3);
+  var yDestination = precisionRound(carInfo.yDestination, 3);
+  var speed = precisionRound(carInfo._speed, 3);
+  var carOrientation = carInfo._orientation;
+  // Get the edge information from the object
+  var edgeId = carInfo._currentEdgeId;
+  var edgeOrientation = map.getEdgeObject(edgeId);
+  // Finds shortest distance
+  var closestVehicleDistance = collisionAvoidanceCheck(carId);
+  // carFinished = true; // determines if a car has reached its destination or not
+
+  // TODO Temporily hardcoded values, need to tweak once actual map is working
+  // Collision avoidance
+
+  if (closestVehicleDistance < minimumSlowDownDistance(speed + 10)) {
+    // Must decelerate at maximum speed until stopped
+    adjustSpeed(carId, 0);
+  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
+    adjustSpeed(carId, 20);
+  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
+    adjustSpeed(carId, 30);
+  } else {
+    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
 
-  return (b[1] - a[1]) / (b[0] - a[0]);
-}
+  // checks if the car needs to move along the xaxis
+  //console.log("EDGE ID",EdgeID);
+  //console.log("ORIENTATION:",map.getEdgeObject(29).orientation);
 
-function intercept(point, slope) {
-  if (slope === null) {
-    // vertical line
-    return point[0];
+  var xDifference = general.difference(xPos, xDestination);
+  var yDifference = general.difference(yPos, yDestination);
+
+  // if (xDifference > 0.00001 || yDifference > 0.00001) { // TODO: dont know if i need this
+  // console.log("TEST1");
+
+  if (Math.abs(carOrientation) == 90 || Math.abs(carOrientation) == 270) {
+    if (yPos > yDestination) {
+      yPos = precisionRound(yPos - carInfo._speed, 3);
+    } else if (yPos < yDestination) {
+      yPos = precisionRound(yPos + carInfo._speed, 3);
+    }
+    // console.log("yPos: ", yPos);
+    carInfo._yPos = yPos;
+  } else if (Math.abs(carOrientation) == 0 || Math.abs(carOrientation) == 180) {
+    if (xPos > xDestination) {
+      xPos = precisionRound(xPos - carInfo._speed, 3);
+    } else if (xPos < xDestination) {
+      xPos = precisionRound(xPos + carInfo._speed, 3);
+    }
+    // console.log("xPos: ", xPos);
+    carInfo._xPos = xPos;
+  } else {
+    //     console.log("TEST6");
+    // var A = [carArray[i]._xPos, carArray[i]._yPos];
+    //     var B = [map.getEndNode(EdgeID).x, map.getEndNode(EdgeID).y];
+    //     var m = slope(A, B);
+    //     var b = intercept(A, m);
+    //     var x = parseInt(A[0]) + 500;
+    //     var n = parseInt(B[0]);
+    //     var coordinates = [];
+    //     console.log("orientation", carArray[i]._orientation);
+    //
+    //     console.log("point 1", A[0], A[1]);
+    //     console.log("point 2", B[0], B[1]);
+    //     console.log("slope", m);
+    //     console.log("intercept", b);
+    //     console.log("RANGE:", A[0], B[0]);
+    //     var y = m * x + b;
+    //     // for (x; x <= n;x+= 50) {
+    //     //   console.log("TEST");
+    //     //   var y = m * x + b;
+    //     //   coordinates.push([x, y]);
+    //     // }
+    //     console.log("TREST FIN");
+    //     console.log(x, y);
+    //     carArray[i]._xPos = x;
+    //     carArray[i]._yPos = y;
+    //   }
   }
 
-  return point[1] - slope * point[0];
+
+  // carFinished = false;
+  //     }
+
+  // console.log(carInfo);
+  return carInfo;
 }
+
+
+
 
 // This functions allows io from app.js to be used
 module.exports = function(io) {
@@ -161,154 +241,13 @@ module.exports = function(io) {
     // Loop for moving all dumb cars on an interval
     var dcMovementLoop = setInterval(function() { // Temporarily using interval to display cars moving slowly
       // This loop checks each car in carArray and moves it closer towards its destination
-      // for (var i = 0; i < carArray.length; i++) {
-      //
-      //   var xpos = precisionRound(carArray[i]._xPos, 3);
-      //   var ypos = precisionRound(carArray[i]._yPos, 3);
-      //   var xdes = precisionRound(carArray[i].xDestination, 3);
-      //   var ydes = precisionRound(carArray[i].yDestination, 3);
-      //   var speed = precisionRound(carArray[i]._speed, 3); // TODO Remove if not being used
-      //
-      //
-      //   var closestVehicleDistance = collisionAvoidanceCheck(carArray[i].carID); // Finds shortest distance
-      //   carFinished = true; // determines if a car has reached its destination or not
-      //
-      //   // TODO Temporily hardcoded values, need to tweak once actual map is working
-      //   // Collision avoidance
-      //
-      //   if (closestVehicleDistance < minimumSlowDownDistance(carArray[i]._speed + 10)) {
-      //     // Must decelerate at maximum speed until stopped
-      //     adjustSpeed(carArray[i].carID, 0);
-      //   } else if (closestVehicleDistance < minimumSlowDownDistance(carArray[i]._speed + 20)) {
-      //     adjustSpeed(carArray[i].carID, 20);
-      //   } else if (closestVehicleDistance < minimumSlowDownDistance(carArray[i]._speed + 30)) {
-      //     adjustSpeed(carArray[i].carID, 30);
-      //   } else {
-      //     adjustSpeed(carArray[i].carID, 50); // TODO Need to set max speed to current roads speed limit instead of 0.05
-      //   }
-      //
-      //   // checks if the car needs to move along the xaxis
-      //   var EdgeID = carArray[i]._currentEdgeID;
-      //   //console.log("EDGE ID",EdgeID);
-      //   //console.log("ORIENTATION:",map.getEdgeObject(29).orientation);
-      //
-      //   if ((difference(xpos, xdes) > 0.00001) || (difference(ypos, ydes) > 0.00001)) {
-      //     console.log("TEST1");
-      //
-      //     if (map.getEdgeObject(EdgeID).orientation == 90 || map.getEdgeObject(EdgeID).orientation == -90 || map.getEdgeObject(EdgeID).orientation == 270 || map.getEdgeObject(EdgeID).orientation == -270) {
-      //       console.log("TEST2");
-      //
-      //       if (ypos > ydes) {
-      //         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 3);
-      //       } else if (ypos < ydes) {
-      //         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
-      //       }
-      //
-      //     } else if (map.getEdgeObject(EdgeID).orientation == 0 || map.getEdgeObject(EdgeID).orientation == 180 || map.getEdgeObject(EdgeID).orientation == -180) {
-      //       console.log("TEST3");
-      //
-      //       if (xpos > xdes) {
-      //         console.log("TEST4");
-      //         console.log(carArray[i]._speed);
-      //         carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
-      //       } else if (xpos < xdes) {
-      //         console.log("Test5");
-      //         console.log(carArray[i]._speed);
-      //         carArray[i]._xPos = precisionRound(xpos + carArray[i]._speed, 3);
-      //       }
-      //
-      //     } else {
-      //       console.log("TEST6");
-      //       var EdgeID = carArray[i]._currentEdgeID;
-      //       var A = [carArray[i]._xPos, carArray[i]._yPos];
-      //       var B = [map.getEndNode(EdgeID).x, map.getEndNode(EdgeID).y];
-      //       var m = slope(A, B);
-      //       var b = intercept(A, m);
-      //       var x = parseInt(A[0]) + 500;
-      //       var n = parseInt(B[0]);
-      //       var coordinates = [];
-      //       console.log("orientation", carArray[i]._orientation);
-      //
-      //       console.log("point 1", A[0], A[1]);
-      //       console.log("point 2", B[0], B[1]);
-      //       console.log("slope", m);
-      //       console.log("intercept", b);
-      //       console.log("RANGE:", A[0], B[0]);
-      //       var y = m * x + b;
-      //       // for (x; x <= n;x+= 50) {
-      //       //   console.log("TEST");
-      //       //   var y = m * x + b;
-      //       //   coordinates.push([x, y]);
-      //       // }
-      //       console.log("TREST FIN");
-      //       console.log(x, y);
-      //       carArray[i]._xPos = x;
-      //       carArray[i]._yPos = y;
-      //     }
-      //   }
-      //
-      //   //removed because obsolete
-      //   // if (difference(xpos,xdes) > 0.0001) {
-      //   //     // Checks if the car needs to move left or right
-      //   //     if (xpos > xdes) {
-      //   //         carArray[i]._xPos = precisionRound(xpos - carArray[i]._speed, 3);
-      //   //     }
-      //   //     else if (xpos < xdes) {
-      //   //         carArray[i]._xPos = precisionRound(xpos + carArray[i]._speed, 3);
-      //   //     }
-      //   //     carFinished = false;
-      //   // }
-      //   // else if (difference(ypos,ydes) > 0.0001) {
-      //   //     // If the car is heading north
-      //   //     if (ypos > ydes) {
-      //   //         // Conditional for when the car is starting north but hasn't yet fully turned
-      //   //         if (carArray[i]._orientation != 90) {
-      //   //             // TODO Temporarily just sets speed to 0
-      //   //             carArray[i]._speed = 0; // Turning speed
-      //
-      //   //             // Checks if the car needs to turn left heading north
-      //   //             if (carArray[i]._orientation >= 0 && carArray[i]._orientation < 90) {
-      //   //                 carArray[i]._orientation = carArray[i]._orientation + 5;
-      //   //             }
-      //   //             // Check if car needs to turn right heading north
-      //   //             else if (carArray[i]._orientation > 90 && carArray[i]._orientation <= 180) {
-      //   //                 carArray[i]._orientation = carArray[i]._orientation - 5;
-      //   //             }
-      //   //         }
-      //
-      //   //         carArray[i]._yPos = precisionRound(ypos - carArray[i]._speed, 5);
-      //   //     }
-      //   //     // If the car is heading south
-      //   //     else {
-      //   //         if (carArray[i]._orientation != 270) {
-      //   //             carArray[i]._speed = 0; // Turning speed
-      //
-      //   //             // Allows for right turns heading south by setting orientation from 0 to 360
-      //   //             if (carArray[i]._orientation == 0) {
-      //   //                 carArray[i]._orientation = 360;
-      //   //             }
-      //   //             // TODO Will need to change orientation base on next roads orientation
-      //   //             // Check if car needs to turn left heading south
-      //   //             if (carArray[i]._orientation >= 180 && carArray[i]._orientation < 270) {
-      //   //                 carArray[i]._orientation = carArray[i]._orientation + 5;
-      //   //             }
-      //   //             // Check if car needs to turn right heading south
-      //   //             else if (carArray[i]._orientation > 270 && carArray[i]._orientation <= 360) {
-      //   //                 carArray[i]._orientation = carArray[i]._orientation - 5;
-      //   //             }
-      //   //         }
-      //
-      //   //         carArray[i]._yPos = precisionRound(ypos + carArray[i]._speed, 3);
-      //   //     }
-      //   carFinished = false;
-      //   //     }
-      //
-      //   console.log(carArray[i]._xPos, carArray[i]._yPos);
-      // }
-      // //  TODO This works but isn't fully connected to the front end
-      // if (carFinished == true) {
-      //   carArray.splice(i, 1);
-      // }
+      for (var i = 0; i < carArray.length; i++) {
+        carArray[i] = moveCar(carArray[i]);
+      }
+      //  TODO This works but isn't fully connected to the front end
+      if (carFinished == true) {
+        carArray.splice(i, 1);
+      }
 
       // Updates the carArray with new positions and sends data to client
       //carArray[0]= [247301,510000];
