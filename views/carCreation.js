@@ -46,7 +46,7 @@ function generateDumbCar() {
   // }
 
   // console.log("edgeObj: ", edgeObj);
-  console.log("carObject: ", car);
+  // console.log("carObject: ", car);
   currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   return car;
 }
