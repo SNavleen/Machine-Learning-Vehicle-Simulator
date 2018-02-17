@@ -24,9 +24,11 @@ function min(a, b) {
 // B: is a point of an object {x: xValue, y: yValue}
 function slope(A, B) {
   if (A.x == B.x) {
-    return null;
+    // Vertical line
+    return undefined;
   }
-  return (B.y - A.y) / (B.x - A.x);
+  var m = (B.y - A.y) / (B.x - A.x);
+  return m;
 }
 
 // Input
@@ -34,7 +36,7 @@ function slope(A, B) {
 // m: is the slope of the line
 function intercept(A, m) {
   if (m === null) {
-    return A.x;
+    return undefined;
   }
   // b = y - m * x
   var b = A.y - m * A.x;
