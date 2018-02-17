@@ -9,6 +9,7 @@ var carArray = carCreation.getCarArr();
 // TODO Clean up code and remove everything out of socket function (only keep socket events)
 // TODO Create function to convert speed to km/h as an int
 // TODO: move all the general functions to be used by all files in views in general.js (precisionRound, euclideanDistance, etc.)
+// TODO: Once the car gets to the node, it does not turn yet
 
 
 // A function used to round a float number to a specific precision
@@ -130,8 +131,23 @@ function switchEdge(carId) {
   return false;
 }
 
+function moveY(yPos, yDestination, speed) {
+  if (yPos > yDestination) {
+    yPos = precisionRound(yPos - speed, 3);
+  } else if (yPos < yDestination) {
+    yPos = precisionRound(yPos + speed, 3);
+  }
+  return yPos;
+}
 
-
+function moveX(xPos, xDestination, speed) {
+  if (xPos > xDestination) {
+    xPos = precisionRound(xPos - speed, 3);
+  } else if (xPos < xDestination) {
+    xPos = precisionRound(xPos + speed, 3);
+  }
+  return xPos;
+}
 
 function moveCar(carInfo) {
   // Get car information from the object
@@ -141,10 +157,13 @@ function moveCar(carInfo) {
   var xDestination = precisionRound(carInfo.xDestination, 3);
   var yDestination = precisionRound(carInfo.yDestination, 3);
   var speed = precisionRound(carInfo._speed, 3);
-  var carOrientation = carInfo._orientation;
   // Get the edge information from the object
   var edgeId = carInfo._currentEdgeId;
-  var edgeOrientation = map.getEdgeObject(edgeId);
+  var edgeStartNode = map.getStartNode(edgeId);
+  var edgeEndNode = map.getEndNode(edgeId)
+  // Orientation information
+  var slope = general.slope(edgeStartNode, edgeEndNode);
+  var intercept = general.intercept(edgeStartNode, slope);
   // Finds shortest distance
   var closestVehicleDistance = collisionAvoidanceCheck(carId);
   // carFinished = true; // determines if a car has reached its destination or not
@@ -171,56 +190,44 @@ function moveCar(carInfo) {
   var yDifference = general.difference(yPos, yDestination);
 
   // if (xDifference > 0.00001 || yDifference > 0.00001) { // TODO: dont know if i need this
-  // console.log("TEST1");
 
-  if (Math.abs(carOrientation) == 90 || Math.abs(carOrientation) == 270) {
-    if (yPos > yDestination) {
-      yPos = precisionRound(yPos - carInfo._speed, 3);
-    } else if (yPos < yDestination) {
-      yPos = precisionRound(yPos + carInfo._speed, 3);
-    }
+  if (slope == undefined) {
     // console.log("yPos: ", yPos);
-    carInfo._yPos = yPos;
-  } else if (Math.abs(carOrientation) == 0 || Math.abs(carOrientation) == 180) {
-    if (xPos > xDestination) {
-      xPos = precisionRound(xPos - carInfo._speed, 3);
-    } else if (xPos < xDestination) {
-      xPos = precisionRound(xPos + carInfo._speed, 3);
-    }
+    carInfo._yPos = moveY(yPos, yDestination, speed);
+  } else if (slope == 0) {
     // console.log("xPos: ", xPos);
-    carInfo._xPos = xPos;
+    carInfo._xPos = moveX(xPos, xDestination, speed);
   } else {
-    //     console.log("TEST6");
-    // var A = [carArray[i]._xPos, carArray[i]._yPos];
-    //     var B = [map.getEndNode(EdgeID).x, map.getEndNode(EdgeID).y];
-    //     var m = slope(A, B);
-    //     var b = intercept(A, m);
-    //     var x = parseInt(A[0]) + 500;
-    //     var n = parseInt(B[0]);
-    //     var coordinates = [];
-    //     console.log("orientation", carArray[i]._orientation);
-    //
-    //     console.log("point 1", A[0], A[1]);
-    //     console.log("point 2", B[0], B[1]);
-    //     console.log("slope", m);
-    //     console.log("intercept", b);
-    //     console.log("RANGE:", A[0], B[0]);
-    //     var y = m * x + b;
-    //     // for (x; x <= n;x+= 50) {
-    //     //   console.log("TEST");
-    //     //   var y = m * x + b;
-    //     //   coordinates.push([x, y]);
-    //     // }
-    //     console.log("TREST FIN");
-    //     console.log(x, y);
-    //     carArray[i]._xPos = x;
-    //     carArray[i]._yPos = y;
-    //   }
+    // console.log("xPos: ", xPos);
+    carInfo._xPos = moveX(xPos, xDestination, speed);
+    yPos = Math.floor((slope * xPos) + intercept);
+    // console.log("yPos: ", yPos);
+    carInfo._yPos = moveY(yPos, yDestination, speed);
   }
 
-
-  // carFinished = false;
-  //     }
+  // TODO: take this out before mergeing to master, I just have it here so we can refer back to this if the else condition does not work
+  //     var x = parseInt(A[0]) + 500;
+  //     var n = parseInt(B[0]);
+  //     var coordinates = [];
+  //     console.log("orientation", carArray[i]._orientation);
+  //
+  //     console.log("point 1", A[0], A[1]);
+  //     console.log("point 2", B[0], B[1]);
+  //     console.log("slope", m);
+  //     console.log("intercept", b);
+  //     console.log("RANGE:", A[0], B[0]);
+  //     var y = m * x + b;
+  //     // for (x; x <= n;x+= 50) {
+  //     //   console.log("TEST");
+  //     //   var y = m * x + b;
+  //     //   coordinates.push([x, y]);
+  //     // }
+  //     console.log("TREST FIN");
+  //     console.log(x, y);
+  //     carArray[i]._xPos = x;
+  //     carArray[i]._yPos = y;
+  //   }
+  // }
 
   // console.log(carInfo);
   return carInfo;
@@ -244,15 +251,10 @@ module.exports = function(io) {
       for (var i = 0; i < carArray.length; i++) {
         carArray[i] = moveCar(carArray[i]);
       }
-      //  TODO This works but isn't fully connected to the front end
+      //  TODO This works but isn't fully connected to the front end, look into this once more
       if (carFinished == true) {
         carArray.splice(i, 1);
       }
-
-      // Updates the carArray with new positions and sends data to client
-      //carArray[0]= [247301,510000];
-      //carArray[0]._xPos = 3;
-      //carArray[0]._yPos = 2;
 
       carCreation.setCarArr(carArray);
 

@@ -18,8 +18,8 @@ function createDumbCars() {
 
 function generateDumbCar() {
   var edgeArrayLen = map.getNumOfEdges();
-  // var edgeIdStart = general.randInterval(1, edgeArrayLen);
-  var edgeIdStart = 51;
+  var edgeIdStart = general.randInterval(1, edgeArrayLen);
+  // var edgeIdStart = 51;
   var edgeIdEnd = general.randInterval(1, edgeArrayLen);
   // var edgeIdEnd = 30;
   var edgeObj = map.getEdgeObject(edgeIdStart);
