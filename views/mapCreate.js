@@ -1,49 +1,60 @@
 var graphObject = require('../models/graphObject.js')
 var map = new graphObject();
 
-var dijkstras = require('../views/dijkstras.js')
+var dijkstras = require('../models/dijkstras.js')
 var dijkstrasGraph = new dijkstras.Graph();
 
 // Dijkstra's
 var edgeWeightMap = map.getEdgeWeightMap();
-for(var i = 1; i <= Object.keys(edgeWeightMap).length; i++){
-	dijkstrasGraph.addVertex(i, edgeWeightMap[i]);
+for (var i = 1; i <= Object.keys(edgeWeightMap).length; i++) {
+  dijkstrasGraph.addVertex(i, edgeWeightMap[i]);
 }
 
 function getCarsOnEdge(edgeId) {
-	return map.getCarsOnEdge(edgeId);
+  return map.getCarsOnEdge(edgeId);
 }
 
 function getNumOfEdges() {
-	return map.getNumOfEdges();
+  return map.getNumOfEdges();
 }
 
 function getEdgeObject(edgeId) {
-	return map.getEdgeObject(edgeId);
+  return map.getEdgeObject(edgeId);
 }
 
 function getEdgeArray() {
-	return map.getEdgeArray();
+  return map.getEdgeArray();
 }
 
 function removeCarFromEdge(carId, edgeId, colNum) {
-	return map.removeCarFromEdge(carId, edgeId, colNum);
+  return map.removeCarFromEdge(carId, edgeId, colNum);
 }
 
 function insertCarToEdge(carId, edgeId, colNum) {
-	return map.insertCarToEdge(carId, edgeId, colNum);
+  return map.insertCarToEdge(carId, edgeId, colNum);
 }
 
-function getStartNode(edgeId){
-	return map.getStartNode(edgeId);
+function getStartNode(edgeId) {
+  return map.getStartNode(edgeId);
 }
-function getEndNode(edgeId){
-	return map.getEndNode(edgeId);
+
+function getEndNode(edgeId) {
+  return map.getEndNode(edgeId);
 }
 
 //console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
-module.exports = {dijkstrasGraph, getCarsOnEdge, getNumOfEdges, getEdgeObject, getEdgeArray, removeCarFromEdge, insertCarToEdge, getStartNode, getEndNode};
+module.exports = {
+  dijkstrasGraph,
+  getCarsOnEdge,
+  getNumOfEdges,
+  getEdgeObject,
+  getEdgeArray,
+  removeCarFromEdge,
+  insertCarToEdge,
+  getStartNode,
+  getEndNode
+};
 
 // HOW to use map object
 
