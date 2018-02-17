@@ -12,9 +12,10 @@ function drawMap(){
     }
   }
   try{
-    //primaryCtx.fillStyle = "#32CD32";
+    //greay background
     primaryCtx.fillStyle = "#D3D3D3";
     primaryCtx.fillRect(0,0,900,1100);
+
     var i = 0;
     while (i < map.length){
       var ratio = 500;
@@ -28,6 +29,7 @@ function drawMap(){
         angle = 360 + angle;
       }
 
+
       //road variables
       var widthRoads = 70;
       var lineWidth = 3;
@@ -36,6 +38,10 @@ function drawMap(){
 
       //draw main black road
       drawLines(StartxPos,StartyPos,EndxPos,EndyPos,"black",widthRoads,[0]);
+
+      //make intersections black
+      primaryCtx.fillStyle = "black";
+      primaryCtx.fillRect(StartxPos-middleLane,StartyPos-middleLane,widthRoads,widthRoads);
 
       //variables for yellow line
       var yellowx1=StartxPos,yellowy1=StartyPos,yellowx2=EndxPos,yellowy2=EndyPos;
@@ -144,9 +150,6 @@ function drawMap(){
         roadStopLine2y1= yellowy2;
         roadStopLine2x2= yellowx2 + middleLane;
         roadStopLine2y2 = yellowy2;
-      }
-      else{
-        
       }
 
       //draw the lines
