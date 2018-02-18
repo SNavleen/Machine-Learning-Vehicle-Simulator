@@ -60,7 +60,6 @@ module.exports = class edgeObject{
 		return this._orientation;
 	}
 	get listOfCars(){
-		console.log(this._listOfCars);
 		return this._listOfCars;
 	}
 	getNumOfNodes(){

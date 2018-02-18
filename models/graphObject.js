@@ -90,4 +90,7 @@ module.exports = class graphObject{
 	getCarsOnEdge(edgeId){
 		return edgeArray[edgeId-1]._listOfCars;
 	}
+	getOrientationOfEdge(edgeId){
+		return edgeArray[edgeId]._orientation;
+	}
 }

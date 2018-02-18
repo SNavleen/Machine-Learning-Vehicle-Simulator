@@ -9,7 +9,7 @@ module.exports = function(io){
 };
 function sendMapToFront(){
 	var graphObject = require('../models/graphObject.js');
-	var map = new graphObject();
+	var map = new graphObject(); // TODO import map here from mapCreate
 	var numEdges = map.getNumOfEdges();
 
 	var frontEndMapArray = new Array();
@@ -18,7 +18,8 @@ function sendMapToFront(){
 		StartxPos: map.getStartNode(i).x,
 		StartyPos: map.getStartNode(i).y,
 	  	EndxPos: map.getEndNode(i).x,
-		EndyPos: map.getEndNode(i).y
+		EndyPos: map.getEndNode(i).y,
+		orientation: map.getOrientationOfEdge(i)
 	};
 		frontEndMapArray.push(frontEndMap);
 	}
