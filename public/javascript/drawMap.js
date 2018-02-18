@@ -25,6 +25,7 @@ function drawMap(){
           EndyPos = map[i].EndyPos/ratio,
           angle = map[i].orientation;
       
+      //this if statement needs to be removed before its merged into master, it is unessesary after merge with pauls branch
       if(angle<0){
         angle = 360 + angle;
       }
