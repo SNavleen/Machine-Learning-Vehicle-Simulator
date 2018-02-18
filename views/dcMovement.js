@@ -11,7 +11,6 @@ var carArray = carCreation.getCarArr();
 // TODO: move all the general functions to be used by all files in views in general.js (precisionRound, euclideanDistance, etc.)
 // TODO: Once the car gets to the node, it does not turn yet
 
-
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
   var factor = Math.pow(10, precision);
@@ -156,6 +155,15 @@ function moveCar(carInfo) {
   var yPos = precisionRound(carInfo._yPos, 3);
   var xDestination = precisionRound(carInfo.xDestination, 3);
   var yDestination = precisionRound(carInfo.yDestination, 3);
+
+  var carFinished = false; // Used to determine when a car has reached it's destination
+
+  //  TODO This works but isn't fully connected to the front end, look into this once more
+  if (carFinished == true) {
+    //carArray.splice(i, 1);
+    //console.log(carArray[i]);
+  }
+
   var speed = precisionRound(carInfo._speed, 3);
   // Get the edge information from the object
   var edgeId = carInfo._currentEdgeId;
@@ -166,18 +174,16 @@ function moveCar(carInfo) {
   var intercept = general.intercept(edgeStartNode, slope);
   // Finds shortest distance
   var closestVehicleDistance = collisionAvoidanceCheck(carId);
-  // carFinished = true; // determines if a car has reached its destination or not
 
   // TODO Temporily hardcoded values, need to tweak once actual map is working
   // Collision avoidance
-
   if (closestVehicleDistance < minimumSlowDownDistance(speed + 10)) {
     // Must decelerate at maximum speed until stopped
-    adjustSpeed(carId, 0);
+    //adjustSpeed(carId, 0);
   } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
-    adjustSpeed(carId, 20);
+    //adjustSpeed(carId, 20);
   } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
-    adjustSpeed(carId, 30);
+    //adjustSpeed(carId, 30);
   } else {
     adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
@@ -233,32 +239,23 @@ function moveCar(carInfo) {
   return carInfo;
 }
 
-
-
-
 // This functions allows io from app.js to be used
 module.exports = function(io) {
   io.on('connection', function(dcSocket) {
     // Emit initial car positions
     dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
 
-
-    var carFinished = true; // Used to determine when a car has reached it's destination
-
     // Loop for moving all dumb cars on an interval
-    var dcMovementLoop = setInterval(function() { // Temporarily using interval to display cars moving slowly
+    var dcMovementLoop = setInterval(function() {
       // This loop checks each car in carArray and moves it closer towards its destination
       for (var i = 0; i < carArray.length; i++) {
         carArray[i] = moveCar(carArray[i]);
-      }
-      //  TODO This works but isn't fully connected to the front end, look into this once more
-      if (carFinished == true) {
-        carArray.splice(i, 1);
       }
 
       carCreation.setCarArr(carArray);
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-    }, 1000); // How often the server updates the client
+      
+    }, 50); // How often the server updates the client
   });
 };

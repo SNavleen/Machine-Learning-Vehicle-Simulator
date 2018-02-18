@@ -25,7 +25,11 @@ function orientationOfEdge(node1, node2){
 	var deltaY = nodeArray[node2].y - nodeArray[node1].y;
 	var rad = Math.atan2(deltaY, deltaX);
 
-	var deg = rad * (180 / Math.PI)
+	var deg = rad * (180 / Math.PI);
+
+	if (deg < 0) {
+		deg = 360 + deg;
+	}
 	// console.log(deg);
 	return deg;
 	// console.log(nodeArray[node1]);
