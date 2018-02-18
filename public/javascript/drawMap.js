@@ -29,10 +29,10 @@ function drawMap(){
         angle = 360 + angle;
       }
 
-
       //road variables
       var widthRoads = 70;
       var lineWidth = 3;
+      var stopLineWidth = 6;
       var middleLane = widthRoads/2;
       var whiteLines = middleLane/2;
 
@@ -156,8 +156,8 @@ function drawMap(){
       drawLines(yellowx1,yellowy1,yellowx2,yellowy2,"yellow",lineWidth,[0]);
       drawLines(white1x1,white1y1,white1x2,white1y2,"white",lineWidth,[5]);
       drawLines(white2x1,white2y1,white2x2,white2y2,"white",lineWidth,[5]);
-      drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"white",lineWidth,[0]);
-      drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"white",lineWidth,[0]);
+      drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"red",stopLineWidth,[0]);
+      drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"green",stopLineWidth,[0]);
       i ++;
     }
   }catch(e){
@@ -166,7 +166,7 @@ function drawMap(){
 }
 
 function drawLines(startX,startY, endX,endY, fillColor,width,dash) {
-  primaryCtx.save()
+  primaryCtx.save();
   primaryCtx.strokeStyle= fillColor;
   primaryCtx.lineWidth = width;
   primaryCtx.beginPath();
