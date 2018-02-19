@@ -13,15 +13,16 @@ function sendMapToFront() {
   var map = new graphObject(); // TODO import map here from mapCreate
   var numEdges = map.getNumOfEdges();
 
-  var frontEndMapArray = new Array();
-  for (var i = 1; i <= numEdges; i++) {
-    var frontEndMap = {
-      StartxPos: map.getStartNode(i).x,
-      StartyPos: map.getStartNode(i).y,
-      EndxPos: map.getEndNode(i).x,
-      EndyPos: map.getEndNode(i).y
-    };
-    frontEndMapArray.push(frontEndMap);
-  }
-  return frontEndMapArray;
+	var frontEndMapArray = new Array();
+	for(var i = 0; i < numEdges; i++){
+		var frontEndMap = {
+		StartxPos: map.getStartNode(i).x,
+		StartyPos: map.getStartNode(i).y,
+	  EndxPos: map.getEndNode(i).x,
+		EndyPos: map.getEndNode(i).y,
+		orientation: map.getOrientationOfEdge(i)
+	};
+		frontEndMapArray.push(frontEndMap);
+	}
+	return frontEndMapArray;
 }

@@ -90,4 +90,3 @@ module.exports = class graphObject {
   getCarsOnEdge(edgeId) {
     return edgeArray[edgeId - 1]._listOfCars;
   }
-}
