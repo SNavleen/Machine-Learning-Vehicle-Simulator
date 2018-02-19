@@ -155,6 +155,7 @@ function moveCar(carInfo) {
   var xDestination;
   var yDestination;
   var finalEdge = false;
+  carInfo._orientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
 
   // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)
   if (map.getEdgeObject(carInfo._currentEdgeId).startNodeId == route[route.length - 2]) {
@@ -246,6 +247,6 @@ module.exports = function(io) {
       }
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());     
-    }, 5); // How often the server updates the client
+    }, 10); // How often the server updates the client
   });
 };

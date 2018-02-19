@@ -27,11 +27,14 @@ function orientationOfEdge(node1, node2){
 
 	var deg = rad * (180 / Math.PI);
 
-	if (deg < 0) {
-		deg = 360 + deg;
+	// TODO Temp fix for edge orienation, couldn't figure out why but changing the vertical edges to the opposite orienation displays everthing properly
+	if (deg == 90) {
+		deg = 270;
+	}
+	else if (deg ==  -90) {
+		deg = 90;
 	}
 	return deg;
-	// return nodeArray[node1-1];
 }
 
 
