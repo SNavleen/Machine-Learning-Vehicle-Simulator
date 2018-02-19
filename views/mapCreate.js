@@ -11,7 +11,6 @@ for (var i = 1; i <= Object.keys(edgeWeightMap).length; i++) {
 }
 
 function getCarsOnEdge(edgeId) {
-  // console.log(edgeId);
   return map.getCarsOnEdge(edgeId);
 }
 

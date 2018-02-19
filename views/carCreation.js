@@ -2,8 +2,8 @@ var carObject = require('../models/carObject.js');
 var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
-var numberOfCars = 1;
-var currentCarId = 0;
+var numberOfCars = 200;
+var currentCarId = 0; // TODO See if we should change this to start at 1 (there shouldn't be a car 0)
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
 
@@ -43,13 +43,14 @@ function generateDumbCar() {
 
       // Temporary fix to set minimum route length to 3
       // With a route length of 2 there's potential for cars to move in the wrong direction
-      if (edgeIdStart != edgeIdEnd && route.length < 3) {
+      // TODO Hard coded bug fix for to stop route from ending on node 2 (see github issue)
+      if ((edgeIdStart != edgeIdEnd && route.length < 3) || route[route.length - 1] == '2') {
         edgeIdStart = edgeIdEnd; // Sets while condition to true to re-run the loop and regenerate values
       }
       // Generations successful, reset values to be on the route to prevent errors (ask Paul for clarification)
       else if (edgeIdStart != edgeIdEnd && route.length >= 3) {
         // Scan through all edges
-        for (var i = 0; i < edgeArray.length; i++) {
+        for (var i = 1; i < edgeArray.length; i++) {
           // Finds the first edge on the route
           if (edgeArray[i].startNodeId == route[0] && edgeArray[i].endNodeId == route[1]) {
             edgeIdStart = edgeArray[i].edgeId;
@@ -115,7 +116,8 @@ function randomizeCarPos(edgeId) {
     };
   }
 
-  randY = Math.floor((slope * randX) + intercept);
+
+  randY = (yMin + yMax) / 2; // Temp removal by Paul to spawn in middle of edge // Math.floor((slope * randX) + intercept);
 
   return {
     x: randX,
@@ -124,8 +126,7 @@ function randomizeCarPos(edgeId) {
 }
 
 function getFrontendCarArr() {
-  for (var i = 0; i < numberOfCars; i++) {
-
+  for (var i = 0; i < carArray.length; i++) {
     frontendCarArray[i] = {
       _xPos: carArray[i]._xPos,
       _yPos: carArray[i]._yPos,
@@ -133,6 +134,10 @@ function getFrontendCarArr() {
     }
   }
   return frontendCarArray;
+}
+
+function spliceFrontendCarArr(index) {
+   frontendCarArray.splice(index, 1);
 }
 
 function getCar(carId) {
@@ -157,5 +162,6 @@ module.exports = {
   getCarArr,
   setCarArr,
   getFrontendCarArr,
+  spliceFrontendCarArr,
   getCar
 };

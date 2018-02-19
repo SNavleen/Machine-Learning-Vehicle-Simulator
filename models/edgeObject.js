@@ -30,9 +30,7 @@ function orientationOfEdge(node1, node2){
 	if (deg < 0) {
 		deg = 360 + deg;
 	}
-	// console.log(deg);
 	return deg;
-	// console.log(nodeArray[node1]);
 	// return nodeArray[node1-1];
 }
 
@@ -55,7 +53,6 @@ module.exports = class edgeObject{
 		}
 
 		this._orientation = orientationOfEdge(this.startNodeId - 1, this.endNodeId - 1);
-		// console.log(this._orientation);
 		this._listOfCars = new Array();
 
   }

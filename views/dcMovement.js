@@ -115,7 +115,7 @@ function switchEdge(carId) {
     var nextEdgeEnd = currentCar.route[currentCar.route.indexOf(nextEdgeStart) + 1];
 
     // Scan through all edges to find the next one on the route
-    for (var i = 0; i < edgeArray.length; i++) {
+    for (var i = 1; i < edgeArray.length; i++) {
       // Switch to this edge
       if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
         map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
@@ -123,8 +123,6 @@ function switchEdge(carId) {
         map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
       }
     }
-  } else {
-    // TODO Car is done, handle this
   }
 
   return false;
@@ -153,15 +151,21 @@ function moveCar(carInfo) {
   var carId = carInfo.carId;
   var xPos = precisionRound(carInfo._xPos, 3);
   var yPos = precisionRound(carInfo._yPos, 3);
-  var xDestination = precisionRound(carInfo.xDestination, 3);
-  var yDestination = precisionRound(carInfo.yDestination, 3);
+  var route = carInfo.route;
+  var xDestination;
+  var yDestination;
+  var finalEdge = false;
 
-  var carFinished = false; // Used to determine when a car has reached it's destination
-
-  //  TODO This works but isn't fully connected to the front end, look into this once more
-  if (carFinished == true) {
-    //carArray.splice(i, 1);
-    //console.log(carArray[i]);
+  // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)
+  if (map.getEdgeObject(carInfo._currentEdgeId).startNodeId == route[route.length - 2]) {
+    xDestination = precisionRound(carInfo.xDestination, 3);
+    yDestination = precisionRound(carInfo.yDestination, 3);
+    finalEdge = true;
+  }
+  // The car is not yet on it's final edge so it's destination is set to the end node of it's current edge
+  else {
+    xDestination = precisionRound(map.getEdgeObject(carInfo._currentEdgeId).getEndNode().x, 3);
+    yDestination = precisionRound(map.getEdgeObject(carInfo._currentEdgeId).getEndNode().y, 3);
   }
 
   var speed = precisionRound(carInfo._speed, 3);
@@ -188,54 +192,31 @@ function moveCar(carInfo) {
     adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
 
-  // checks if the car needs to move along the xaxis
-  //console.log("EDGE ID",EdgeID);
-  //console.log("ORIENTATION:",map.getEdgeObject(29).orientation);
-
+  // Checks the remaining distance between the cars current position and current destination
   var xDifference = general.difference(xPos, xDestination);
   var yDifference = general.difference(yPos, yDestination);
 
-  // if (xDifference > 0.00001 || yDifference > 0.00001) { // TODO: dont know if i need this
+  // Checks if car has reached the end of its current edge
+  if (finalEdge == false && xDifference <= 250 && yDifference <= 250) {
+    switchEdge(carInfo.carId);
+  }
+  // Checks if the car has reached it's final destination
+  else if (finalEdge == true && xDifference <= 250 && yDifference <= 250) {
+    return null;
+  }
 
   if (slope == undefined) {
-    // console.log("yPos: ", yPos);
     carInfo._yPos = moveY(yPos, yDestination, speed);
-  } else if (slope == 0) {
-    // console.log("xPos: ", xPos);
+  }
+  else if (slope == 0) {
     carInfo._xPos = moveX(xPos, xDestination, speed);
-  } else {
-    // console.log("xPos: ", xPos);
+  }
+  else {
     carInfo._xPos = moveX(xPos, xDestination, speed);
     yPos = Math.floor((slope * xPos) + intercept);
-    // console.log("yPos: ", yPos);
     carInfo._yPos = moveY(yPos, yDestination, speed);
   }
 
-  // TODO: take this out before mergeing to master, I just have it here so we can refer back to this if the else condition does not work
-  //     var x = parseInt(A[0]) + 500;
-  //     var n = parseInt(B[0]);
-  //     var coordinates = [];
-  //     console.log("orientation", carArray[i]._orientation);
-  //
-  //     console.log("point 1", A[0], A[1]);
-  //     console.log("point 2", B[0], B[1]);
-  //     console.log("slope", m);
-  //     console.log("intercept", b);
-  //     console.log("RANGE:", A[0], B[0]);
-  //     var y = m * x + b;
-  //     // for (x; x <= n;x+= 50) {
-  //     //   console.log("TEST");
-  //     //   var y = m * x + b;
-  //     //   coordinates.push([x, y]);
-  //     // }
-  //     console.log("TREST FIN");
-  //     console.log(x, y);
-  //     carArray[i]._xPos = x;
-  //     carArray[i]._yPos = y;
-  //   }
-  // }
-
-  // console.log(carInfo);
   return carInfo;
 }
 
@@ -249,13 +230,22 @@ module.exports = function(io) {
     var dcMovementLoop = setInterval(function() {
       // This loop checks each car in carArray and moves it closer towards its destination
       for (var i = 0; i < carArray.length; i++) {
-        carArray[i] = moveCar(carArray[i]);
+        var currentCarInfo = moveCar(carArray[i]);
+
+        // If the move function returns null indicating that the current car is finished it's route
+        if (currentCarInfo == null) {
+          carArray.splice(i, 1);
+          carCreation.spliceFrontendCarArr(i);
+        }
+        // Checks to make sure car hasn't been spliced and then updates the car array
+        else {
+          carArray[i] = currentCarInfo;
+        }
+
+        if (carArray.length < 10) { }
       }
 
-      carCreation.setCarArr(carArray);
-
-      dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-      
-    }, 50); // How often the server updates the client
+      dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());     
+    }, 5); // How often the server updates the client
   });
 };

@@ -10,7 +10,7 @@ function readEdgeFile() {
   var file = "./map/SiouxFalls_net.tntp";
   var lines = fs.readFileSync(file).toString();
   var line = lines.split("\n");
-  var edgeId = 0;
+  var edgeId = 1;
   // console.log(line);
   for (var i = 0; i < line.length; i++) {
     // console.log(line[i]);
@@ -83,14 +83,11 @@ module.exports = class graphObject {
   }
   insertCarToEdge(carId, edgeId, colNum) {
     edgeArray[edgeId - 1].addCarToEdge(carId, colNum);
-    // console.log(edgeArray[edgeId-1]);
   }
   removeCarFromEdge(carId, edgeId, colNum) {
     edgeArray[edgeId - 1].removeCarFromEdge(carId, colNum);
-    // console.log(edgeArray[edgeId-1]);
   }
   getCarsOnEdge(edgeId) {
-    // console.log(edgeId);
     return edgeArray[edgeId - 1]._listOfCars;
   }
 }
