@@ -247,6 +247,6 @@ module.exports = function(io) {
       }
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());     
-    }, 10); // How often the server updates the client
+    }, 100); // How often the server updates the client
   });
 };

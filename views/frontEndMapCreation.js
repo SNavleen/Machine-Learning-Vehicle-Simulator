@@ -20,7 +20,7 @@ function sendMapToFront() {
 		StartyPos: map.getStartNode(i).y,
 	  	EndxPos: map.getEndNode(i).x,
 		EndyPos: map.getEndNode(i).y,
-		orientation: map.getEdgeObject(i).orientation
+		orientation: map.getOrientationOfEdge(i)
 	};
 		frontEndMapArray.push(frontEndMap);
 	}
