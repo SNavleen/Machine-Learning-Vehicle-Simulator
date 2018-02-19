@@ -155,7 +155,16 @@ function moveCar(carInfo) {
   var xDestination;
   var yDestination;
   var finalEdge = false;
-  carInfo._orientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
+  var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
+  
+  // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
+  if (carOrientation == 90) {
+    carOrientation = 270;
+  }
+  else if (carOrientation == 270) {
+    carOrientation = 90;
+  }
+  carInfo._orientation = carOrientation;
 
   // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)
   if (map.getEdgeObject(carInfo._currentEdgeId).startNodeId == route[route.length - 2]) {
@@ -242,11 +251,9 @@ module.exports = function(io) {
         else {
           carArray[i] = currentCarInfo;
         }
-
-        if (carArray.length < 10) { }
       }
 
-      dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());     
-    }, 100); // How often the server updates the client
+      dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
+    }, 10); // How often the server updates the client
   });
 };

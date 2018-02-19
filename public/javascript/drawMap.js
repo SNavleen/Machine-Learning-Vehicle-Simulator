@@ -27,17 +27,12 @@ function drawMap(){
           EndxPos = map[i].EndxPos/ratio,
           EndyPos = map[i].EndyPos/ratio,
           angle = map[i].orientation;
-      
-      // TODO This if statement needs to be removed before its merged into master, it is unessesary after merge with pauls branch
-      if(angle<0){
-        angle = 360 + angle;
-      }
 
       createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
       
-      i ++;
+      i++;
     }
-  }catch(e){
+  } catch(e){
     console.log(e);
   }
 }
