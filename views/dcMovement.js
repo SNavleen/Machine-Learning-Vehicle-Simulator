@@ -190,7 +190,7 @@ function moveCar(carInfo) {
   } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
     //adjustSpeed(carId, 30);
   } else {
-    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
+    adjustSpeed(carId, 250); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
 
   // Checks the remaining distance between the cars current position and current destination
