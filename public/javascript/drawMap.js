@@ -188,22 +188,18 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   primaryCtx.restore();
 
   //draw stop line at the front of the yellow line
-  primaryCtx.save();
   primaryCtx.strokeStyle= "red";
   primaryCtx.lineWidth = stopLineWidth;
   primaryCtx.beginPath();
   drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"red",stopLineWidth,[0]);
   primaryCtx.stroke();
-  primaryCtx.restore();
 
   //draw stop line at the back of the yellow line
-  primaryCtx.save();
   primaryCtx.strokeStyle= "green";
   primaryCtx.lineWidth = stopLineWidth;
   primaryCtx.beginPath();
   drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"green",stopLineWidth,[0]);
   primaryCtx.stroke();
-  primaryCtx.restore();
 }
 
 function drawLines(startX,startY, endX,endY, fillColor,width,dash) {
