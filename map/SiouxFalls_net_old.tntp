@@ -1,8 +1,7 @@
-<NUMBER OF ZONES> 24											
 <NUMBER OF NODES> 24											
 <FIRST THRU NODE> 1											
 <NUMBER OF LINKS> 76											
-<END OF METADATA>											
+<END OF METADATA>
 
 
 ~ 	Init node 	Term node 	Capacity 	Length 	Free Flow Time 	B	Power	Speed limit 	Toll 	Type	;

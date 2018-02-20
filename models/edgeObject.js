@@ -25,11 +25,14 @@ function orientationOfEdge(node1, node2){
 	var deltaY = nodeArray[node2].y - nodeArray[node1].y;
 	var rad = Math.atan2(deltaY, deltaX);
 
-	var deg = rad * (180 / Math.PI)
-	// console.log(deg);
+	var deg = rad * (180 / Math.PI);
+
+	// Flips degrees if negative
+	if(deg < 0) {
+		deg = 360 + deg;
+    }
+
 	return deg;
-	// console.log(nodeArray[node1]);
-	// return nodeArray[node1-1];
 }
 
 
@@ -51,7 +54,6 @@ module.exports = class edgeObject{
 		}
 
 		this._orientation = orientationOfEdge(this.startNodeId - 1, this.endNodeId - 1);
-		// console.log(this._orientation);
 		this._listOfCars = new Array();
 
   }

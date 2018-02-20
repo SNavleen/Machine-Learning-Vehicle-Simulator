@@ -17,6 +17,8 @@ function drawMap(){
     primaryCtx.fillRect(0,0,900,1100);
 
     var i = 0;
+
+    //console.log("map length:",map.length);
     while (i < map.length){
       var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
       //the lower the number, the bigger the size of the map will be
@@ -25,17 +27,12 @@ function drawMap(){
           EndxPos = map[i].EndxPos/ratio,
           EndyPos = map[i].EndyPos/ratio,
           angle = map[i].orientation;
-      
-      //this if statement needs to be removed before its merged into master, it is unessesary after merge with pauls branch
-      if(angle<0){
-        angle = 360 + angle;
-      }
 
       createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
       
-      i ++;
+      i++;
     }
-  }catch(e){
+  } catch(e){
     console.log(e);
   }
 }

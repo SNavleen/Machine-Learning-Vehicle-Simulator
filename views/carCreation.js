@@ -1,117 +1,167 @@
 var carObject = require('../models/carObject.js');
+var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
-var numberOfCars = 1;
-var currentCarID = 0;
+var numberOfCars = 5;
+var currentCarId = 0; // TODO See if we should change this to start at 1 (there shouldn't be a car 0)
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
 
-
-function createDumbCars(){
+function createDumbCars() {
   //initializes dumb cars
   for (var i = 0; i < numberOfCars; i++) {
-      carArray[i] = new carObject;
-      carArray[i] = generateDumbCar();
+    carArray[i] = new carObject;
+    carArray[i] = generateDumbCar();
   }
 }
 
-function generateDumbCar(){
+function generateDumbCar() {
+  var edgeArray = map.getEdgeArray();
+  var edgeArrayLen = map.getNumOfEdges();
+
+  // Initalize edge ID's to be ==
+  var route;
+  var edgeIdStart = 0;
+  var edgeIdEnd = 0; // Note: This might not always be the edge it ends on (it might only have the end node of the edge the car actually does end on)
+
+  // Check to ensure DJK is not run on a single edge + is not passed same start and end node
+  while (edgeIdStart == edgeIdEnd) {
+    edgeIdStart = general.randInterval(1, edgeArrayLen);
+    edgeIdEnd = general.randInterval(1, edgeArrayLen);
+    if (edgeIdStart != edgeIdEnd) {
+      var edgeObjStart = map.getEdgeObject(edgeIdStart);
+      var edgeObjEnd = map.getEdgeObject(edgeIdEnd);
+      // Second check to see if the two edges selected share a common intersection (would cause problems with DJK - Paul)
+      if (edgeObjStart.getStartNode().nodeId == edgeObjEnd.getStartNode().nodeId ||
+          edgeObjStart.getStartNode().nodeId == edgeObjEnd.getEndNode().nodeId ||
+          edgeObjStart.getEndNode().nodeId == edgeObjEnd.getStartNode().nodeId ||
+          edgeObjStart.getEndNode().nodeId == edgeObjEnd.getEndNode().nodeId) {
+        edgeIdStart = edgeIdEnd; // Sets while condition to true to re-run the loop and regenerate values
+      }
+
+      route = map.dijkstrasGraph.shortestPath(edgeObjStart.getStartNode().nodeId, edgeObjEnd.getEndNode().nodeId).concat([edgeObjStart.getStartNode().nodeId]).reverse();
+
+      // Temporary fix to set minimum route length to 3
+      // With a route length of 2 there's potential for cars to move in the wrong direction
+      // TODO Hard coded bug fix for to stop route from ending on node 2 (see github issue)
+      if ((edgeIdStart != edgeIdEnd && route.length < 3) || route[route.length - 1] == '2') {
+        edgeIdStart = edgeIdEnd; // Sets while condition to true to re-run the loop and regenerate values
+      }
+      // Generations successful, reset values to be on the route to prevent errors (ask Paul for clarification)
+      else if (edgeIdStart != edgeIdEnd && route.length >= 3) {
+        // Scan through all edges
+        for (var i = 1; i < edgeArray.length; i++) {
+          // Finds the first edge on the route
+          if (edgeArray[i].startNodeId == route[0] && edgeArray[i].endNodeId == route[1]) {
+            edgeIdStart = edgeArray[i].edgeId;
+            // Not being used ATM, add back in if needed (TODO Make sure this isn't modifying the map object itself)
+            // edgeObjStart.getStartNode().nodeId = edgeArray[i].startNodeId;
+            // edgeObjStart.getEndNode().nodeId = edgeArray[i].endNodeId;
+          }
+
+          // Finds the last edge on the route
+          if (edgeArray[i].startNodeId == route[route.length - 2] && edgeArray[i].endNodeId == route[route.length - 1]) {
+            edgeIdEnd = edgeArray[i].edgeId;
+            // Not being used ATM, add back in if needed (TODO Make sure this isn't modifying the map object itself)
+            // edgeObjEnd.getStartNode().nodeId = edgeArray[i].startNodeId;
+            // edgeObjEnd.getEndNode().nodeId = edgeArray[i].endNodeId;
+          }
+        }
+      }
+    }
+  }
+
   var carType = "Dumb";
-  var start = randomizeCarPos();
-  var end = randomizeCarPos();
-  var route = map.dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse();
-  let car = new carObject(currentCarID, start.x, start.y, end.x, end.y, carType, route);
-  currentCarID++; // This will need to be removed from dumbcar and applied to all vehicle spawns
+  var start = randomizeCarPos(edgeIdStart);
+  var end = randomizeCarPos(edgeIdEnd);
+  let car = new carObject(currentCarId, start.x, start.y, end.x, end.y, carType, route);
   car._xPos = start.x;
   car._yPos = start.y;
+  car._orientation = map.getEdgeObject(edgeIdStart).orientation;
+  car._currentEdgeId = edgeIdStart;
+  map.insertCarToEdge(currentCarId, edgeIdStart, 0);
 
-  // Initalizes cars starting orientation (since atm it's either going left or right it automatically sets this here)
-  // This might need to change eventually because it's a bit of a work around (ask Paul for further explanation)
-  if (start.x > end.x) { car._orientation = 180; }
-  else { car._orientation = 0; }
-
+  currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   return car;
 }
 
-// TODO This randomization will have to be adjusted once djkistras in implemented
-function randomizeCarPos() {
-  /* Temp removal, doesn't work at the moment (ask Paul)
-  // TODO This gets called twice
-  // TODO Must insert cars to edge
-  //get StartX
-  //get EdgeArray
-  var edgeArrayLen = map.getNumOfEdges();
-  var EdgeID = (Math.floor(Math.random()*edgeArrayLen));
+function randomizeCarPos(edgeId) {
+  // Get the (x, y) of the startNode
+  var edgeStartNode = map.getStartNode(edgeId);
+  // Get the (x, y) of the endNode
+  var edgeEndNode = map.getEndNode(edgeId);
 
+  // Get the min and max of the x start and end node
+  var xMin = general.min(edgeStartNode.x, edgeEndNode.x);
+  var xMax = general.max(edgeStartNode.x, edgeEndNode.x);
+  // console.log("RandX min: ", xMin, " max: ", xMax);
 
-  var A = [map.getStartX(EdgeID),map.getStartY(EdgeID)];
-  var B = [map.getEndX(EdgeID),map.getEndY(EdgeID)];
-  var m = slope(A, B);
-  var b = intercept(A, m);
+  // Get the min and max of the y start and end node
+  var yMin = general.min(edgeStartNode.y, edgeEndNode.y);
+  var yMax = general.max(edgeStartNode.y, edgeEndNode.y);
 
-  var coordinates = [];
-  for (var x = A[0]; x <= B[0]; x= x+0.5) {
-    var y = m * x + b;
-    coordinates.push([x, y]);
+  var randX = (xMin + xMax) / 2; // Temp removal by Paul to spawn in middle of edge // general.randInterval(xMin, xMax);
+  var randY;
+
+  // Set all the values in the formula y = m * x + b
+  var slope = general.slope(edgeStartNode, edgeEndNode);
+  var intercept = general.intercept(edgeStartNode, slope);
+
+  if (slope == undefined) {
+    randY =  (yMin + yMax) / 2; // Temp removal by Paul to spawn in middle of edge // general.randInterval(yMin, yMax);
+    
+    return {
+      x: randX,
+      y: randY
+    };
   }
 
-  var occupancy = map.getCardsOnEdge(EdgeID);
-  console.log(coordinates);
-  var spawn = coordinates[Math.floor(Math.random()*coordinates.length)];
 
+  randY = (yMin + yMax) / 2; // Temp removal by Paul to spawn in middle of edge // Math.floor((slope * randX) + intercept);
 
-  // var x = Math.floor(Math.random() * 6);
-  // var y = Math.floor(Math.random() * 6);
-
-  return {x: spawn[0], y: spawn[1]};
-  */
-
-  var x = Math.floor(Math.random() * 6);
-  var y = Math.floor(Math.random() * 6);
-  return {x: x, y: y};
+  return {
+    x: randX,
+    y: randY
+  };
 }
 
-function getFrontendCarArr(){
-  for (var i = 0; i < numberOfCars; i++) {
-      frontendCarArray[i] = {_xPos: carArray[i]._xPos, _yPos: carArray[i]._yPos, _orientation: carArray[i]._orientation}
+function getFrontendCarArr() {
+  for (var i = 0; i < carArray.length; i++) {
+    frontendCarArray[i] = {
+      _xPos: carArray[i]._xPos,
+      _yPos: carArray[i]._yPos,
+      _orientation: carArray[i]._orientation
+    }
   }
   return frontendCarArray;
 }
 
-function getCar(carID) {
+function spliceFrontendCarArr(index) {
+   frontendCarArray.splice(index, 1);
+}
+
+function getCar(carId) {
   for (var i = 0; i < carArray.length; i++) {
-    if (carArray[i].carID == carID) {
+    if (carArray[i].carId == carId) {
       return carArray[i];
     }
   }
   return "Error in carCreation.js";
 }
 
-function slope(a, b) {
-    if (a[0] == b[0]) {
-        return null;
-    }
-
-    return (b[1] - a[1]) / (b[0] - a[0]);
-}
-function intercept(point, slope) {
-    if (slope === null) {
-        // vertical line
-        return point[0];
-    }
-
-    return point[1] - slope * point[0];
-}
-
-
-
-
-function getCarArr(){
+function getCarArr() {
   return carArray;
 }
 
-function setCarArr(cars){
+function setCarArr(cars) {
   carArray = cars;
 }
 
-module.exports = {createDumbCars, getCarArr, setCarArr, getFrontendCarArr, getCar};
+module.exports = {
+  createDumbCars,
+  getCarArr,
+  setCarArr,
+  getFrontendCarArr,
+  spliceFrontendCarArr,
+  getCar
+};
