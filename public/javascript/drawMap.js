@@ -29,7 +29,8 @@ function drawMap(){
           angle = map[i].orientation;
 
       createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
-      
+      primaryCtx.stroke();
+
       i++;
     }
   } catch(e){
@@ -46,7 +47,13 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   var whiteLines = middleLane/2;
 
   //draw main black road
+  primaryCtx.save();
+  primaryCtx.strokeStyle= "black";
+  primaryCtx.lineWidth = widthRoads;
+  primaryCtx.beginPath();
   drawLines(StartxPos,StartyPos,EndxPos,EndyPos,"black",widthRoads,[0]);
+  primaryCtx.stroke();
+  primaryCtx.restore();
 
   //make intersections black
   primaryCtx.fillStyle = "black";
@@ -162,27 +169,45 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   }
 
   //draw yellow middle line
+  primaryCtx.save();
+  primaryCtx.strokeStyle= "yellow";
+  primaryCtx.lineWidth = lineWidth;
+  primaryCtx.beginPath();
   drawLines(yellowx1,yellowy1,yellowx2,yellowy2,"yellow",lineWidth,[0]);
+  primaryCtx.stroke();
+  primaryCtx.restore();
 
   //draw dashed white lines
+  primaryCtx.save();
+  primaryCtx.strokeStyle= "white";
+  primaryCtx.lineWidth = lineWidth;
+  primaryCtx.beginPath();
   drawLines(white1x1,white1y1,white1x2,white1y2,"white",lineWidth,[5]);
   drawLines(white2x1,white2y1,white2x2,white2y2,"white",lineWidth,[5]);
+  primaryCtx.stroke();
+  primaryCtx.restore();
 
   //draw stop line at the front of the yellow line
+  primaryCtx.save();
+  primaryCtx.strokeStyle= "red";
+  primaryCtx.lineWidth = stopLineWidth;
+  primaryCtx.beginPath();
   drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"red",stopLineWidth,[0]);
+  primaryCtx.stroke();
+  primaryCtx.restore();
 
   //draw stop line at the back of the yellow line
+  primaryCtx.save();
+  primaryCtx.strokeStyle= "green";
+  primaryCtx.lineWidth = stopLineWidth;
+  primaryCtx.beginPath();
   drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"green",stopLineWidth,[0]);
+  primaryCtx.stroke();
+  primaryCtx.restore();
 }
 
 function drawLines(startX,startY, endX,endY, fillColor,width,dash) {
-  primaryCtx.save();
-  primaryCtx.strokeStyle= fillColor;
-  primaryCtx.lineWidth = width;
-  primaryCtx.beginPath();
   primaryCtx.setLineDash(dash);
   primaryCtx.moveTo(startX, startY);
   primaryCtx.lineTo(endX, endY);
-  primaryCtx.stroke();
-  primaryCtx.restore();
 }

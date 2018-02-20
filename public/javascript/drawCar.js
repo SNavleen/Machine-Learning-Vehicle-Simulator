@@ -8,7 +8,7 @@ function drawCars() {
     // Prints out recieved DC array to console
     //console.log(data);
     primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
-    //drawMap();
+    drawMap();
 
     // TODO: fix so it the drawn car looks correct, (x, y) are being passed as correct values
     // TODO: fix the orientation since its passed but needs to be mirrored
