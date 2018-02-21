@@ -151,7 +151,10 @@ function isRoadBlocked(carId) {
 
   // Checks the distance of car from the startNode to determine if a car is blocking the road
   for (var i = 0; i < carsOnNextEdge.length; i++) {
-    // console.log(euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos));
+    // Checks if a car is 1000 away from intersection
+    if (1000 >= euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos)) {
+      return true;
+    }
   }
 
   return false;
