@@ -12,13 +12,14 @@ function drawMap(){
     }
   }
   try{
+    //mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
     //greay background
-    primaryCtx.fillStyle = "#D3D3D3";
-    primaryCtx.fillRect(0,0,900,1100);
+    mapCtx.fillStyle = "#D3D3D3";
+    mapCtx.fillRect(0,0,900,1100);
 
     var i = 0;
 
-    //console.log("map length:",map.length);
+    console.log("map length:",map.length);
     while (i < map.length){
       var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
       //the lower the number, the bigger the size of the map will be
@@ -29,7 +30,6 @@ function drawMap(){
           angle = map[i].orientation;
 
       createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
-      primaryCtx.stroke();
 
       i++;
     }
@@ -39,6 +39,7 @@ function drawMap(){
 }
 
 function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
+  system.log("GOT");
   //road variables
   var widthRoads = 70;
   var lineWidth = 3;
@@ -47,15 +48,15 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   var whiteLines = middleLane/2;
 
   //draw main black road
-  primaryCtx.strokeStyle= "black";
-  primaryCtx.lineWidth = widthRoads;
-  primaryCtx.beginPath();
+  mapCtx.strokeStyle= "black";
+  mapCtx.lineWidth = widthRoads;
+  mapCtx.beginPath();
   drawLines(StartxPos,StartyPos,EndxPos,EndyPos,"black",widthRoads,[0]);
-  primaryCtx.stroke();
+  mapCtx.stroke();
 
   //make intersections black
-  primaryCtx.fillStyle = "black";
-  primaryCtx.fillRect(StartxPos-middleLane,StartyPos-middleLane,widthRoads,widthRoads);
+  mapCtx.fillStyle = "black";
+  mapCtx.fillRect(StartxPos-middleLane,StartyPos-middleLane,widthRoads,widthRoads);
 
   //variables for yellow line
   var yellowx1=StartxPos,yellowy1=StartyPos,yellowx2=EndxPos,yellowy2=EndyPos;
@@ -167,39 +168,38 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   }
 
   //draw yellow middle line
-  primaryCtx.strokeStyle= "yellow";
-  primaryCtx.lineWidth = lineWidth;
-  primaryCtx.beginPath();
+  mapCtx.strokeStyle= "yellow";
+  mapCtx.lineWidth = lineWidth;
+  mapCtx.beginPath();
   drawLines(yellowx1,yellowy1,yellowx2,yellowy2,"yellow",lineWidth,[0]);
-  primaryCtx.stroke();
+  mapCtx.stroke();
 
   //draw dashed white lines
-  primaryCtx.save();
-  primaryCtx.strokeStyle= "white";
-  primaryCtx.lineWidth = lineWidth;
-  primaryCtx.beginPath();
+  mapCtx.save();
+  mapCtx.strokeStyle= "white";
+  mapCtx.lineWidth = lineWidth;
+  mapCtx.beginPath();
   drawLines(white1x1,white1y1,white1x2,white1y2,"white",lineWidth,[5]);
   drawLines(white2x1,white2y1,white2x2,white2y2,"white",lineWidth,[5]);
-  primaryCtx.stroke();
-  primaryCtx.restore();
+  mapCtx.stroke();
+  mapCtx.restore();
 
   //draw stop line at the front of the yellow line
-  primaryCtx.strokeStyle= "red";
-  primaryCtx.lineWidth = stopLineWidth;
-  primaryCtx.beginPath();
+  mapCtx.strokeStyle= "red";
+  mapCtx.lineWidth = stopLineWidth;
+  mapCtx.beginPath();
   drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"red",stopLineWidth,[0]);
-  primaryCtx.stroke();
+  mapCtx.stroke();
 
   //draw stop line at the back of the yellow line
-  primaryCtx.strokeStyle= "green";
-  primaryCtx.lineWidth = stopLineWidth;
-  primaryCtx.beginPath();
+  mapCtx.strokeStyle= "green";
+  mapCtx.beginPath();
   drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"green",stopLineWidth,[0]);
-  primaryCtx.stroke();
+  mapCtx.stroke();
 }
 
 function drawLines(startX,startY, endX,endY, fillColor,width,dash) {
-  primaryCtx.setLineDash(dash);
-  primaryCtx.moveTo(startX, startY);
-  primaryCtx.lineTo(endX, endY);
+  mapCtx.setLineDash(dash);
+  mapCtx.moveTo(startX, startY);
+  mapCtx.lineTo(endX, endY);
 }

@@ -1,3 +1,4 @@
+var mapCtx = document.getElementById("mapCanvas").getContext("2d");
 var primaryCtx = document.getElementById("canvas").getContext("2d");
 //var secondaryCanvas = document.createElement("canvas"), secondaryCtx = secondaryCanvas.getContext("2d");
 

@@ -31,10 +31,38 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-12">
-					<canvas id="canvas" class="align-self-center" width="900" height="1100"></canvas>
+					<canvas id="mapCanvas" style="z-index: 1;
+position:absolute;
+left:0px;
+top:0px;
+" class="align-self-center" width="900" height="1100"></canvas>
+					<canvas id="canvas" style="z-index: 2;
+position:absolute;
+left:0px;
+top:0px;
+" class="align-self-center" width="900" height="1100"></canvas>
 				</div>
 			</div>
 		</div>
+<!-- <div id="canvasesdiv" style="position:relative; width:900px; height:1100px">
+<canvas id="mapCanvas"
+style="z-index: 1;
+position:absolute;
+left:0px;
+top:0px;
+" height="1100px" width="900">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+<canvas id="canvas"
+style="z-index: 2;
+position:absolute;
+left:0px;
+top:0px;
+" height="1100px" width="900">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+</canvas>
+</div> -->
 	</body>
   <script src="/socket.io/socket.io.js"></script>
   <script src="./javascript/drawMap.js"></script>
