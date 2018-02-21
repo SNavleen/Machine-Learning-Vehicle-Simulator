@@ -12,6 +12,7 @@ var carArray = carCreation.getCarArr();
 // TODO: Once the car gets to the node, it does not turn yet
 // TODO Handle all magic numbers (specifically for precisionRound)
 // TODO ALSO check if precision round is still needed
+// TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
@@ -42,10 +43,11 @@ function adjustSpeed(carId, desiredSpeed) {
   return false;
 }
 
-// Determines the distance between two cars
-function euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY) {
-  var xDifference = general.difference(currentCarX, checkedCarX);
-  var yDifference = general.difference(currentCarY, checkedCarY);
+// TODO Move this to general
+// Determines the distance between two points on the map
+function euclideanDistance(X1, Y1, X2, Y2) {
+  var xDifference = general.difference(X1, X2);
+  var yDifference = general.difference(Y1, Y2);
   var distance = Math.sqrt(xDifference * xDifference + yDifference * yDifference);
   return distance;
 }
@@ -64,6 +66,7 @@ function collisionAvoidanceCheck(carId) {
   // Check against each car currently on edge
   for (var i = 0; i < carsOnEdge.length; i++) {
     // Makes sure not to check itself
+    // NOTE: carsOnEdge[i] may already be just the carId
     if (currentCar._carId != carsOnEdge[i]._carId) {
       checkedCarX = carsOnEdge[i]._xPos;
       checkedCarY = carsOnEdge[i]._yPos;
@@ -102,20 +105,12 @@ function collisionAvoidanceCheck(carId) {
   return shortestDistance;
 }
 
-// This moves the current car onto the next edge in its route
-function switchEdge(carId) {
+// Returns the edgeId of the passed in cars next edge on it's current route
+function getNextEdgeInRoute(carId) {
   var edgeArray = map.getEdgeArray();
   var currentCar = carCreation.getCar(carId);
   var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeId).endNodeId;
   var nextEdgeStart = currentEdgeEnd;
-  
-  var currentIntersection = map.getEdgeObject(currentCar._currentEdgeId).getEndNode();
-  var currentIntersectionQueue = currentIntersection._intersectionQueue;
-
-  // Time out for when to remove a car from the intersectionQueue, this delay stops multiple cars from entering the intersection at the same time
-  setTimeout(function() {
-    currentIntersectionQueue.shift(); // Pops the first value of the queue
-  }, 2000);
 
   // Finds the ID of the next node in the route
   if (nextEdgeStart != currentCar.route[currentCar.route.length - 1]) {
@@ -125,17 +120,46 @@ function switchEdge(carId) {
     for (var i = 1; i < edgeArray.length; i++) {
       // Switch to this edge
       if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
-        map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
-        currentCar._currentEdgeId = edgeArray[i].edgeId;
-        map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+        return edgeArray[i].edgeId;
       }
     }
+  }
+}
+
+// This moves the current car onto the next edge in its route
+function switchEdge(carId) {  
+  var currentCar = carCreation.getCar(carId);
+  var currentIntersection = map.getEdgeObject(currentCar._currentEdgeId).getEndNode();
+  var currentIntersectionQueue = currentIntersection._intersectionQueue;
+
+  // Time out for when to remove a car from the intersectionQueue, this delay stops multiple cars from entering the intersection at the same time
+  setTimeout(function() {
+    currentIntersectionQueue.shift(); // Pops the first value of the queue
+  }, 2000);
+
+  map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+  currentCar._currentEdgeId = getNextEdgeInRoute(carId);
+  map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+}
+
+// Function to check if the next edge in the current vehicles path has space available to enter
+function isRoadBlocked(carId) {
+  var nextEdgeId = getNextEdgeInRoute(carId);
+  var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId);
+  var nextEdgeStartNode = map.getStartNode(nextEdgeId);
+  var nextEdgeStartNodeX = nextEdgeStartNode.x;
+  var nextEdgeStartNodeY = nextEdgeStartNode.y;
+
+  // Checks the distance of car from the startNode to determine if a car is blocking the road
+  for (var i = 0; i < carsOnNextEdge.length; i++) {
+    console.log(carCreation.getCar(carsOnNextEdge[i])._yPos);
+    
+    //console.log(euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos));
   }
 
   return false;
 }
 
-// TODO Handle if car can't move to next edge
 // Used to handle checking when a car can go through an intersection
 function intersectionCheck(carId) {
   var currentCar = carCreation.getCar(carId);
@@ -148,7 +172,15 @@ function intersectionCheck(carId) {
   }
   // Checks if the car has reached the front of the queue (Note: Actual dequeue is handled in switchEdge)
   if (currentIntersectionQueue.indexOf(carId) == 0) {
-    adjustSpeed(carId, 500);
+    // if next edge is full, remove car from front of queue and re-add it to the back
+    if (isRoadBlocked(carId)) {
+      currentIntersectionQueue.shift();
+      currentIntersection.addToIntersectionQueue(carId);
+    }
+    // Trigger car to enter intersection
+    else {
+      adjustSpeed(carId, 500);
+    }
   }
 }
 
