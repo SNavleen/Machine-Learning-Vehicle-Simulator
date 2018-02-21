@@ -47,13 +47,11 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   var whiteLines = middleLane/2;
 
   //draw main black road
-  primaryCtx.save();
   primaryCtx.strokeStyle= "black";
   primaryCtx.lineWidth = widthRoads;
   primaryCtx.beginPath();
   drawLines(StartxPos,StartyPos,EndxPos,EndyPos,"black",widthRoads,[0]);
   primaryCtx.stroke();
-  primaryCtx.restore();
 
   //make intersections black
   primaryCtx.fillStyle = "black";
@@ -169,13 +167,11 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   }
 
   //draw yellow middle line
-  primaryCtx.save();
   primaryCtx.strokeStyle= "yellow";
   primaryCtx.lineWidth = lineWidth;
   primaryCtx.beginPath();
   drawLines(yellowx1,yellowy1,yellowx2,yellowy2,"yellow",lineWidth,[0]);
   primaryCtx.stroke();
-  primaryCtx.restore();
 
   //draw dashed white lines
   primaryCtx.save();
