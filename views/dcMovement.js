@@ -36,8 +36,7 @@ var minimumSlowDownDistance = function(currentSpeed) {
 function adjustSpeed(carId, desiredSpeed) {
   if (carCreation.getCar(carId)._speed < desiredSpeed) {
     carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 100;
-  }
-  else if (carCreation.getCar(carId)._speed > desiredSpeed) {
+  } else if (carCreation.getCar(carId)._speed > desiredSpeed) {
     carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 100;
   }
   return false;
@@ -127,7 +126,7 @@ function getNextEdgeInRoute(carId) {
 }
 
 // This moves the current car onto the next edge in its route
-function switchEdge(carId) {  
+function switchEdge(carId) {
   var currentCar = carCreation.getCar(carId);
   var currentIntersection = map.getEdgeObject(currentCar._currentEdgeId).getEndNode();
   var currentIntersectionQueue = currentIntersection._intersectionQueue;
@@ -152,9 +151,7 @@ function isRoadBlocked(carId) {
 
   // Checks the distance of car from the startNode to determine if a car is blocking the road
   for (var i = 0; i < carsOnNextEdge.length; i++) {
-    console.log(carCreation.getCar(carsOnNextEdge[i])._yPos);
-    
-    //console.log(euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos));
+    // console.log(euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos));
   }
 
   return false;
@@ -213,12 +210,11 @@ function moveCar(carInfo) {
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
   var approachingIntersection = false;
-  
+
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
     carOrientation = 270;
-  }
-  else if (carOrientation == 270) {
+  } else if (carOrientation == 270) {
     carOrientation = 90;
   }
   carInfo._orientation = carOrientation;
@@ -252,8 +248,7 @@ function moveCar(carInfo) {
     // Checks if car has reached the end of its current edge
     if (xDifference <= 0 && yDifference <= 0) {
       switchEdge(carInfo.carId);
-    }
-    else if (xDifference == 0 && yDifference < 2000) {
+    } else if (xDifference == 0 && yDifference < 2000) {
       approachingIntersection = true;
       adjustSpeed(carId, 0);
 
@@ -261,8 +256,7 @@ function moveCar(carInfo) {
       if (speed == 0) {
         intersectionCheck(carId);
       }
-    }
-    else if (yDifference == 0 && xDifference < 2000) {
+    } else if (yDifference == 0 && xDifference < 2000) {
       approachingIntersection = true;
       adjustSpeed(carId, 0);
 
@@ -297,11 +291,9 @@ function moveCar(carInfo) {
 
   if (slope == undefined) {
     carInfo._yPos = moveY(yPos, yDestination, speed);
-  }
-  else if (slope == 0) {
+  } else if (slope == 0) {
     carInfo._xPos = moveX(xPos, xDestination, speed);
-  }
-  else {
+  } else {
     carInfo._xPos = moveX(xPos, xDestination, speed);
     yPos = Math.floor((slope * xPos) + intercept);
     carInfo._yPos = moveY(yPos, yDestination, speed);
@@ -324,6 +316,7 @@ module.exports = function(io) {
 
         // If the move function returns null indicating that the current car is finished it's route
         if (currentCarInfo == null) {
+          map.removeCarFromEdge(carArray[i].carId, carArray[i]._currentEdgeId, 0);
           carArray.splice(i, 1);
           carCreation.spliceFrontendCarArr(i);
         }

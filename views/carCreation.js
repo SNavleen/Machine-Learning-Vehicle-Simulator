@@ -24,7 +24,7 @@ function setupRoute() {
     if (edgeIdStart != edgeIdEnd) {
       var edgeObjStart = map.getEdgeObject(edgeIdStart);
       var edgeObjEnd = map.getEdgeObject(edgeIdEnd);
-      
+
       // Nodes for start/end of route
       var startEdgeStartNodeId = edgeObjStart.getStartNode().nodeId;
       var startEdgeEndNodeId = edgeObjStart.getEndNode().nodeId;
@@ -32,9 +32,9 @@ function setupRoute() {
       var endEdgeEndNodeId = edgeObjEnd.getEndNode().nodeId;
       // Second check to see if the two edges selected share a common intersection (would cause problems with DJK - Paul)
       if (startEdgeStartNodeId == endEdgeStartNodeId ||
-          startEdgeStartNodeId == endEdgeEndNodeId ||
-          startEdgeEndNodeId == endEdgeStartNodeId ||
-          startEdgeEndNodeId == endEdgeEndNodeId) {
+        startEdgeStartNodeId == endEdgeEndNodeId ||
+        startEdgeEndNodeId == endEdgeStartNodeId ||
+        startEdgeEndNodeId == endEdgeEndNodeId) {
         edgeIdStart = edgeIdEnd; // Sets while condition to true to re-run the loop and regenerate values
       }
 
@@ -124,8 +124,8 @@ function randomizeCarPos(edgeId) {
   var intercept = general.intercept(edgeStartNode, slope);
 
   if (slope == undefined) {
-    randY =  (yMin + yMax) / 2; // Temp removal by Paul to spawn in middle of edge // general.randInterval(yMin, yMax);
-    
+    randY = (yMin + yMax) / 2; // Temp removal by Paul to spawn in middle of edge // general.randInterval(yMin, yMax);
+
     return {
       x: randX,
       y: randY
@@ -153,7 +153,7 @@ function getFrontendCarArr() {
 }
 
 function spliceFrontendCarArr(index) {
-   frontendCarArray.splice(index, 1);
+  frontendCarArray.splice(index, 1);
 }
 
 function getCar(carId) {
