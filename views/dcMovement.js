@@ -141,6 +141,7 @@ function switchEdge(carId) {
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
 }
 
+// TODO This functionality might have to be changed a bit in the future. Once a road becomes free the car that has been waiting the longest should be the first to go (instead of getting sent to the back of the queue)
 // Function to check if the next edge in the current vehicles path has space available to enter
 function isRoadBlocked(carId) {
   var nextEdgeId = getNextEdgeInRoute(carId);
@@ -151,8 +152,10 @@ function isRoadBlocked(carId) {
 
   // Checks the distance of car from the startNode to determine if a car is blocking the road
   for (var i = 0; i < carsOnNextEdge.length; i++) {
-    // Checks if a car is 1000 away from intersection
-    if (1000 >= euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos)) {
+    // Below determines the distance each vehicle on the edge is away from the intersection node
+    var closestVehicleToIntersection = euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos);
+    // Checks if a car is 1000 away from intersection an returns trun to indicate that the intersection is currently blocked
+    if (1000 >= closestVehicleToIntersection) {
       return true;
     }
   }
