@@ -1,45 +1,42 @@
 //Draw the grid/map
 var map;
-function drawMap(){
+function loadMapData(){
   if(map == undefined){
     var socket = io();
     socket.on('mapArray',function(data){
-        //console.log(data);
+        console.log(data);
         map = data;
+        drawMap(map);
     });
     if(map != undefined){
       socket.close();
     }
   }
-  try{
-    //mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
-    //greay background
-    mapCtx.fillStyle = "#D3D3D3";
-    mapCtx.fillRect(0,0,900,1100);
+}
+function drawMap(map){
+  //mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+  //greay background
+  mapCtx.fillStyle = "#D3D3D3";
+  mapCtx.fillRect(0,0,900,1100);
 
-    var i = 0;
+  var i = 0;
+  //console.log("map length:",map.length);
+  while (i < map.length){
+    var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
+    //the lower the number, the bigger the size of the map will be
+    var StartxPos = map[i].StartxPos/ratio,
+        StartyPos = map[i].StartyPos/ratio,
+        EndxPos = map[i].EndxPos/ratio,
+        EndyPos = map[i].EndyPos/ratio,
+        angle = map[i].orientation;
 
-    console.log("map length:",map.length);
-    while (i < map.length){
-      var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
-      //the lower the number, the bigger the size of the map will be
-      var StartxPos = map[i].StartxPos/ratio,
-          StartyPos = map[i].StartyPos/ratio,
-          EndxPos = map[i].EndxPos/ratio,
-          EndyPos = map[i].EndyPos/ratio,
-          angle = map[i].orientation;
+    createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
 
-      createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
-
-      i++;
-    }
-  } catch(e){
-    console.log(e);
+    i++;
   }
 }
 
 function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
-  system.log("GOT");
   //road variables
   var widthRoads = 70;
   var lineWidth = 3;
