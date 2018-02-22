@@ -7,7 +7,7 @@ function drawCars() {
   socket.on('DumbCarArray', function(data) {
     // Prints out recieved DC array to console
     //console.log(data);
-    primaryCtx.clearRect(0, 0, canvas.width, canvas.height);
+    carCtx.clearRect(0, 0, carCanvas.width, carCanvas.height);
     //drawMap();
 
     // TODO: fix so it the drawn car looks correct, (x, y) are being passed as correct values
@@ -45,20 +45,20 @@ function drawCars() {
 function drawRotatedCar(x, y, width, height, degrees) {
 
   // first save the untranslated/unrotated context
-  primaryCtx.save();
+  carCtx.save();
 
-  primaryCtx.beginPath();
+  carCtx.beginPath();
   // move the rotation point to the center of the rect
-  primaryCtx.translate(x + width / 2, y + height / 2);
+  carCtx.translate(x + width / 2, y + height / 2);
   // rotate the rect
-  primaryCtx.rotate(-degrees * Math.PI / 180);
+  carCtx.rotate(-degrees * Math.PI / 180);
 
   // draw the rect on the transformed context
   // Note: after transforming [0,0] is visually [x,y]
   //       so the rect needs to be offset accordingly when drawn
-  primaryCtx.drawImage(dc_image, -width / 2, -height / 2, width, height);
+  carCtx.drawImage(dc_image, -width / 2, -height / 2, width, height);
 
   // restore the context to its untranslated/unrotated state
-  primaryCtx.restore();
+  carCtx.restore();
 
 }

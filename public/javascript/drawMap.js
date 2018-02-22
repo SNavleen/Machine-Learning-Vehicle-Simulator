@@ -1,39 +1,38 @@
 //Draw the grid/map
 var map;
-function drawMap(){
+function loadMapData(){
   if(map == undefined){
     var socket = io();
     socket.on('mapArray',function(data){
         //console.log(data);
         map = data;
+        drawMap(map);
     });
     if(map != undefined){
       socket.close();
     }
   }
-  try{
-    //greay background
-    primaryCtx.fillStyle = "#D3D3D3";
-    primaryCtx.fillRect(0,0,900,1100);
+}
+function drawMap(map){
+  //mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+  //greay background
+  mapCtx.fillStyle = "#D3D3D3";
+  mapCtx.fillRect(0,0,900,1100);
 
-    var i = 0;
+  var i = 0;
+  //console.log("map length:",map.length);
+  while (i < map.length){
+    var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
+    //the lower the number, the bigger the size of the map will be
+    var StartxPos = map[i].StartxPos/ratio,
+        StartyPos = map[i].StartyPos/ratio,
+        EndxPos = map[i].EndxPos/ratio,
+        EndyPos = map[i].EndyPos/ratio,
+        angle = map[i].orientation;
 
-    //console.log("map length:",map.length);
-    while (i < map.length){
-      var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
-      //the lower the number, the bigger the size of the map will be
-      var StartxPos = map[i].StartxPos/ratio,
-          StartyPos = map[i].StartyPos/ratio,
-          EndxPos = map[i].EndxPos/ratio,
-          EndyPos = map[i].EndyPos/ratio,
-          angle = map[i].orientation;
+    createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
 
-      createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle);
-      
-      i++;
-    }
-  } catch(e){
-    console.log(e);
+    i++;
   }
 }
 
@@ -46,11 +45,15 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   var whiteLines = middleLane/2;
 
   //draw main black road
+  mapCtx.strokeStyle= "black";
+  mapCtx.lineWidth = widthRoads;
+  mapCtx.beginPath();
   drawLines(StartxPos,StartyPos,EndxPos,EndyPos,"black",widthRoads,[0]);
+  mapCtx.stroke();
 
   //make intersections black
-  primaryCtx.fillStyle = "black";
-  primaryCtx.fillRect(StartxPos-middleLane,StartyPos-middleLane,widthRoads,widthRoads);
+  mapCtx.fillStyle = "black";
+  mapCtx.fillRect(StartxPos-middleLane,StartyPos-middleLane,widthRoads,widthRoads);
 
   //variables for yellow line
   var yellowx1=StartxPos,yellowy1=StartyPos,yellowx2=EndxPos,yellowy2=EndyPos;
@@ -162,27 +165,38 @@ function createRoads(StartxPos,StartyPos,EndxPos,EndyPos,angle){
   }
 
   //draw yellow middle line
+  mapCtx.strokeStyle= "yellow";
+  mapCtx.lineWidth = lineWidth;
+  mapCtx.beginPath();
   drawLines(yellowx1,yellowy1,yellowx2,yellowy2,"yellow",lineWidth,[0]);
+  mapCtx.stroke();
 
   //draw dashed white lines
+  mapCtx.save();
+  mapCtx.strokeStyle= "white";
+  mapCtx.lineWidth = lineWidth;
+  mapCtx.beginPath();
   drawLines(white1x1,white1y1,white1x2,white1y2,"white",lineWidth,[5]);
   drawLines(white2x1,white2y1,white2x2,white2y2,"white",lineWidth,[5]);
+  mapCtx.stroke();
+  mapCtx.restore();
 
   //draw stop line at the front of the yellow line
+  mapCtx.strokeStyle= "red";
+  mapCtx.lineWidth = stopLineWidth;
+  mapCtx.beginPath();
   drawLines(roadStopLine1x1,roadStopLine1y1,roadStopLine1x2,roadStopLine1y2,"red",stopLineWidth,[0]);
+  mapCtx.stroke();
 
   //draw stop line at the back of the yellow line
+  mapCtx.strokeStyle= "green";
+  mapCtx.beginPath();
   drawLines(roadStopLine2x1,roadStopLine2y1,roadStopLine2x2,roadStopLine2y2,"green",stopLineWidth,[0]);
+  mapCtx.stroke();
 }
 
 function drawLines(startX,startY, endX,endY, fillColor,width,dash) {
-  primaryCtx.save();
-  primaryCtx.strokeStyle= fillColor;
-  primaryCtx.lineWidth = width;
-  primaryCtx.beginPath();
-  primaryCtx.setLineDash(dash);
-  primaryCtx.moveTo(startX, startY);
-  primaryCtx.lineTo(endX, endY);
-  primaryCtx.stroke();
-  primaryCtx.restore();
+  mapCtx.setLineDash(dash);
+  mapCtx.moveTo(startX, startY);
+  mapCtx.lineTo(endX, endY);
 }
