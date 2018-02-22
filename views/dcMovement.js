@@ -10,6 +10,9 @@ var carArray = carCreation.getCarArr();
 // TODO Create function to convert speed to km/h as an int
 // TODO: move all the general functions to be used by all files in views in general.js (precisionRound, euclideanDistance, etc.)
 // TODO: Once the car gets to the node, it does not turn yet
+// TODO Handle all magic numbers (specifically for precisionRound)
+// TODO ALSO check if precision round is still needed
+// TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
@@ -24,29 +27,26 @@ var minimumSlowDownDistance = function(currentSpeed) {
 
   while (currentSpeed > 0) {
     totalStoppingDistance = precisionRound(currentSpeed + totalStoppingDistance, 2);
-    currentSpeed = precisionRound(currentSpeed - 10, 2);
+    currentSpeed = precisionRound(currentSpeed - 100, 2);
   }
   return totalStoppingDistance;
 }
 
 // Function for adjusting cars to specified speed
 function adjustSpeed(carId, desiredSpeed) {
-
   if (carCreation.getCar(carId)._speed < desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 10;
-    //console.log("Speed 1 :",carCreation.getCar(carId)._speed);
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 100;
   } else if (carCreation.getCar(carId)._speed > desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 10;
-    //console.log("Speed 2:",carCreation.getCar(carId)._speed);
-
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 100;
   }
   return false;
 }
 
-// Determines the distance between two cars
-function euclideanDistance(currentCarX, currentCarY, checkedCarX, checkedCarY) {
-  var xDifference = general.difference(currentCarX, checkedCarX);
-  var yDifference = general.difference(currentCarY, checkedCarY);
+// TODO Move this to general
+// Determines the distance between two points on the map
+function euclideanDistance(X1, Y1, X2, Y2) {
+  var xDifference = general.difference(X1, X2);
+  var yDifference = general.difference(Y1, Y2);
   var distance = Math.sqrt(xDifference * xDifference + yDifference * yDifference);
   return distance;
 }
@@ -65,6 +65,7 @@ function collisionAvoidanceCheck(carId) {
   // Check against each car currently on edge
   for (var i = 0; i < carsOnEdge.length; i++) {
     // Makes sure not to check itself
+    // NOTE: carsOnEdge[i] may already be just the carId
     if (currentCar._carId != carsOnEdge[i]._carId) {
       checkedCarX = carsOnEdge[i]._xPos;
       checkedCarY = carsOnEdge[i]._yPos;
@@ -103,8 +104,8 @@ function collisionAvoidanceCheck(carId) {
   return shortestDistance;
 }
 
-// This moves the current car onto the next edge in its route
-function switchEdge(carId) {
+// Returns the edgeId of the passed in cars next edge on it's current route
+function getNextEdgeInRoute(carId) {
   var edgeArray = map.getEdgeArray();
   var currentCar = carCreation.getCar(carId);
   var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeId).endNodeId;
@@ -118,14 +119,72 @@ function switchEdge(carId) {
     for (var i = 1; i < edgeArray.length; i++) {
       // Switch to this edge
       if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
-        map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
-        currentCar._currentEdgeId = edgeArray[i].edgeId;
-        map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+        return edgeArray[i].edgeId;
       }
+    }
+  }
+}
+
+// This moves the current car onto the next edge in its route
+function switchEdge(carId) {
+  var currentCar = carCreation.getCar(carId);
+  var currentIntersection = map.getEdgeObject(currentCar._currentEdgeId).getEndNode();
+  var currentIntersectionQueue = currentIntersection._intersectionQueue;
+
+  // Time out for when to remove a car from the intersectionQueue, this delay stops multiple cars from entering the intersection at the same time
+  setTimeout(function() {
+    currentIntersectionQueue.shift(); // Pops the first value of the queue
+  }, 2000);
+
+  map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+  currentCar._currentEdgeId = getNextEdgeInRoute(carId);
+  map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+}
+
+// TODO This functionality might have to be changed a bit in the future. Once a road becomes free the car that has been waiting the longest should be the first to go (instead of getting sent to the back of the queue)
+// Function to check if the next edge in the current vehicles path has space available to enter
+function isRoadBlocked(carId) {
+  var nextEdgeId = getNextEdgeInRoute(carId);
+  var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId);
+  var nextEdgeStartNode = map.getStartNode(nextEdgeId);
+  var nextEdgeStartNodeX = nextEdgeStartNode.x;
+  var nextEdgeStartNodeY = nextEdgeStartNode.y;
+
+  // Checks the distance of car from the startNode to determine if a car is blocking the road
+  for (var i = 0; i < carsOnNextEdge.length; i++) {
+    // Below determines the distance each vehicle on the edge is away from the intersection node
+    var closestVehicleToIntersection = euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos);
+    // Checks if a car is 1000 away from intersection an returns trun to indicate that the intersection is currently blocked
+    if (1000 >= closestVehicleToIntersection) {
+      return true;
     }
   }
 
   return false;
+}
+
+// Used to handle checking when a car can go through an intersection
+function intersectionCheck(carId) {
+  var currentCar = carCreation.getCar(carId);
+  var currentIntersection = map.getEdgeObject(currentCar._currentEdgeId).getEndNode();
+  var currentIntersectionQueue = currentIntersection._intersectionQueue;
+
+  // Adds current car to end of queue if it's not already in the list
+  if (currentIntersectionQueue.indexOf(carId) == -1) {
+    currentIntersection.addToIntersectionQueue(carId);
+  }
+  // Checks if the car has reached the front of the queue (Note: Actual dequeue is handled in switchEdge)
+  if (currentIntersectionQueue.indexOf(carId) == 0) {
+    // if next edge is full, remove car from front of queue and re-add it to the back
+    if (isRoadBlocked(carId)) {
+      currentIntersectionQueue.shift();
+      currentIntersection.addToIntersectionQueue(carId);
+    }
+    // Trigger car to enter intersection
+    else {
+      adjustSpeed(carId, 500);
+    }
+  }
 }
 
 function moveY(yPos, yDestination, speed) {
@@ -156,12 +215,12 @@ function moveCar(carInfo) {
   var yDestination;
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
-  
+  var approachingIntersection = false;
+
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
     carOrientation = 270;
-  }
-  else if (carOrientation == 270) {
+  } else if (carOrientation == 270) {
     carOrientation = 90;
   }
   carInfo._orientation = carOrientation;
@@ -186,6 +245,38 @@ function moveCar(carInfo) {
   // Orientation information
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
+
+  // Checks the remaining distance between the cars current position and current destination
+  var xDifference = general.difference(xPos, xDestination);
+  var yDifference = general.difference(yPos, yDestination);
+
+  if (finalEdge == false) {
+    // Checks if car has reached the end of its current edge
+    if (xDifference <= 0 && yDifference <= 0) {
+      switchEdge(carInfo.carId);
+    } else if (xDifference == 0 && yDifference < 2000) {
+      approachingIntersection = true;
+      adjustSpeed(carId, 0);
+
+      // Car is at front of intersection
+      if (speed == 0) {
+        intersectionCheck(carId);
+      }
+    } else if (yDifference == 0 && xDifference < 2000) {
+      approachingIntersection = true;
+      adjustSpeed(carId, 0);
+
+      // Car is at front of intersection
+      if (speed == 0) {
+        intersectionCheck(carId);
+      }
+    }
+  }
+  // Checks if the car has reached it's final destination
+  else if (finalEdge == true && xDifference <= 500 && yDifference <= 500) {
+    return null;
+  }
+
   // Finds shortest distance
   var closestVehicleDistance = collisionAvoidanceCheck(carId);
 
@@ -198,30 +289,17 @@ function moveCar(carInfo) {
     //adjustSpeed(carId, 20);
   } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
     //adjustSpeed(carId, 30);
-  } else {
-    adjustSpeed(carId, 250); // TODO Need to set max speed to current roads speed limit instead of 0.05
+  } else if (!approachingIntersection) {
+    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
 
-  // Checks the remaining distance between the cars current position and current destination
-  var xDifference = general.difference(xPos, xDestination);
-  var yDifference = general.difference(yPos, yDestination);
-
-  // Checks if car has reached the end of its current edge
-  if (finalEdge == false && xDifference <= 250 && yDifference <= 250) {
-    switchEdge(carInfo.carId);
-  }
-  // Checks if the car has reached it's final destination
-  else if (finalEdge == true && xDifference <= 250 && yDifference <= 250) {
-    return null;
-  }
+  speed = precisionRound(carInfo._speed, 3); // Update speed from car object before moving
 
   if (slope == undefined) {
     carInfo._yPos = moveY(yPos, yDestination, speed);
-  }
-  else if (slope == 0) {
+  } else if (slope == 0) {
     carInfo._xPos = moveX(xPos, xDestination, speed);
-  }
-  else {
+  } else {
     carInfo._xPos = moveX(xPos, xDestination, speed);
     yPos = Math.floor((slope * xPos) + intercept);
     carInfo._yPos = moveY(yPos, yDestination, speed);
@@ -244,6 +322,7 @@ module.exports = function(io) {
 
         // If the move function returns null indicating that the current car is finished it's route
         if (currentCarInfo == null) {
+          map.removeCarFromEdge(carArray[i].carId, carArray[i]._currentEdgeId, 0);
           carArray.splice(i, 1);
           carCreation.spliceFrontendCarArr(i);
         }
@@ -254,6 +333,6 @@ module.exports = function(io) {
       }
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-    }, 10); // How often the server updates the client
+    }, 10); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
   });
 };
