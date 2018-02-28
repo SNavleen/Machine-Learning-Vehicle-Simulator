@@ -97,7 +97,7 @@ function generateDumbCar() {
   car._currentEdgeId = route.edgeIdStart;
   //TODO: currently setting the default lane that the car spawns on as far left
   car._currentLane = 1;
-  map.insertCarToEdge(currentCarId, route.edgeIdStart, 0);
+  map.insertCarToEdge(currentCarId, route.edgeIdStart, car._currentLane);
 
   currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   return car;

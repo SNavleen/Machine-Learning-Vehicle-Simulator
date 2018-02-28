@@ -56,7 +56,10 @@ module.exports = class edgeObject {
     }
 
     this._orientation = orientationOfEdge(this.startNodeId - 1, this.endNodeId - 1);
-    this._listOfCars = new Array();
+    this._listOfCars = new Array(numberOfLanes);
+    for (var i = 0; i <= numberOfLanes; i++) {
+      this._listOfCars[i] = new Array();
+    }
 
   }
 
@@ -76,12 +79,12 @@ module.exports = class edgeObject {
     return nodeArray[this.endNodeId - 1];
   }
   addCarToEdge(carId, colNum) {
-    this._listOfCars.push(carId);
+    this._listOfCars[colNum - 1].push(carId);
   }
   removeCarFromEdge(carId, colNum) {
-    var index = this._listOfCars.indexOf(carId);
+    var index = this._listOfCars[colNum - 1].indexOf(carId);
     if (index > -1) {
-      this._listOfCars.splice(index, 1);
+      this._listOfCars[colNum - 1].splice(index, 1);
     }
   }
 }
