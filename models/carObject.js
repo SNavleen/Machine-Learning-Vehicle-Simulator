@@ -14,6 +14,7 @@ module.exports = class carObject {
     this.xPos;
     this.yPos;
     this.currentEdgeId; // TODO Change this back to null once Trevor has implemented random spawn
+
   }
 
   get xPos() {

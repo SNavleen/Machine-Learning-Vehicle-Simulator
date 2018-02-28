@@ -14,6 +14,18 @@ var carArray = carCreation.getCarArr();
 // TODO ALSO check if precision round is still needed
 // TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 
+var sensorRange = 60;
+//A function to check what is around the car
+function sensorCheck(carID){
+  var carsInRange = {};
+  var currentCar = carCreation.getCar(carId);
+  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeId);
+  if(carsOnEdge)
+
+
+}
+
+
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
   var factor = Math.pow(10, precision);
