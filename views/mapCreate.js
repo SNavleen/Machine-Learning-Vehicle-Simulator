@@ -42,6 +42,10 @@ function getEndNode(edgeId) {
   return map.getEndNode(edgeId);
 }
 
+function getNumberOfLanesOnEdge(edgeId) {
+  return map.getNumberOfLanesOnEdge(edgeId);
+}
+
 //console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
 module.exports = {

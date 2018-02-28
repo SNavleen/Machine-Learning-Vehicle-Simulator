@@ -29,9 +29,11 @@ function readEdgeFile() {
         var speedLimit = word[8];
         var toll = word[9];
         var type = word[10];
-
+        //TODO: Currently setting an override of 2 lanes when we want to enable dynamic lanes just uncomment out the line below.
+        // var numberOfLanes = word[11];
+        var numberOfLanes = 2;
         // Create an edge object
-        var edge = new edgeObject(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type);
+        var edge = new edgeObject(edgeId, startNodeId, endNodeId, capacity, length, freeFlowTime, b, power, speedLimit, toll, type, numberOfLanes);
         // console.log(edge);
         // Add the edge to array
         edgeArray.push(edge);
@@ -90,7 +92,10 @@ module.exports = class graphObject {
   getCarsOnEdge(edgeId) {
     return edgeArray[edgeId - 1]._listOfCars;
   }
-  getOrientationOfEdge(edgeId){
-    return edgeArray[edgeId-1]._orientation;
+  getOrientationOfEdge(edgeId) {
+    return edgeArray[edgeId - 1]._orientation;
+  }
+  getNumberOfLanesOnEdge(edgeId) {
+    return edgeArray[edgeId - 1].numberOfLanes;
   }
 }
