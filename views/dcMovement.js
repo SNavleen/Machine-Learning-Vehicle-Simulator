@@ -205,6 +205,10 @@ function moveX(xPos, xDestination, speed) {
   return xPos;
 }
 
+function calcNextLaneDirection(carOrientation,nextEdge){
+
+}
+
 function moveCar(carInfo) {
   // Get car information from the object
   var carId = carInfo.carId;
@@ -224,6 +228,10 @@ function moveCar(carInfo) {
     carOrientation = 90;
   }
   carInfo._orientation = carOrientation;
+
+  //variable to store what
+  nextEdge = getNextEdgeInRoute(carId);
+  calcNextLaneDirection(carOrientation,nextEdge);
 
   // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)
   if (map.getEdgeObject(carInfo._currentEdgeId).startNodeId == route[route.length - 2]) {
