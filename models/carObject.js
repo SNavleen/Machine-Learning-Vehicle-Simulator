@@ -123,40 +123,22 @@ module.exports = class carObject {
     this._rbSensor.push(value);
   }
 
-  removeFromFrontSensor(value) {
-    var index = this._fSensor.indexOf(value);
-    if (index > -1) {
-      this._fSensor.splice(index, 1);
-    }
+  clearFrontSensor(value) {
+    this._fSensor.splice(0, this._fSensor.length);
   }
-  removeFromBackSensor(value) {
-    var index = this._bSensor.indexOf(value);
-    if (index > -1) {
-      this._bSensor.splice(index, 1);
-    }
+  clearBackSensor(value) {
+    this._bSensor.splice(0, this._bSensor.length);
   }
-  removeFromLeftFrontSensor(value) {
-    var index = this._lfSensor.indexOf(value);
-    if (index > -1) {
-      this._lfSensor.splice(index, 1);
-    }
+  clearLeftFrontSensor(value) {
+    this._lfSensor.splice(0, this._lfSensor.length);
   }
-  removeFromLeftBackSensor(value) {
-    var index = this._lbSensor.indexOf(value);
-    if (index > -1) {
-      this._lbSensor.splice(index, 1);
-    }
+  clearLeftBackSensor(value) {
+    this._lbSensor.splice(0, this._lbSensor.length);
   }
-  removeFromRightFrontSensor(value) {
-    var index = this._rfSensor.indexOf(value);
-    if (index > -1) {
-      this._rfSensor.splice(index, 1);
-    }
+  clearRightFrontSensor(value) {
+    this._rfSensor.splice(0, this._rfSensor.length);
   }
-  removeFromRightBackSensor(value) {
-    var index = this._rbSensor.indexOf(value);
-    if (index > -1) {
-      this._rbSensor.splice(index, 1);
-    }
+  clearRightBackSensor(value) {
+    this._rbSensor.splice(0, this._rbSensor.length);
   }
 }
