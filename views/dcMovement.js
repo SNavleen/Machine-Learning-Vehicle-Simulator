@@ -137,9 +137,11 @@ function switchEdge(carId) {
   }, 2000);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
-  console.log(map.getEdgeObject(currentCar._currentEdgeId));
+  //console.log(map.getEdgeObject(currentCar._currentEdgeId));
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
+
+
 }
 
 // TODO This functionality might have to be changed a bit in the future. Once a road becomes free the car that has been waiting the longest should be the first to go (instead of getting sent to the back of the queue)
@@ -207,8 +209,57 @@ function moveX(xPos, xDestination, speed) {
   return xPos;
 }
 
-function calcNextLaneDirection(carOrientation,nextEdge){
+function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
+  var currentEdge = map.getEdgeObject(currentEdgeId);
+  var nextEdge = map.getEdgeObject(nextEdgeId);
+  var nextTurn;
+  if (nextEdge) {
+    var currentEdgeOrientation = currentEdge._orientation;
+    var nextEdgeOrientation = nextEdge._orientation;
+    console.log("currentEdgeOrientation " + currentEdgeOrientation + " nextEdgeOrientation " + nextEdgeOrientation);
 
+    if (currentEdgeOrientation != nextEdgeOrientation) {
+      if (currentEdgeOrientation == 0) {
+        if (nextEdgeOrientation == 90) {
+          console.log("left turn");
+          nextTurn = 1;
+        } else {
+          console.log("right turn");
+          nextTurn = 0;
+        }
+      } else if (currentEdgeOrientation == 90) {
+        if (nextEdgeOrientation == 180) {
+          console.log("left turn");
+          nextTurn = 1;
+        } else {
+          console.log("right turn");
+          nextTurn = 0;
+        }
+      } else if (currentEdgeOrientation == 180) {
+        if (nextEdgeOrientation == 270) {
+          console.log("left turn");
+          nextTurn = 1;
+        } else {
+          console.log("right turn");
+          nextTurn = 0;
+        }
+      } else if (currentEdgeOrientation == 270) {
+        if (nextEdgeOrientation == 0) {
+          console.log("left turn");
+          nextTurn = 1;
+        } else {
+          console.log("right turn");
+          nextTurn = 0;
+        }
+      }
+      if (nextTurn == currentLane) {
+        return -1;
+      } else {
+        return nextTurn;
+      }
+    }
+  }
+  return false;
 }
 
 function moveCar(carInfo) {
@@ -230,10 +281,6 @@ function moveCar(carInfo) {
     carOrientation = 90;
   }
   carInfo._orientation = carOrientation;
-
-  //variable to store what
-  nextEdge = getNextEdgeInRoute(carId);
-  calcNextLaneDirection(carOrientation,nextEdge);
 
   // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)
   if (map.getEdgeObject(carInfo._currentEdgeId).startNodeId == route[route.length - 2]) {
@@ -264,6 +311,13 @@ function moveCar(carInfo) {
     // Checks if car has reached the end of its current edge
     if (xDifference <= 0 && yDifference <= 0) {
       switchEdge(carInfo.carId);
+
+      var nextEdgeId = getNextEdgeInRoute(carId);
+      var needToChangeLane = checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
+
+      carInfo._shouldChangeLane= needToChangeLane;
+      console.log(carInfo._shouldChangeLane);
+
     } else if (xDifference == 0 && yDifference < 2000) {
       approachingIntersection = true;
       adjustSpeed(carId, 0);
