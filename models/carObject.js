@@ -97,11 +97,29 @@ module.exports = class carObject {
   set currentLane(value) {
     this._currentLane = value;
   }
-  set leftSensor(value) {
+  set lSensor(value) {
     this._lSensor = value;
   }
-  set rightSensor(value) {
+  set rSensor(value) {
     this._rSensor = value;
+  }
+  set fSensor(value) {
+    this._fSensor = value;
+  }
+  set bSensor(value) {
+    this._bSensor = value;
+  }
+  set lfSensor(value) {
+    this._lfSensor = value;
+  }
+  set lbSensor(value) {
+    this._lbSensor = value;
+  }
+  set rfSensor(value) {
+    this._rfSensor =value;
+  }
+  set rbSensor(value) {
+    this._rbSensor = value;
   }
 
   addToFrontSensor(value) {

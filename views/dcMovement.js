@@ -16,37 +16,102 @@ var carArray = carCreation.getCarArr();
 
 var sensorRange = 60;
 //A function to check what is around the car
+//Note each arrays first element will be the car ID of the current car
 function sensorCheck(carID){
-  var carsInRange = {};
   var currentCar = carCreation.getCar(carID);
   var lanesOnRoad = map.getNumberOfLanesOnEdge(currentCar._currentEdgeId);
-  console.log(carID, currentCar._currentLane, carsOnEdge);
-  console.log(map.getNumberOfLanesOnEdge(currentCar._currentEdgeId));
+ // console.log(map.getNumberOfLanesOnEdge(currentCar._currentEdgeId));
 
 
   var carsInLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane);
+  //inserts for lane car is currently in
+  var currentLane = laneChecker(currentCar,carsInLane);
+  currentCar._fSensor = currentLane.inFront;
+  currentCar._bSensor = currentLane.behind;
 
-  //if in the left hand lane
   if(currentCar._currentLane == 1){
-        var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
-
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._rfSensor = currentLane.inFront;
+    currentCar._rbSensor = currentLane.behind;
   }
   else if(currentCar._currentLane ==map.getNumberOfLanesOnEdge(currentCar._currentEdgeId)){
-  //if in the right hand lane
-
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._lfSensor = currentLane.inFront;
+    currentCar._lbSensor = currentLane.behind;
   }
   else{
-      //middle lane
-
-
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._rfSensor = currentLane.inFront;
+    currentCar._rbSensor = currentLane.behind;
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._lfSensor = currentLane.inFront;
+    currentCar._lbSensor = currentLane.behind;
   }
-
-  //var currentLane = map.get
-
 
 }
 
+function laneChecker(currentCar,carsInLane){
+  var inFront = new Array();
+  var behind = new Array();
+  carsInLane.forEach(function(nextCarID){
+    var nextCar = carCreation.getCar(nextCarID);
+    //if the distance between the cars is sensor range
+    if(euclideanDistance(currentCar.xPos,currentCar.yPos,nextCar.xPos,nextCar.yPos) < 500000000){
+      //if car is driving right
+      if(currentCar.orientation == 0){
+        //current car is to behind next car
+        if(currentCar.xPos < nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        else{
+          //current car is in front of next car
+          behind.push(nextCarID);
+        }
+      }
+      //car is driving left
+      else if(currentCar.orientation == 180){
+        //current car is behind next car
+        if(currentCar.xPos > nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        //current car is in front of next car
+        else{
+          behind.push(nextCarID);
+        }
+      }
+      //if car is driving right
+      if(currentCar.orientation == 90){
+        //current car is to behind next car
+        if(currentCar.yPos > nextCar.yPos){
+          inFront.push(nextCarID);
+        }
+        else{
+          //current car is in front of next car
+          behind.push(nextCarID);
+        }
+      }
+      //car is driving left
+      else if(currentCar.orientation == 270){
+        //current car is behind next car
+        if(currentCar.xPos < nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        //current car is in front of next car
+        else{
+          behind.push(nextCarID);
+        }
+      }
 
+    }
+
+  });
+  return {inFront: inFront, behind: behind};
+
+}
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
   var factor = Math.pow(10, precision);
