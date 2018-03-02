@@ -27,7 +27,7 @@ var minimumSlowDownDistance = function(currentSpeed) {
 
   while (currentSpeed > 0) {
     totalStoppingDistance = precisionRound(currentSpeed + totalStoppingDistance, 2);
-    currentSpeed = precisionRound(currentSpeed - 100, 2);
+    currentSpeed = precisionRound(currentSpeed - 10, 2);
   }
   return totalStoppingDistance;
 }
@@ -35,9 +35,9 @@ var minimumSlowDownDistance = function(currentSpeed) {
 // Function for adjusting cars to specified speed
 function adjustSpeed(carId, desiredSpeed) {
   if (carCreation.getCar(carId)._speed < desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 100;
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 10;
   } else if (carCreation.getCar(carId)._speed > desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 100;
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 10;
   }
   return false;
 }
@@ -154,7 +154,7 @@ function isRoadBlocked(carId) {
   for (var i = 0; i < carsOnNextEdge.length; i++) {
     // Below determines the distance each vehicle on the edge is away from the intersection node
     var closestVehicleToIntersection = euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos);
-    // Checks if a car is 1000 away from intersection an returns trun to indicate that the intersection is currently blocked
+    // Checks if a car is 1000 away from intersection an returns true to indicate that the intersection is currently blocked
     if (1000 >= closestVehicleToIntersection) {
       return true;
     }
@@ -182,7 +182,7 @@ function intersectionCheck(carId) {
     }
     // Trigger car to enter intersection
     else {
-      adjustSpeed(carId, 500);
+      //adjustSpeed(carId, 500);
     }
   }
 }
@@ -254,20 +254,20 @@ function moveCar(carInfo) {
     // Checks if car has reached the end of its current edge
     if (xDifference <= 0 && yDifference <= 0) {
       switchEdge(carInfo.carId);
-    } else if (xDifference == 0 && yDifference < 2000) {
+    } 
+    // Checks if car is is approaching an intersection
+    else if ((xDifference == 0 && ((carOrientation == 90 && yDifference < 31500)
+      || (carOrientation == 270 && yDifference < 32000)))
+      || (yDifference == 0 && ((carOrientation == 0 &&  xDifference < 28000)
+      || (carOrientation == 180 &&  xDifference < 28000)))) {
       approachingIntersection = true;
       adjustSpeed(carId, 0);
 
       // Car is at front of intersection
       if (speed == 0) {
-        intersectionCheck(carId);
-      }
-    } else if (yDifference == 0 && xDifference < 2000) {
-      approachingIntersection = true;
-      adjustSpeed(carId, 0);
-
-      // Car is at front of intersection
-      if (speed == 0) {
+        // 26500 x
+        // 22500 y up
+        // 30500 y down // 30000
         intersectionCheck(carId);
       }
     }
@@ -333,6 +333,6 @@ module.exports = function(io) {
       }
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-    }, 10); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
+    }, 50); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
   });
 };
