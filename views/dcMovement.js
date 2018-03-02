@@ -182,7 +182,7 @@ function intersectionCheck(carId) {
     }
     // Trigger car to enter intersection
     else {
-      //adjustSpeed(carId, 500);
+      adjustSpeed(carId, 500);
     }
   }
 }
@@ -249,25 +249,33 @@ function moveCar(carInfo) {
   // Checks the remaining distance between the cars current position and current destination
   var xDifference = general.difference(xPos, xDestination);
   var yDifference = general.difference(yPos, yDestination);
+  var approachingIntersectionDistance = 40000;
+  var instersectionOffsetX = 27000;
+  var instersectionOffsetY = 23000;
 
+  // Intersection handling
   if (finalEdge == false) {
     // Checks if car has reached the end of its current edge
-    if (xDifference <= 0 && yDifference <= 0) {
+    if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carInfo.carId);
-    } 
+    }
+    // TODO clean up if statement when done
     // Checks if car is is approaching an intersection
-    else if ((xDifference == 0 && ((carOrientation == 90 && yDifference < 31500)
-      || (carOrientation == 270 && yDifference < 32000)))
-      || (yDifference == 0 && ((carOrientation == 0 &&  xDifference < 28000)
-      || (carOrientation == 180 &&  xDifference < 28000)))) {
+    else if ((xDifference == 0 && ((carOrientation == 90 && instersectionOffsetY <= yDifference && yDifference < approachingIntersectionDistance)
+      || (carOrientation == 270 && instersectionOffsetY <= yDifference && yDifference < approachingIntersectionDistance)))
+      || (yDifference == 0 && ((carOrientation == 0 && instersectionOffsetX <= xDifference && xDifference < approachingIntersectionDistance)
+      || (carOrientation == 180 && instersectionOffsetX <= xDifference && xDifference < approachingIntersectionDistance)))) {
+
       approachingIntersection = true;
-      adjustSpeed(carId, 0);
+
+      // checks if car needs to slow down to stop at edge of intersection
+      if ((carOrientation == 0 || carOrientation == 180) && (xDifference - minimumSlowDownDistance(speed) <= instersectionOffsetX + 1000)
+        || (carOrientation == 90 || carOrientation == 270) && (yDifference - minimumSlowDownDistance(speed) <= instersectionOffsetY + 1000)) {
+        adjustSpeed(carId, 0);
+      }
 
       // Car is at front of intersection
-      if (speed == 0) {
-        // 26500 x
-        // 22500 y up
-        // 30500 y down // 30000
+      if (speed == 0 && (xDifference <= instersectionOffsetX || yDifference <= instersectionOffsetY)) {
         intersectionCheck(carId);
       }
     }
@@ -333,6 +341,6 @@ module.exports = function(io) {
       }
 
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-    }, 50); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
+    }, 10); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
   });
 };

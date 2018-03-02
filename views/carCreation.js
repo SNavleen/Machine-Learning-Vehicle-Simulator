@@ -162,7 +162,7 @@ function getCar(carId) {
       return carArray[i];
     }
   }
-  return "Error in carCreation.js";
+  return "Error in carCreation.js"; // TODO deal with this instead of returning a string
 }
 
 function getCarArr() {
