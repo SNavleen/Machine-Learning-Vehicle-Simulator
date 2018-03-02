@@ -18,9 +18,30 @@ var sensorRange = 60;
 //A function to check what is around the car
 function sensorCheck(carID){
   var carsInRange = {};
-  var currentCar = carCreation.getCar(carId);
-  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeId);
-  if(carsOnEdge)
+  var currentCar = carCreation.getCar(carID);
+  var lanesOnRoad = map.getNumberOfLanesOnEdge(currentCar._currentEdgeId);
+  console.log(carID, currentCar._currentLane, carsOnEdge);
+  console.log(map.getNumberOfLanesOnEdge(currentCar._currentEdgeId));
+
+
+  var carsInLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane);
+
+  //if in the left hand lane
+  if(currentCar._currentLane == 1){
+        var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
+
+  }
+  else if(currentCar._currentLane ==map.getNumberOfLanesOnEdge(currentCar._currentEdgeId)){
+  //if in the right hand lane
+
+  }
+  else{
+      //middle lane
+
+
+  }
+
+  //var currentLane = map.get
 
 
 }
@@ -149,7 +170,7 @@ function switchEdge(carId) {
   }, 2000);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
-  console.log(map.getEdgeObject(currentCar._currentEdgeId));
+  //console.log(map.getEdgeObject(currentCar._currentEdgeId));
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 }
@@ -230,6 +251,7 @@ function moveCar(carInfo) {
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
   var approachingIntersection = false;
+  sensorCheck(carId);
 
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
