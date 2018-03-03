@@ -134,7 +134,7 @@ function switchEdge(carId) {
   // Time out for when to remove a car from the intersectionQueue, this delay stops multiple cars from entering the intersection at the same time
   setTimeout(function() {
     currentIntersectionQueue.shift(); // Pops the first value of the queue
-  }, 1000);
+  }, 100);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
@@ -192,7 +192,7 @@ function stopForIntersectionCheck(distanceFromCenterX, distanceFromCenterY, inst
   // The car is travelling on the Y-Axis
   if (carOrientation == 90 || carOrientation == 270) {
     // Car needs to slow down in order to stop on the edge of the intersection
-    if ((distanceFromCenterY - minimumSlowDownDistance(speed)) <= instersectionOffsetY + 1000) {
+    if ((distanceFromCenterY - minimumSlowDownDistance(speed)) <= instersectionOffsetY + 500) {
       return true;
     }
     else {
@@ -201,7 +201,7 @@ function stopForIntersectionCheck(distanceFromCenterX, distanceFromCenterY, inst
   }
   // The car is travelling on the X-Axis
   else if (carOrientation == 0 || carOrientation == 180) {
-    if ((distanceFromCenterX - minimumSlowDownDistance(speed)) <= instersectionOffsetX + 1000) {
+    if ((distanceFromCenterX - minimumSlowDownDistance(speed)) <= instersectionOffsetX + 500) {
       return true;
     }
     else {
