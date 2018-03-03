@@ -54,7 +54,7 @@ function euclideanDistance(X1, Y1, X2, Y2) {
 // Checks the distance of the nearest vehicle on a cars current road
 function collisionAvoidanceCheck(carId) {
   var currentCar = carCreation.getCar(carId);
-  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeId);
+  var carsOnEdge = map.getCarsOnEdge(currentCar._currentEdgeId, currentCar._currentLane);
   var currentCarX = currentCar._xPos;
   var currentCarY = currentCar._yPos;
   var checkedCarX = 0;
@@ -136,16 +136,18 @@ function switchEdge(carId) {
     currentIntersectionQueue.shift(); // Pops the first value of the queue
   }, 100);
 
-  map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+  map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
+  console.log(map.getEdgeObject(currentCar._currentEdgeId));
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
-  map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
+  map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 }
 
 // TODO This functionality might have to be changed a bit in the future. Once a road becomes free the car that has been waiting the longest should be the first to go (instead of getting sent to the back of the queue)
 // Function to check if the next edge in the current vehicles path has space available to enter
 function isRoadBlocked(carId) {
+  var currentCar = carCreation.getCar(carId);
   var nextEdgeId = getNextEdgeInRoute(carId);
-  var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId);
+  var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId, currentCar._currentLane);
   var nextEdgeStartNode = map.getStartNode(nextEdgeId);
   var nextEdgeStartNodeX = nextEdgeStartNode.x;
   var nextEdgeStartNodeY = nextEdgeStartNode.y;
@@ -373,7 +375,7 @@ module.exports = function(io) {
 
         // If the move function returns null indicating that the current car is finished it's route
         if (currentCarInfo == null) {
-          map.removeCarFromEdge(carArray[i].carId, carArray[i]._currentEdgeId, 0);
+          map.removeCarFromEdge(carArray[i].carId, carArray[i]._currentEdgeId, 1);
           carArray.splice(i, 1);
           carCreation.spliceFrontendCarArr(i);
         }

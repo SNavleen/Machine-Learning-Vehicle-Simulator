@@ -10,8 +10,8 @@ for (var i = 1; i <= Object.keys(edgeWeightMap).length; i++) {
   dijkstrasGraph.addVertex(i, edgeWeightMap[i]);
 }
 
-function getCarsOnEdge(edgeId) {
-  return map.getCarsOnEdge(edgeId);
+function getCarsOnEdge(edgeId, colNum) {
+  return map.getCarsOnEdge(edgeId, colNum);
 }
 
 function getNumOfEdges() {
@@ -42,6 +42,10 @@ function getEndNode(edgeId) {
   return map.getEndNode(edgeId);
 }
 
+function getNumberOfLanesOnEdge(edgeId) {
+  return map.getNumberOfLanesOnEdge(edgeId);
+}
+
 //console.log(dijkstrasGraph.shortestPath('1', '24').concat(['1']).reverse());
 
 module.exports = {
@@ -53,7 +57,8 @@ module.exports = {
   removeCarFromEdge,
   insertCarToEdge,
   getStartNode,
-  getEndNode
+  getEndNode,
+  getNumberOfLanesOnEdge
 };
 
 // HOW to use map object
