@@ -134,7 +134,7 @@ function switchEdge(carId) {
   // Time out for when to remove a car from the intersectionQueue, this delay stops multiple cars from entering the intersection at the same time
   setTimeout(function() {
     currentIntersectionQueue.shift(); // Pops the first value of the queue
-  }, 2000);
+  }, 1000);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 0); // TODO Will have to update "0"
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
@@ -187,6 +187,53 @@ function intersectionCheck(carId) {
   }
 }
 
+// Checks to see if the car needs to slow down and stop at the edge of an intersection
+function stopForIntersectionCheck(distanceFromCenterX, distanceFromCenterY, instersectionOffsetX, instersectionOffsetY, speed, carOrientation) {
+  // The car is travelling on the Y-Axis
+  if (carOrientation == 90 || carOrientation == 270) {
+    // Car needs to slow down in order to stop on the edge of the intersection
+    if ((distanceFromCenterY - minimumSlowDownDistance(speed)) <= instersectionOffsetY + 1000) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  // The car is travelling on the X-Axis
+  else if (carOrientation == 0 || carOrientation == 180) {
+    if ((distanceFromCenterX - minimumSlowDownDistance(speed)) <= instersectionOffsetX + 1000) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+}
+
+// Checks to see whether a car is within 40,000 of being at an edge intersection
+function approachingIntersectionCheck(distanceFromCenterX, distanceFromCenterY, instersectionOffsetX, instersectionOffsetY, carOrientation) {
+  var approachingIntersectionDistance = 40000; // The distance the car begins to check whether is needs to stop for an intersection or not
+  // The car is travelling on the Y-Axis
+  if (carOrientation == 90 || carOrientation == 270) {
+    // checks if the car is in range of the intersection
+    if (instersectionOffsetY < distanceFromCenterY && distanceFromCenterY <= approachingIntersectionDistance) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  // The car is travelling on the X-Axis
+  else if (carOrientation == 0 || carOrientation == 180) {
+    if (instersectionOffsetX < distanceFromCenterX && distanceFromCenterX <= approachingIntersectionDistance) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+}
+
 function moveY(yPos, yDestination, speed) {
   if (yPos > yDestination) {
     yPos = precisionRound(yPos - speed, 3);
@@ -215,7 +262,6 @@ function moveCar(carInfo) {
   var yDestination;
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
-  var approachingIntersection = false;
 
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
@@ -246,37 +292,34 @@ function moveCar(carInfo) {
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
 
+  // Intersection handling
+
   // Checks the remaining distance between the cars current position and current destination
   var xDifference = general.difference(xPos, xDestination);
   var yDifference = general.difference(yPos, yDestination);
-  var approachingIntersectionDistance = 40000;
-  var instersectionOffsetX = 27000;
+  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
   var instersectionOffsetY = 23000;
 
-  // Intersection handling
+  var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
+
+  // Before final edge, xDiff & yDiff represent the current distance to the end node of the current edge
+  // Once on the final edge, xDiff & yDiff are the how far away the car is from it's final destination (somewhere near the center of this edge)
   if (finalEdge == false) {
     // Checks if car has reached the end of its current edge
     if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carInfo.carId);
     }
-    // TODO clean up if statement when done
     // Checks if car is is approaching an intersection
-    else if ((xDifference == 0 && ((carOrientation == 90 && instersectionOffsetY <= yDifference && yDifference < approachingIntersectionDistance)
-      || (carOrientation == 270 && instersectionOffsetY <= yDifference && yDifference < approachingIntersectionDistance)))
-      || (yDifference == 0 && ((carOrientation == 0 && instersectionOffsetX <= xDifference && xDifference < approachingIntersectionDistance)
-      || (carOrientation == 180 && instersectionOffsetX <= xDifference && xDifference < approachingIntersectionDistance)))) {
-
-      approachingIntersection = true;
-
-      // checks if car needs to slow down to stop at edge of intersection
-      if ((carOrientation == 0 || carOrientation == 180) && (xDifference - minimumSlowDownDistance(speed) <= instersectionOffsetX + 1000)
-        || (carOrientation == 90 || carOrientation == 270) && (yDifference - minimumSlowDownDistance(speed) <= instersectionOffsetY + 1000)) {
-        adjustSpeed(carId, 0);
+    else if (approachingIntersection) {
+      // Checks if car needs to slow down to stop at edge of intersection
+      if (stopForIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, speed, carOrientation)) {
+        adjustSpeed(carId, 0); // Stop at edge of intersection
+        if (speed == 0) {
+          intersectionCheck(carId);
+        }
       }
-
-      // Car is at front of intersection
-      if (speed == 0 && (xDifference <= instersectionOffsetX || yDifference <= instersectionOffsetY)) {
-        intersectionCheck(carId);
+      else {
+        adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
       }
     }
   }
@@ -339,8 +382,7 @@ module.exports = function(io) {
           carArray[i] = currentCarInfo;
         }
       }
-
       dcSocket.emit('DumbCarArray', carCreation.getFrontendCarArr());
-    }, 10); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
+    }, 50); // How often the server updates the client (50) seems like a good rate at for 500 car speed)
   });
 };
