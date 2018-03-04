@@ -39,7 +39,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
           nextTurn = 1;
         } else {
           console.log("right turn");
-          nextTurn = 0;
+          nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 90) {
         if (nextEdgeOrientation == 180) {
@@ -47,7 +47,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
           nextTurn = 1;
         } else {
           console.log("right turn");
-          nextTurn = 0;
+          nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 180) {
         if (nextEdgeOrientation == 270) {
@@ -55,7 +55,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
           nextTurn = 1;
         } else {
           console.log("right turn");
-          nextTurn = 0;
+          nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 270) {
         if (nextEdgeOrientation == 0) {
@@ -63,7 +63,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
           nextTurn = 1;
         } else {
           console.log("right turn");
-          nextTurn = 0;
+          nextTurn = 2;
         }
       }
       if (nextTurn == currentLane) {
@@ -73,7 +73,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
       }
     }
   }
-  return false;
+  return -1;
 }
 
 module.exports = {

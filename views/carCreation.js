@@ -148,7 +148,9 @@ function getFrontendCarArr() {
     frontendCarArray[i] = {
       _xPos: carArray[i]._xPos,
       _yPos: carArray[i]._yPos,
-      _orientation: carArray[i]._orientation
+      _orientation: carArray[i]._orientation,
+      _currentLane: carArray[i]._currentLane,
+      _shouldChangeLane: carArray[i]._shouldChangeLane
     }
   }
   return frontendCarArray;
