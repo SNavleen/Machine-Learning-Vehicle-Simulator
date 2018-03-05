@@ -60,6 +60,7 @@ function collisionAvoidanceCheck(carId) {
   var currentCarY = currentCar._yPos;
   var checkedCarX = 0;
   var checkedCarY = 0;
+  var currentDistance;
 
   var shortestDistance = Number.MAX_SAFE_INTEGER; // resets the distance to max
 
@@ -67,10 +68,9 @@ function collisionAvoidanceCheck(carId) {
   for (var i = 0; i < carsOnEdge.length; i++) {
     // Makes sure not to check itself
     // NOTE: carsOnEdge[i] may already be just the carId
-    if (currentCar._carId != carsOnEdge[i]._carId) {
-      checkedCarX = carsOnEdge[i]._xPos;
-      checkedCarY = carsOnEdge[i]._yPos;
-
+    if (currentCar.carId != carsOnEdge[i]) {
+      checkedCarX = carCreation.getCar(carsOnEdge[i])._xPos;
+      checkedCarY = carCreation.getCar(carsOnEdge[i])._yPos;
       // Only need to check cars with a larger x
       if (currentCar._orientation == 0) {
         if (currentCarX < checkedCarX) {
@@ -138,8 +138,8 @@ function isRoadBlocked(carId) {
   for (var i = 0; i < carsOnNextEdge.length; i++) {
     // Below determines the distance each vehicle on the edge is away from the intersection node
     var closestVehicleToIntersection = euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos);
-    // Checks if a car is 1000 away from intersection an returns true to indicate that the intersection is currently blocked
-    if (1000 >= closestVehicleToIntersection) {
+    // Checks if a car is 45000 away from intersection an returns true to indicate that the intersection is currently blocked
+    if (45000 >= closestVehicleToIntersection) {
       return true;
     }
   }
@@ -218,6 +218,51 @@ function approachingIntersectionCheck(distanceFromCenterX, distanceFromCenterY, 
   }
 }
 
+// Main function for checking everything intersection related (mainly speed adjustments, collision avoidance)
+function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination) {
+  // Intersection handling
+  var carId = carInfo.carId;
+  // Checks the remaining distance between the cars current position and current destination
+  var xDifference = general.difference(xPos, xDestination);
+  var yDifference = general.difference(yPos, yDestination);
+  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
+  var instersectionOffsetY = 23000;
+
+  var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
+
+  // Before final edge, xDiff & yDiff represent the current distance to the end node of the current edge
+  // Once on the final edge, xDiff & yDiff are the how far away the car is from it's final destination (somewhere near the center of this edge)
+  if (finalEdge == false) {
+    // Checks if car has reached the end of its current edge
+    if (xDifference <= 500 && yDifference <= 500) {
+      switchEdge(carId);
+      var nextEdgeId = carPositioning.getNextEdgeInRoute(carId);
+      var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
+
+      carInfo._shouldChangeLane= needToChangeLane;
+      console.log(carInfo._shouldChangeLane);
+    }
+    // Checks if car is is approaching an intersection
+    else if (approachingIntersection) {
+      // Checks if car needs to slow down to stop at edge of intersection
+      if (stopForIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, speed, carOrientation)) {
+        adjustSpeed(carId, 0); // Stop at edge of intersection
+        if (speed == 0) {
+          intersectionCheck(carId);
+        }
+      }
+      else if (!withinSlowDownRange) {
+        adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
+      }
+    }
+  }
+  // Checks if the car has reached it's final destination
+  else if (finalEdge == true && xDifference <= 500 && yDifference <= 500) {
+    return null;
+  }
+  return approachingIntersection;
+}
+
 function moveY(yPos, yDestination, speed) {
   if (yPos > yDestination) {
     yPos = precisionRound(yPos - speed, 3);
@@ -276,62 +321,24 @@ function moveCar(carInfo) {
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
 
-  // Intersection handling
+  // Finds shortest distance
+  var closestVehicleDistance = collisionAvoidanceCheck(carId);
+  var withinSlowDownRange = closestVehicleDistance < minimumSlowDownDistance(speed + 550);
 
-  // Checks the remaining distance between the cars current position and current destination
-  var xDifference = general.difference(xPos, xDestination);
-  var yDifference = general.difference(yPos, yDestination);
-  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
-  var instersectionOffsetY = 23000;
-
-  var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
-
-  // Before final edge, xDiff & yDiff represent the current distance to the end node of the current edge
-  // Once on the final edge, xDiff & yDiff are the how far away the car is from it's final destination (somewhere near the center of this edge)
-  if (finalEdge == false) {
-    // Checks if car has reached the end of its current edge
-    if (xDifference <= 500 && yDifference <= 500) {
-      switchEdge(carInfo.carId);
-      var nextEdgeId = carPositioning.getNextEdgeInRoute(carId);
-      var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
-
-      carInfo._shouldChangeLane= needToChangeLane;
-      console.log(carInfo._shouldChangeLane);
-
-    }
-    // Checks if car is is approaching an intersection
-    else if (approachingIntersection) {
-      // Checks if car needs to slow down to stop at edge of intersection
-      if (stopForIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, speed, carOrientation)) {
-        adjustSpeed(carId, 0); // Stop at edge of intersection
-        if (speed == 0) {
-          intersectionCheck(carId);
-        }
-      }
-      else {
-        adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
-      }
-    }
-  }
-  // Checks if the car has reached it's final destination
-  else if (finalEdge == true && xDifference <= 500 && yDifference <= 500) {
+  // Handles everything that deals with intersection movement, this is assigned to a var to ensure speed doesn't increase incorrectly
+  var approachingIntersection = intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination);
+  // Catches if the car is finished it's route and needs to be despawned
+  if (approachingIntersection == null) {
     return null;
   }
 
-  // Finds shortest distance
-  var closestVehicleDistance = collisionAvoidanceCheck(carId);
-
-  // TODO Temporily hardcoded values, need to tweak once actual map is working
   // Collision avoidance
-  if (closestVehicleDistance < minimumSlowDownDistance(speed + 10)) {
+  if (withinSlowDownRange) {
     // Must decelerate at maximum speed until stopped
-    //adjustSpeed(carId, 0);
-  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
-    //adjustSpeed(carId, 20);
-  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
-    //adjustSpeed(carId, 30);
-  } else if (!approachingIntersection) {
-    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
+    adjustSpeed(carId, 0);
+  }
+  else if (!approachingIntersection) {
+    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit
   }
 
   speed = precisionRound(carInfo._speed, 3); // Update speed from car object before moving
