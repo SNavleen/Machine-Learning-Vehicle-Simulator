@@ -28,11 +28,10 @@ function orientationOfEdge(node1, node2) {
 
   var deg = rad * (180 / Math.PI);
 
-  // Flips degrees if negative
+  // Turn Negative Degrees to positive
   if (deg < 0) {
     deg = 360 + deg;
   }
-
   return deg;
 }
 

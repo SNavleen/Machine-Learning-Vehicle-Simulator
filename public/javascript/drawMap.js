@@ -22,7 +22,6 @@ function drawMap(map){
   var i = 0;
   //console.log("map length:",map.length);
   while (i < map.length){
-    var ratio = 500; //what value to divide the x and y coordinates by, because our x and y valeus are very large and need to be smaller
     //the lower the number, the bigger the size of the map will be
     var StartxPos = map[i].StartxPos/ratio,
         StartyPos = map[i].StartyPos/ratio,
