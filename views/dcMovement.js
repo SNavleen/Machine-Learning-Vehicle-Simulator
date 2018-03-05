@@ -13,6 +13,7 @@ var carArray = carCreation.getCarArr();
 // TODO Handle all magic numbers (specifically for precisionRound)
 // TODO ALSO check if precision round is still needed
 // TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
+// TODO Add intersection offsets to map file so they don't need to be hardcoded, read these in from the file to make dynamic
 
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
@@ -34,10 +35,12 @@ var minimumSlowDownDistance = function(currentSpeed) {
 
 // Function for adjusting cars to specified speed
 function adjustSpeed(carId, desiredSpeed) {
+  var adjustmentAmount = 10;
+
   if (carCreation.getCar(carId)._speed < desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + 10;
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed + adjustmentAmount;
   } else if (carCreation.getCar(carId)._speed > desiredSpeed) {
-    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - 10;
+    carCreation.getCar(carId)._speed = carCreation.getCar(carId)._speed - adjustmentAmount;
   }
   return false;
 }
