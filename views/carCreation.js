@@ -2,7 +2,7 @@ var carObject = require('../models/carObject.js');
 var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
-var numberOfCars = 1;
+var numberOfCars = 2;
 var currentCarId = 0; // TODO See if we should change this to start at 1 (there shouldn't be a car 0)
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
