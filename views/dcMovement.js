@@ -350,16 +350,8 @@ function moveCar(carInfo) {
     adjustSpeed(carId, 0);
   }
   else if (!approachingIntersection) {
-    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
+    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit
   }
-
-  /* Temp, remove if not needed
-  else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
-    //adjustSpeed(carId, 20);
-  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
-    //adjustSpeed(carId, 30);
-  }
-  */
 
   speed = precisionRound(carInfo._speed, 3); // Update speed from car object before moving
 
