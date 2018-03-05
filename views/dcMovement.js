@@ -235,6 +235,45 @@ function approachingIntersectionCheck(distanceFromCenterX, distanceFromCenterY, 
   }
 }
 
+function intersectionHandling(carId, carOrientation, speed, finalEdge, xPos, yPos, xDestination, yDestination) {
+  // Intersection handling
+
+  // Checks the remaining distance between the cars current position and current destination
+  var xDifference = general.difference(xPos, xDestination);
+  var yDifference = general.difference(yPos, yDestination);
+  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
+  var instersectionOffsetY = 23000;
+
+  var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
+
+  // Before final edge, xDiff & yDiff represent the current distance to the end node of the current edge
+  // Once on the final edge, xDiff & yDiff are the how far away the car is from it's final destination (somewhere near the center of this edge)
+  if (finalEdge == false) {
+    // Checks if car has reached the end of its current edge
+    if (xDifference <= 500 && yDifference <= 500) {
+      switchEdge(carId);
+    }
+    // Checks if car is is approaching an intersection
+    else if (approachingIntersection) {
+      // Checks if car needs to slow down to stop at edge of intersection
+      if (stopForIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, speed, carOrientation)) {
+        adjustSpeed(carId, 0); // Stop at edge of intersection
+        if (speed == 0) {
+          intersectionCheck(carId);
+        }
+      }
+      else {
+        adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
+      }
+    }
+  }
+  // Checks if the car has reached it's final destination
+  else if (finalEdge == true && xDifference <= 500 && yDifference <= 500) {
+    return null;
+  }
+  return approachingIntersection;
+}
+
 function moveY(yPos, yDestination, speed) {
   if (yPos > yDestination) {
     yPos = precisionRound(yPos - speed, 3);
@@ -293,39 +332,9 @@ function moveCar(carInfo) {
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
 
-  // Intersection handling
-
-  // Checks the remaining distance between the cars current position and current destination
-  var xDifference = general.difference(xPos, xDestination);
-  var yDifference = general.difference(yPos, yDestination);
-  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
-  var instersectionOffsetY = 23000;
-
-  var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
-
-  // Before final edge, xDiff & yDiff represent the current distance to the end node of the current edge
-  // Once on the final edge, xDiff & yDiff are the how far away the car is from it's final destination (somewhere near the center of this edge)
-  if (finalEdge == false) {
-    // Checks if car has reached the end of its current edge
-    if (xDifference <= 500 && yDifference <= 500) {
-      switchEdge(carInfo.carId);
-    }
-    // Checks if car is is approaching an intersection
-    else if (approachingIntersection) {
-      // Checks if car needs to slow down to stop at edge of intersection
-      if (stopForIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, speed, carOrientation)) {
-        adjustSpeed(carId, 0); // Stop at edge of intersection
-        if (speed == 0) {
-          intersectionCheck(carId);
-        }
-      }
-      else {
-        adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
-      }
-    }
-  }
-  // Checks if the car has reached it's final destination
-  else if (finalEdge == true && xDifference <= 500 && yDifference <= 500) {
+  // Handles everything that deals with intersection movement, this is assigned to a var to ensure speed doesn't increase incorrectly
+  var approachingIntersection = intersectionHandling(carId, carOrientation, speed, finalEdge, xPos, yPos, xDestination, yDestination);
+  if (approachingIntersection == null) {
     return null;
   }
 
