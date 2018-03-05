@@ -59,17 +59,17 @@ function collisionAvoidanceCheck(carId) {
   var currentCarY = currentCar._yPos;
   var checkedCarX = 0;
   var checkedCarY = 0;
+  var currentDistance;
 
   var shortestDistance = Number.MAX_SAFE_INTEGER; // resets the distance to max
-
+  
   // Check against each car currently on edge
   for (var i = 0; i < carsOnEdge.length; i++) {
     // Makes sure not to check itself
     // NOTE: carsOnEdge[i] may already be just the carId
-    if (currentCar._carId != carsOnEdge[i]._carId) {
-      checkedCarX = carsOnEdge[i]._xPos;
-      checkedCarY = carsOnEdge[i]._yPos;
-
+    if (currentCar.carId != carsOnEdge[i]) {
+      checkedCarX = carCreation.getCar(carsOnEdge[i])._xPos;
+      checkedCarY = carCreation.getCar(carsOnEdge[i])._yPos;
       // Only need to check cars with a larger x
       if (currentCar._orientation == 0) {
         if (currentCarX < checkedCarX) {
@@ -155,8 +155,8 @@ function isRoadBlocked(carId) {
   for (var i = 0; i < carsOnNextEdge.length; i++) {
     // Below determines the distance each vehicle on the edge is away from the intersection node
     var closestVehicleToIntersection = euclideanDistance(nextEdgeStartNodeX, nextEdgeStartNodeY, carCreation.getCar(carsOnNextEdge[i])._xPos, carCreation.getCar(carsOnNextEdge[i])._yPos);
-    // Checks if a car is 1000 away from intersection an returns true to indicate that the intersection is currently blocked
-    if (1000 >= closestVehicleToIntersection) {
+    // Checks if a car is 45000 away from intersection an returns true to indicate that the intersection is currently blocked
+    if (45000 >= closestVehicleToIntersection) {
       return true;
     }
   }
@@ -235,7 +235,8 @@ function approachingIntersectionCheck(distanceFromCenterX, distanceFromCenterY, 
   }
 }
 
-function intersectionHandling(carId, carOrientation, speed, finalEdge, xPos, yPos, xDestination, yDestination) {
+// Main function for checking everything intersection related (mainly speed adjustments, collision avoidance)
+function intersectionHandling(carId, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination) {
   // Intersection handling
 
   // Checks the remaining distance between the cars current position and current destination
@@ -262,7 +263,7 @@ function intersectionHandling(carId, carOrientation, speed, finalEdge, xPos, yPo
           intersectionCheck(carId);
         }
       }
-      else {
+      else if (!withinSlowDownRange) {
         adjustSpeed(carId, 500); // Attempt to move forward until at front of intersection
       }
     }
@@ -332,27 +333,33 @@ function moveCar(carInfo) {
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
 
+  // Finds shortest distance
+  var closestVehicleDistance = collisionAvoidanceCheck(carId);
+  var withinSlowDownRange = closestVehicleDistance < minimumSlowDownDistance(speed + 550);
+
   // Handles everything that deals with intersection movement, this is assigned to a var to ensure speed doesn't increase incorrectly
-  var approachingIntersection = intersectionHandling(carId, carOrientation, speed, finalEdge, xPos, yPos, xDestination, yDestination);
+  var approachingIntersection = intersectionHandling(carId, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination);
+  // Catches if the car is finished it's route and needs to be despawned
   if (approachingIntersection == null) {
     return null;
   }
 
-  // Finds shortest distance
-  var closestVehicleDistance = collisionAvoidanceCheck(carId);
-
-  // TODO Temporily hardcoded values, need to tweak once actual map is working
   // Collision avoidance
-  if (closestVehicleDistance < minimumSlowDownDistance(speed + 10)) {
+  if (withinSlowDownRange) {
     // Must decelerate at maximum speed until stopped
-    //adjustSpeed(carId, 0);
-  } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
+    adjustSpeed(carId, 0);
+  }
+  else if (!approachingIntersection) {
+    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
+  }
+
+  /* Temp, remove if not needed
+  else if (closestVehicleDistance < minimumSlowDownDistance(speed + 20)) {
     //adjustSpeed(carId, 20);
   } else if (closestVehicleDistance < minimumSlowDownDistance(speed + 30)) {
     //adjustSpeed(carId, 30);
-  } else if (!approachingIntersection) {
-    adjustSpeed(carId, 500); // TODO Need to set max speed to current roads speed limit instead of 0.05
   }
+  */
 
   speed = precisionRound(carInfo._speed, 3); // Update speed from car object before moving
 
