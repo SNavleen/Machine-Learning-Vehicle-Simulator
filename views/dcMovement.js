@@ -14,7 +14,7 @@ var carArray = carCreation.getCarArr();
 // TODO ALSO check if precision round is still needed
 // TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 
-var sensorRange = 60;
+var sensorRange = 500000;
 //A function to check what is around the car
 //Note each arrays first element will be the car ID of the current car
 function sensorCheck(carID){
@@ -62,7 +62,7 @@ function laneChecker(currentCar,carsInLane){
   carsInLane.forEach(function(nextCarID){
     var nextCar = carCreation.getCar(nextCarID);
     //if the distance between the cars is sensor range
-    if(euclideanDistance(currentCar.xPos,currentCar.yPos,nextCar.xPos,nextCar.yPos) < 500000000){
+    if(euclideanDistance(currentCar.xPos,currentCar.yPos,nextCar.xPos,nextCar.yPos) < sensorRange){
       //if car is driving right
       if(currentCar.orientation == 0){
         //current car is to behind next car

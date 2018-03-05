@@ -1,0 +1,17 @@
+type
+ Object = ^ObjDesc;
+ ObjDesc = record … end;
+var
+ topScope: Object;
+ guard: Object;
+procedure NewObj (var obj: Object; cls: Class);
+ var n, x: Object;
+begin x := topScope; guard^.name := id; {set sentinel for search}
+ while x^.next^.name <> id do x := x^.next;
+ if x^.next = guard then
+ begin
+ new (n); n^.name := id; n^.cls := cls; n^.next := guard;
+ x^.next := n; obj := n
+ end
+ else begin obj := x^.next; Mark ('mult def') end
+end; 
