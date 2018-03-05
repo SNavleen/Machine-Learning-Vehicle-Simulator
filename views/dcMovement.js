@@ -28,19 +28,21 @@ function sensorCheck(carID){
   var currentLane = laneChecker(currentCar,carsInLane);
   currentCar._fSensor = currentLane.inFront;
   currentCar._bSensor = currentLane.behind;
-
+  //car in left lane
   if(currentCar._currentLane == 1){
     var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
     currentLane = laneChecker(currentCar,carsInRightLane);
     currentCar._rfSensor = currentLane.inFront;
     currentCar._rbSensor = currentLane.behind;
   }
+  //car in right hand lane
   else if(currentCar._currentLane ==map.getNumberOfLanesOnEdge(currentCar._currentEdgeId)){
     var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
     currentLane = laneChecker(currentCar,carsInRightLane);
     currentCar._lfSensor = currentLane.inFront;
     currentCar._lbSensor = currentLane.behind;
   }
+  //car in a middle lane
   else{
     var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
     currentLane = laneChecker(currentCar,carsInRightLane);
