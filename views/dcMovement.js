@@ -236,6 +236,7 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
     // Checks if car has reached the end of its current edge
     if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carId);
+
       var nextEdgeId = carPositioning.getNextEdgeInRoute(carId);
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
@@ -292,12 +293,6 @@ function moveCar(carInfo) {
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
 
-  // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
-  if (carOrientation == 90) {
-    carOrientation = 270;
-  } else if (carOrientation == 270) {
-    carOrientation = 90;
-  }
   carInfo._orientation = carOrientation;
 
   // Checks to see if car is on it's final edge and sets destination to actual final destination (somewhere near the center of this edge)

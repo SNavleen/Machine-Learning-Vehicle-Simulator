@@ -24,13 +24,14 @@ function getNextEdgeInRoute(carId) {
 }
 
 function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
+  var startNode = map.getStartNode(currentEdgeId);
+  var endNode = map.getEndNode(currentEdgeId)
   var currentEdge = map.getEdgeObject(currentEdgeId);
   var nextEdge = map.getEdgeObject(nextEdgeId);
   var nextTurn;
   if (nextEdge) {
     var currentEdgeOrientation = currentEdge._orientation;
     var nextEdgeOrientation = nextEdge._orientation;
-    console.log("currentEdgeOrientation " + currentEdgeOrientation + " nextEdgeOrientation " + nextEdgeOrientation);
 
     if (currentEdgeOrientation != nextEdgeOrientation) {
       if (currentEdgeOrientation == 0) {

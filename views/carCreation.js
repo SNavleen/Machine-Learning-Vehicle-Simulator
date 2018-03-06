@@ -2,7 +2,7 @@ var carObject = require('../models/carObject.js');
 var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
-var numberOfCars = 1;
+var numberOfCars = 50;
 var currentCarId = 0; // TODO See if we should change this to start at 1 (there shouldn't be a car 0)
 var carArray = new Array(numberOfCars);
 var frontendCarArray = new Array(numberOfCars);
@@ -96,7 +96,7 @@ function generateDumbCar() {
   car._orientation = map.getEdgeObject(route.edgeIdStart).orientation;
   car._currentEdgeId = route.edgeIdStart;
   //TODO: currently setting the default lane that the car spawns on as far left
-  car._currentLane = 1;
+  car._currentLane = Math.floor((Math.random() * 2) + 1);;
   map.insertCarToEdge(currentCarId, route.edgeIdStart, car._currentLane);
 
   currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
