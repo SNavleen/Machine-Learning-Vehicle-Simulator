@@ -3,7 +3,8 @@
  */
 
 body,html {
-	background-color: #3b4b54; width : 100%;
+	background-color: #3b4b54;
+	width: 100%;
 	height: 100%;
 	margin: 0 auto;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -105,4 +106,16 @@ div.center {
 
 .align-self-center {
 	display: inline-block;
+}
+
+/* I've added this query so the map still displays in portrait when the window width is too small (for developing on half your screen) */
+@media screen and (min-width: 1470px) {
+	/* Displays the map in landscape */
+	#map-container {
+		-webkit-transform: rotate(90deg);
+	    -moz-transform: rotate(90deg);
+	    -o-transform: rotate(90deg);
+	    -ms-transform: rotate(90deg);
+	    transform: rotate(90deg);
+	}
 }
