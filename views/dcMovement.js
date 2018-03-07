@@ -238,7 +238,7 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
       carInfo._shouldChangeLane = needToChangeLane;
-      console.log(carInfo._shouldChangeLane);
+      // console.log(carInfo._shouldChangeLane);
     }
     // Checks if car is is approaching an intersection
     else if (approachingIntersection) {
@@ -279,28 +279,27 @@ function moveX(xPos, xDestination, speed) {
 }
 
 function changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, slope) {
-  if(carInfo._currentLane != shouldChangeLane){
+  if (carInfo._currentLane != shouldChangeLane) {
     if (slope == undefined) {
       carInfo._yPos = moveY(yPos, yDestination, speed);
       if (shouldChangeLane == 1) {
         carInfo._xPos = xPos - speed;
-        carInfo._currentLane -=0.1;
+        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.1, 2);
       } else if (shouldChangeLane == 2) {
         carInfo._xPos = xPos + speed;
-        carInfo._currentLane +=0.1;
+        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.1, 2);
       }
     } else if (slope == 0) {
       carInfo._xPos = moveX(xPos, xDestination, speed);
       if (shouldChangeLane == 1) {
         carInfo._yPos = yPos - speed;
-        carInfo._currentLane -=0.1;
+        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.1, 2);
       } else if (shouldChangeLane == 2) {
         carInfo._yPos = yPos + speed;
-        carInfo._currentLane +=0.1;
+        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.1, 2);
       }
     }
-  }
-  else{
+  } else {
     carInfo._shouldChangeLane = -1;
   }
 
