@@ -15,6 +15,7 @@ var carArray = carCreation.getCarArr();
 // TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 
 var sensorRange = 500000;
+
 //A function to check what is around the car
 //Note each arrays first element will be the car ID of the current car
 function sensorCheck(carID){
@@ -41,6 +42,7 @@ function sensorCheck(carID){
     currentLane = laneChecker(currentCar,carsInRightLane);
     currentCar._lfSensor = currentLane.inFront;
     currentCar._lbSensor = currentLane.behind;
+    currentCar._rSensor = currentLane.carBeside;
   }
   //car in a middle lane
   else{
@@ -48,10 +50,12 @@ function sensorCheck(carID){
     currentLane = laneChecker(currentCar,carsInRightLane);
     currentCar._rfSensor = currentLane.inFront;
     currentCar._rbSensor = currentLane.behind;
+    currentCar._rSensor = currentLane.carBeside;
     var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
     currentLane = laneChecker(currentCar,carsInRightLane);
     currentCar._lfSensor = currentLane.inFront;
     currentCar._lbSensor = currentLane.behind;
+    currentCar._lSensor = currentLane.carBeside;
   }
 
 }
@@ -59,8 +63,17 @@ function sensorCheck(carID){
 function laneChecker(currentCar,carsInLane){
   var inFront = new Array();
   var behind = new Array();
+  var carBeside = false;
   carsInLane.forEach(function(nextCarID){
+
     var nextCar = carCreation.getCar(nextCarID);
+
+    if((nextCar.xPos == currentCar.xPos) && (nextCar.yPos == currentCar.yPos)){
+      if(nextCar.currentLane != currentCar.currentLane){
+        var carBeside = true;
+      }
+    }
+
     //if the distance between the cars is sensor range
     if(euclideanDistance(currentCar.xPos,currentCar.yPos,nextCar.xPos,nextCar.yPos) < sensorRange){
       //if car is driving right
@@ -111,7 +124,7 @@ function laneChecker(currentCar,carsInLane){
     }
 
   });
-  return {inFront: inFront, behind: behind};
+  return {inFront: inFront, behind: behind, carBeside: carBeside};
 
 }
 // A function used to round a float number to a specific precision
@@ -408,7 +421,6 @@ function moveCar(carInfo) {
     carInfo._yPos = moveY(yPos, yDestination, speed);
   }
 
-  return carInfo;
 }
 
 // This functions allows io from app.js to be used
