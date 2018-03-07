@@ -78,9 +78,13 @@ module.exports = class edgeObject {
     return nodeArray[this.endNodeId - 1];
   }
   addCarToEdge(carId, colNum) {
+    console.log("before ", colNum);
+    colNum = Math.round(colNum);
+    console.log("after ", colNum);
     this._listOfCars[colNum - 1].push(carId);
   }
   removeCarFromEdge(carId, colNum) {
+    colNum = Math.round(colNum);
     var index = this._listOfCars[colNum - 1].indexOf(carId);
     if (index > -1) {
       this._listOfCars[colNum - 1].splice(index, 1);

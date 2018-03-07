@@ -9,11 +9,9 @@ function drawCars() {
   socket.on('DumbCarArray', function(data) {
     carCtx.clearRect(0, 0, carCanvas.width, carCanvas.height); // Clears the canvas of all previous cars
     for (var i = 0; i < data.length; i++) {
-      var xPos = data[i]._xPos / ratio;
-      var yPos = data[i]._yPos / ratio;
+      var xPos;
+      var yPos;
       var currentLane = data[i]._currentLane;
-      //to make the cars rotate for all angles and rotate when its turning
-      //we can just change these if states to acount for 0-90 then 90-180 etc.
 
       if (data[i]._orientation == 0) {
         xPos = data[i]._xPos / ratio;
@@ -32,9 +30,11 @@ function drawCars() {
 
       } else if (data[i]._orientation == 180) {
         xPos = data[i]._xPos / ratio;
-        yPos = data[i]._yPos / ratio - (17 * currentLane);
+        yPos = data[i]._yPos / ratio - 17;
+        if(currentLane>1){
+          xPos-=17;
+        }
         //added -20 here to make it go against the line
-
       } else if (data[i]._orientation == 270) {
         //changed it to -30 so that it would look like its on the line
         xPos = data[i]._xPos / ratio - 8.5;
