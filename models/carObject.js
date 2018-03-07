@@ -101,7 +101,7 @@ module.exports = class carObject {
     this._lSensor = value;
   }
   set rSensor(value) {
-    this._rSensor = value;
+    this._rSensor = value; 
   }
   set fSensor(value) {
     this._fSensor = value;

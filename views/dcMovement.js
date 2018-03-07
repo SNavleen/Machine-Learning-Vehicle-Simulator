@@ -19,6 +19,7 @@ var sensorRange = 500000;
 //A function to check what is around the car
 //Note each arrays first element will be the car ID of the current car
 function sensorCheck(carID){
+  console.log("TRST");
   var currentCar = carCreation.getCar(carID);
   var lanesOnRoad = map.getNumberOfLanesOnEdge(currentCar._currentEdgeId);
  // console.log(map.getNumberOfLanesOnEdge(currentCar._currentEdgeId));
@@ -331,7 +332,7 @@ function moveCar(carInfo) {
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
   var approachingIntersection = false;
-  sensorCheck(carId);
+  //sensorCheck(carId);
 
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
