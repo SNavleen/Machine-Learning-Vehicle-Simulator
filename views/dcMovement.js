@@ -15,6 +15,119 @@ var carArray = carCreation.getCarArr();
 // TODO Fix car speed usage (only use "speed" instead of "carCreation.getCar(carId)._speed")
 // TODO Add intersection offsets to map file so they don't need to be hardcoded, read these in from the file to make dynamic
 
+var sensorRange = 500000;
+
+//A function to check what is around the car
+//Note each arrays first element will be the car ID of the current car
+function sensorCheck(carID){
+  var currentCar = carCreation.getCar(carID);
+  var lanesOnRoad = map.getNumberOfLanesOnEdge(currentCar._currentEdgeId);
+ // console.log(map.getNumberOfLanesOnEdge(currentCar._currentEdgeId));
+
+
+  var carsInLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane);
+  //inserts for lane car is currently in
+  var currentLane = laneChecker(currentCar,carsInLane);
+  currentCar._fSensor = currentLane.inFront;
+  currentCar._bSensor = currentLane.behind;
+  //car in left lane
+  if(Math.round(currentCar._currentLane) == 1){
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._rfSensor = currentLane.inFront;
+    currentCar._rbSensor = currentLane.behind;
+  }
+  //car in right hand lane
+  else if(Math.round(currentCar._currentLane) == map.getNumberOfLanesOnEdge(currentCar._currentEdgeId)){
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._lfSensor = currentLane.inFront;
+    currentCar._lbSensor = currentLane.behind;
+    currentCar._rSensor = currentLane.carBeside;
+  }
+  //car in a middle lane
+  else{
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane+1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._rfSensor = currentLane.inFront;
+    currentCar._rbSensor = currentLane.behind;
+    currentCar._rSensor = currentLane.carBeside;
+    var carsInRightLane = map.getCarsOnEdge(currentCar._currentEdgeId,currentCar._currentLane-1);
+    currentLane = laneChecker(currentCar,carsInRightLane);
+    currentCar._lfSensor = currentLane.inFront;
+    currentCar._lbSensor = currentLane.behind;
+    currentCar._lSensor = currentLane.carBeside;
+  }
+
+}
+
+function laneChecker(currentCar,carsInLane){
+  var inFront = new Array();
+  var behind = new Array();
+  var carBeside = false;
+  carsInLane.forEach(function(nextCarID){
+
+    var nextCar = carCreation.getCar(nextCarID);
+
+    if((nextCar.xPos == currentCar.xPos) && (nextCar.yPos == currentCar.yPos)){
+      if(Math.round(nextCar.currentLane) != Math.round(currentCar.currentLane)){
+        var carBeside = true;
+      }
+    }
+
+    //if the distance between the cars is sensor range
+    if(euclideanDistance(currentCar.xPos,currentCar.yPos,nextCar.xPos,nextCar.yPos) < sensorRange){
+      //if car is driving right
+      if(currentCar.orientation == 0){
+        //current car is to behind next car
+        if(currentCar.xPos < nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        else{
+          //current car is in front of next car
+          behind.push(nextCarID);
+        }
+      }
+      //car is driving left
+      else if(currentCar.orientation == 180){
+        //current car is behind next car
+        if(currentCar.xPos > nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        //current car is in front of next car
+        else{
+          behind.push(nextCarID);
+        }
+      }
+      //if car is driving right
+      if(currentCar.orientation == 90){
+        //current car is to behind next car
+        if(currentCar.yPos > nextCar.yPos){
+          inFront.push(nextCarID);
+        }
+        else{
+          //current car is in front of next car
+          behind.push(nextCarID);
+        }
+      }
+      //car is driving left
+      else if(currentCar.orientation == 270){
+        //current car is behind next car
+        if(currentCar.xPos < nextCar.xPos){
+          inFront.push(nextCarID);
+        }
+        //current car is in front of next car
+        else{
+          behind.push(nextCarID);
+        }
+      }
+
+    }
+
+  });
+  return {inFront: inFront, behind: behind, carBeside: carBeside};
+
+}
 // A function used to round a float number to a specific precision
 function precisionRound(number, precision) {
   var factor = Math.pow(10, precision);
@@ -140,6 +253,7 @@ function switchEdge(carId) {
   }, 100);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
+
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 }
@@ -306,6 +420,9 @@ function moveCar(carInfo) {
   var yDestination;
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
+//  var approachingIntersection = false;
+  //sensorCheck(carId);
+
 
   // TODO Temporarily flipping vertical orienation to display correctly (this is a bug with how the made is displaying flipped)
   if (carOrientation == 90) {
@@ -367,8 +484,8 @@ function moveCar(carInfo) {
     yPos = Math.floor((slope * xPos) + intercept);
     carInfo._yPos = moveY(yPos, yDestination, speed);
   }
-
   return carInfo;
+
 }
 
 // This functions allows io from app.js to be used

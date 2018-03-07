@@ -97,28 +97,66 @@ module.exports = class carObject {
   set currentLane(value) {
     this._currentLane = value;
   }
-  set leftSensor(value) {
+  set lSensor(value) {
     this._lSensor = value;
   }
-  set rightSensor(value) {
-    this._rSensor = value;
+  set rSensor(value) {
+    this._rSensor = value; 
   }
-  set frontSensor(value) {
+  set fSensor(value) {
+    this._fSensor = value;
+  }
+  set bSensor(value) {
+    this._bSensor = value;
+  }
+  set lfSensor(value) {
+    this._lfSensor = value;
+  }
+  set lbSensor(value) {
+    this._lbSensor = value;
+  }
+  set rfSensor(value) {
+    this._rfSensor =value;
+  }
+  set rbSensor(value) {
+    this._rbSensor = value;
+  }
+
+  addToFrontSensor(value) {
     this._fSensor.push(value);
   }
-  set backSensor(value) {
+  addToBackSensor(value) {
     this._bSensor.push(value);
   }
-  set leftFrontSensor(value) {
+  addToLeftFrontSensor(value) {
     this._lfSensor.push(value);
   }
-  set leftBackSensor(value) {
+  addToLeftBackSensor(value) {
     this._lbSensor.push(value);
   }
-  set rightFrontSensor(value) {
+  addToRightFrontSensor(value) {
     this._rfSensor.push(value);
   }
-  set rightBackSensor(value) {
+  addToRightBackSensor(value) {
     this._rbSensor.push(value);
+  }
+
+  clearFrontSensor(value) {
+    this._fSensor.splice(0, this._fSensor.length);
+  }
+  clearBackSensor(value) {
+    this._bSensor.splice(0, this._bSensor.length);
+  }
+  clearLeftFrontSensor(value) {
+    this._lfSensor.splice(0, this._lfSensor.length);
+  }
+  clearLeftBackSensor(value) {
+    this._lbSensor.splice(0, this._lbSensor.length);
+  }
+  clearRightFrontSensor(value) {
+    this._rfSensor.splice(0, this._rfSensor.length);
+  }
+  clearRightBackSensor(value) {
+    this._rbSensor.splice(0, this._rbSensor.length);
   }
 }
