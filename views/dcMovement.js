@@ -216,14 +216,12 @@ function approachingIntersectionCheck(distanceFromCenterX, distanceFromCenterY, 
 }
 
 // Main function for checking everything intersection related (mainly speed adjustments, collision avoidance)
-function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination) {
+function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination, instersectionOffsetX, instersectionOffsetY) {
   // Intersection handling
   var carId = carInfo.carId;
   // Checks the remaining distance between the cars current position and current destination
   var xDifference = general.difference(xPos, xDestination);
   var yDifference = general.difference(yPos, yDestination);
-  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
-  var instersectionOffsetY = 23000;
 
   var approachingIntersection = approachingIntersectionCheck(xDifference, yDifference, instersectionOffsetX, instersectionOffsetY, carOrientation);
 
@@ -238,7 +236,7 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
       carInfo._shouldChangeLane = needToChangeLane;
-      // console.log(carInfo._shouldChangeLane);
+      console.log(carInfo._shouldChangeLane);
     }
     // Checks if car is is approaching an intersection
     else if (approachingIntersection) {
@@ -278,29 +276,83 @@ function moveX(xPos, xDestination, speed) {
   return xPos;
 }
 
-function changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, slope) {
+function changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY) {
+  var laneChangeSpeed = speed/10;
   if (carInfo._currentLane != shouldChangeLane) {
-    if (slope == undefined) {
-      carInfo._yPos = moveY(yPos, yDestination, speed);
-      if (shouldChangeLane == 1) {
-        carInfo._xPos = xPos - speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.1, 2);
-      } else if (shouldChangeLane == 2) {
-        carInfo._xPos = xPos + speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.1, 2);
+    var startNodeId = map.getEdgeObject(carInfo._currentEdgeId).startNodeId;
+    var startNodexPos = map.getStartNode(startNodeId).x;
+    var startNodeyPos = map.getStartNode(startNodeId).y;
+
+    if (carOrientation == 0) {
+      if(xPos >= (startNodexPos + instersectionOffsetX)){
+        carInfo._xPos = moveX(xPos, xDestination, speed);
+        if (shouldChangeLane == 1) {
+          // carInfo._yPos = yPos - speed;
+          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
+        } else if (shouldChangeLane == 2) {
+          // carInfo._yPos = yPos + speed;
+          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+        }
       }
-    } else if (slope == 0) {
+    } else if (carOrientation == 180) {
       carInfo._xPos = moveX(xPos, xDestination, speed);
       if (shouldChangeLane == 1) {
-        carInfo._yPos = yPos - speed;
+        // carInfo._yPos = yPos + speed;
+        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
+      } else if (shouldChangeLane == 2) {
+        // carInfo._yPos = yPos - speed;
+        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+      }
+    } else if (carOrientation == 90) {
+      carInfo._yPos = moveY(yPos, yDestination, speed);
+      if (shouldChangeLane == 1) {
+        // carInfo._xPos = xPos + speed;
+        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
+      } else if (shouldChangeLane == 2) {
+        // carInfo._xPos = xPos - speed;
+        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+      }
+    }
+     else if (carOrientation == 270) {
+      carInfo._yPos = moveY(yPos, yDestination, speed);
+      if (shouldChangeLane == 1) {
+        // carInfo._xPos = xPos - speed;
         carInfo._currentLane = precisionRound(carInfo._currentLane - 0.1, 2);
       } else if (shouldChangeLane == 2) {
-        carInfo._yPos = yPos + speed;
+        // carInfo._xPos = xPos + speed;
         carInfo._currentLane = precisionRound(carInfo._currentLane + 0.1, 2);
       }
     }
   } else {
+    console.log("hit");
     carInfo._shouldChangeLane = -1;
+    // console.log("test");
+    // if (carOrientation == 0) {
+    //   if (shouldChangeLane == 1) {
+    //     carInfo._yPos = yPos + speed*10;
+    //   } else if (shouldChangeLane == 2) {
+    //     carInfo._yPos = yPos - speed*10;
+    //   }
+    // } else if (carOrientation == 180) {
+    //   if (shouldChangeLane == 1) {
+    //     carInfo._yPos = yPos - speed*10;
+    //   } else if (shouldChangeLane == 2) {
+    //     carInfo._yPos = yPos + speed*10;
+    //   }
+    // } else if (carOrientation == 90) {
+    //   if (shouldChangeLane == 1) {
+    //     carInfo._xPos = xPos - speed*10;
+    //   } else if (shouldChangeLane == 2) {
+    //     carInfo._xPos = xPos + speed*10;
+    //   }
+    // }
+    //  else if (carOrientation == 270) {
+    //   if (shouldChangeLane == 1) {
+    //     carInfo._xPos = xPos + speed*10;
+    //   } else if (shouldChangeLane == 2) {
+    //     carInfo._xPos = xPos - speed*10;
+    //   }
+    // }
   }
 
 }
@@ -339,12 +391,15 @@ function moveCar(carInfo) {
   var slope = general.slope(edgeStartNode, edgeEndNode);
   var intercept = general.intercept(edgeStartNode, slope);
 
+  var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
+  var instersectionOffsetY = 23000;
+
   // Finds shortest distance
   var closestVehicleDistance = collisionAvoidanceCheck(carId);
   var withinSlowDownRange = closestVehicleDistance < minimumSlowDownDistance(speed + 550);
 
   // Handles everything that deals with intersection movement, this is assigned to a var to ensure speed doesn't increase incorrectly
-  var approachingIntersection = intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination);
+  var approachingIntersection = intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinSlowDownRange, xPos, yPos, xDestination, yDestination, instersectionOffsetX, instersectionOffsetY);
   // Catches if the car is finished it's route and needs to be despawned
   if (approachingIntersection == null) {
     return null;
@@ -362,7 +417,9 @@ function moveCar(carInfo) {
 
   var shouldChangeLane = carInfo._shouldChangeLane;
 
-  if (shouldChangeLane == -1) {
+  if (shouldChangeLane != -1) {
+    changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY);
+  } else {
     if (slope == undefined) {
       carInfo._yPos = moveY(yPos, yDestination, speed);
     } else if (slope == 0) {
@@ -372,8 +429,6 @@ function moveCar(carInfo) {
       yPos = Math.floor((slope * xPos) + intercept);
       carInfo._yPos = moveY(yPos, yDestination, speed);
     }
-  } else {
-    changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, slope)
   }
 
   return carInfo;
