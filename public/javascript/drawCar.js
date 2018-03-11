@@ -12,52 +12,78 @@ function drawCars() {
       var xPos;
       var yPos;
       var currentLane = data[i]._currentLane;
+      var shouldChangeLane = data[i]._shouldChangeLane;
+
       console.log(currentLane);
 
       if (data[i]._orientation == 0) {
         xPos = data[i]._xPos / ratio;
         yPos = data[i]._yPos / ratio + 1;
-        if(currentLane=1){
+        if(currentLane==2){
           yPos+=17;
         }
         else if(currentLane>1){
-          console.log("0 hit");
-          xPos+=1.7;
+          if(shouldChangeLane==2){
+            console.log("0 hit");
+            yPos+=0.1;
+          }
+          else if (shouldChangeLane ==1){
+            console.log("0 hit");
+            yPos-=0.1;
+          }
         }
 
       } else if (data[i]._orientation == 90) {
         //to make to along the line i added -10 because it looked like it was too far from the road
         xPos = data[i]._xPos / ratio + 8.5;
         yPos = data[i]._yPos / ratio;
-        if(currentLane=1){
+        if(currentLane==2){
           xPos+=17;
         }
         else if(currentLane>1){
-          console.log("90 hit");
-          xPos+=1.7;
+          if(shouldChangeLane==2){
+            console.log("90 hit");
+            xPos+=0.1;
+          }
+          else if (shouldChangeLane ==1){
+            console.log("90 hit");
+            xPos-=0.1;
+          }
         }
 
       } else if (data[i]._orientation == 180) {
         xPos = data[i]._xPos / ratio;
         yPos = data[i]._yPos / ratio - 17;
-        if(currentLane=1){
-          xPos-=17;
+        if(currentLane==2){
+          yPos-=17;
         }
         else if(currentLane>1){
-          console.log("180 hit");
-          xPos-=1.7;
+          if(shouldChangeLane==2){
+            console.log("180 hit");
+            xPos-=0.1;
+          }
+          else if (shouldChangeLane ==1){
+            console.log("180 hit");
+            xPos+=0.1;
+          }
         }
         //added -20 here to make it go against the line
       } else if (data[i]._orientation == 270) {
         //changed it to -30 so that it would look like its on the line
         xPos = data[i]._xPos / ratio - 8.5;
         yPos = data[i]._yPos / ratio;
-        if(currentLane=1){
+        if(currentLane==2){
           xPos-=17;
         }
         else if(currentLane>1){
-          console.log("270 hit");
-          xPos-=1.7;
+          if(shouldChangeLane==2){
+            console.log("180 hit");
+            yPos-=0.1;
+          }
+          else if (shouldChangeLane ==1){
+            console.log("180 hit");
+            yPos+=0.1;
+          }
         }
       }
       //console.log("xpos " + xPos + " ypos " + yPos + " orientation " + data[i]._orientation);

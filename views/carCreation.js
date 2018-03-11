@@ -1,5 +1,6 @@
 var carObject = require('../models/carObject.js');
 var general = require('../views/general.js');
+var carPositioning = require('./carPositioning.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 
 var numberOfCars = 1;
@@ -95,12 +96,42 @@ function generateDumbCar() {
   car._yPos = start.y;
   car._orientation = map.getEdgeObject(route.edgeIdStart).orientation;
   car._currentEdgeId = route.edgeIdStart;
-  //TODO: currently setting the default lane that the car spawns on as far left
-  car._currentLane = Math.floor((Math.random() * 2) + 1);;
+
+  car._currentLane = 2;
+  // var nextEdgeId = getNextEdgeInRoute(car);
+  // console.log(nextEdgeId);
+  //
+  // car._currentLane = 2;
+  // var lane = carPositioning.checkIfLaneChangeIsNeeded(car._currentLane, car._currentEdgeId, nextEdgeId);
+  // console.log(lane);
+  // if(lane==1){
+  //   car._currentLane = 1;
+  // }
+
   map.insertCarToEdge(currentCarId, route.edgeIdStart, car._currentLane);
 
   currentCarId++; // This will need to be removed from dumbcar and applied to all vehicle spawns
   return car;
+}
+
+// Returns the edgeId of the passed in cars next edge on it's current route
+function getNextEdgeInRoute(car) {
+  var edgeArray = map.getEdgeArray();
+  var currentEdgeEnd = map.getEdgeObject(car._currentEdgeId).endNodeId;
+  var nextEdgeStart = currentEdgeEnd;
+
+  // Finds the ID of the next node in the route
+  if (nextEdgeStart != car.route[car.route.length - 1]) {
+    var nextEdgeEnd = car.route[car.route.indexOf(nextEdgeStart) + 1];
+
+    // Scan through all edges to find the next one on the route
+    for (var i = 1; i < edgeArray.length; i++) {
+      // Switch to this edge
+      if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
+        return edgeArray[i].edgeId;
+      }
+    }
+  }
 }
 
 function randomizeCarPos(edgeId) {

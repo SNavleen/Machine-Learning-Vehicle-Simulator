@@ -276,8 +276,8 @@ function moveX(xPos, xDestination, speed) {
   return xPos;
 }
 
-function changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY) {
-  var laneChangeSpeed = speed/10;
+function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY) {
+  console.log("currentLane ", carInfo._currentLane, "shouldChangeLane ", shouldChangeLane);
   if (carInfo._currentLane != shouldChangeLane) {
     var startNodeId = map.getEdgeObject(carInfo._currentEdgeId).startNodeId;
     var startNodexPos = map.getStartNode(startNodeId).x;
@@ -285,74 +285,41 @@ function changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shou
 
     if (carOrientation == 0) {
       if(xPos >= (startNodexPos + instersectionOffsetX)){
-        carInfo._xPos = moveX(xPos, xDestination, speed);
-        if (shouldChangeLane == 1) {
-          // carInfo._yPos = yPos - speed;
-          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
-        } else if (shouldChangeLane == 2) {
-          // carInfo._yPos = yPos + speed;
-          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+        if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
+          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
+        } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
+          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.5, 2);
         }
       }
     } else if (carOrientation == 180) {
-      carInfo._xPos = moveX(xPos, xDestination, speed);
-      if (shouldChangeLane == 1) {
-        // carInfo._yPos = yPos + speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
-      } else if (shouldChangeLane == 2) {
-        // carInfo._yPos = yPos - speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+      if(xPos <= (startNodexPos - instersectionOffsetX)){
+        if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
+          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
+        } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
+          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.5, 2);
+        }
       }
     } else if (carOrientation == 90) {
-      carInfo._yPos = moveY(yPos, yDestination, speed);
-      if (shouldChangeLane == 1) {
-        // carInfo._xPos = xPos + speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.05, 2);
-      } else if (shouldChangeLane == 2) {
-        // carInfo._xPos = xPos - speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.05, 2);
+      if(yPos >= startNodeyPos + instersectionOffsetY){
+        if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
+          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
+        } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
+          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.5, 2);
+        }
       }
     }
      else if (carOrientation == 270) {
-      carInfo._yPos = moveY(yPos, yDestination, speed);
-      if (shouldChangeLane == 1) {
-        // carInfo._xPos = xPos - speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane - 0.1, 2);
-      } else if (shouldChangeLane == 2) {
-        // carInfo._xPos = xPos + speed;
-        carInfo._currentLane = precisionRound(carInfo._currentLane + 0.1, 2);
+      if(yPos <= startNodeyPos - instersectionOffsetY){
+        if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
+          carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
+        } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
+          carInfo._currentLane = precisionRound(carInfo._currentLane + 0.5, 2);
+        }
       }
     }
   } else {
-    console.log("hit");
+    console.log("done lane change");
     carInfo._shouldChangeLane = -1;
-    // console.log("test");
-    // if (carOrientation == 0) {
-    //   if (shouldChangeLane == 1) {
-    //     carInfo._yPos = yPos + speed*10;
-    //   } else if (shouldChangeLane == 2) {
-    //     carInfo._yPos = yPos - speed*10;
-    //   }
-    // } else if (carOrientation == 180) {
-    //   if (shouldChangeLane == 1) {
-    //     carInfo._yPos = yPos - speed*10;
-    //   } else if (shouldChangeLane == 2) {
-    //     carInfo._yPos = yPos + speed*10;
-    //   }
-    // } else if (carOrientation == 90) {
-    //   if (shouldChangeLane == 1) {
-    //     carInfo._xPos = xPos - speed*10;
-    //   } else if (shouldChangeLane == 2) {
-    //     carInfo._xPos = xPos + speed*10;
-    //   }
-    // }
-    //  else if (carOrientation == 270) {
-    //   if (shouldChangeLane == 1) {
-    //     carInfo._xPos = xPos + speed*10;
-    //   } else if (shouldChangeLane == 2) {
-    //     carInfo._xPos = xPos - speed*10;
-    //   }
-    // }
   }
 
 }
@@ -418,17 +385,17 @@ function moveCar(carInfo) {
   var shouldChangeLane = carInfo._shouldChangeLane;
 
   if (shouldChangeLane != -1) {
-    changeLane(carInfo, xPos, xDestination, yPos, yDestination, speed, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY);
+    changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY);
+  }
+
+  if (slope == undefined) {
+    carInfo._yPos = moveY(yPos, yDestination, speed);
+  } else if (slope == 0) {
+    carInfo._xPos = moveX(xPos, xDestination, speed);
   } else {
-    if (slope == undefined) {
-      carInfo._yPos = moveY(yPos, yDestination, speed);
-    } else if (slope == 0) {
-      carInfo._xPos = moveX(xPos, xDestination, speed);
-    } else {
-      carInfo._xPos = moveX(xPos, xDestination, speed);
-      yPos = Math.floor((slope * xPos) + intercept);
-      carInfo._yPos = moveY(yPos, yDestination, speed);
-    }
+    carInfo._xPos = moveX(xPos, xDestination, speed);
+    yPos = Math.floor((slope * xPos) + intercept);
+    carInfo._yPos = moveY(yPos, yDestination, speed);
   }
 
   return carInfo;
