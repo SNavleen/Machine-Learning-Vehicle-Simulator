@@ -97,16 +97,15 @@ function generateDumbCar() {
   car._orientation = map.getEdgeObject(route.edgeIdStart).orientation;
   car._currentEdgeId = route.edgeIdStart;
 
+  var nextEdgeId = getNextEdgeInRoute(car);
+  console.log(nextEdgeId);
+
   car._currentLane = 2;
-  // var nextEdgeId = getNextEdgeInRoute(car);
-  // console.log(nextEdgeId);
-  //
-  // car._currentLane = 2;
-  // var lane = carPositioning.checkIfLaneChangeIsNeeded(car._currentLane, car._currentEdgeId, nextEdgeId);
-  // console.log(lane);
-  // if(lane==1){
-  //   car._currentLane = 1;
-  // }
+  var lane = carPositioning.checkIfLaneChangeIsNeeded(car._currentLane, car._currentEdgeId, nextEdgeId);
+  console.log(lane);
+  if(lane==1){
+    car._currentLane = 1;
+  }
 
   map.insertCarToEdge(currentCarId, route.edgeIdStart, car._currentLane);
 

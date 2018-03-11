@@ -106,6 +106,27 @@ function collisionAvoidanceCheck(carId) {
   return shortestDistance;
 }
 
+// Returns the edgeId of the passed in cars next edge on it's current route
+function getNextEdgeInRoute(carId) {
+  var edgeArray = map.getEdgeArray();
+  var currentCar = carCreation.getCar(carId);
+  var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeId).endNodeId;
+  var nextEdgeStart = currentEdgeEnd;
+
+  // Finds the ID of the next node in the route
+  if (nextEdgeStart != currentCar.route[currentCar.route.length - 1]) {
+    var nextEdgeEnd = currentCar.route[currentCar.route.indexOf(nextEdgeStart) + 1];
+
+    // Scan through all edges to find the next one on the route
+    for (var i = 1; i < edgeArray.length; i++) {
+      // Switch to this edge
+      if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
+        return edgeArray[i].edgeId;
+      }
+    }
+  }
+}
+
 // This moves the current car onto the next edge in its route
 function switchEdge(carId) {
   var currentCar = carCreation.getCar(carId);
@@ -119,7 +140,7 @@ function switchEdge(carId) {
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
   //console.log(map.getEdgeObject(currentCar._currentEdgeId));
-  currentCar._currentEdgeId = carPositioning.getNextEdgeInRoute(carId);
+  currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 
 
@@ -129,7 +150,7 @@ function switchEdge(carId) {
 // Function to check if the next edge in the current vehicles path has space available to enter
 function isRoadBlocked(carId) {
   var currentCar = carCreation.getCar(carId);
-  var nextEdgeId = carPositioning.getNextEdgeInRoute(carId);
+  var nextEdgeId = getNextEdgeInRoute(carId);
   var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId, currentCar._currentLane);
   var nextEdgeStartNode = map.getStartNode(nextEdgeId);
   var nextEdgeStartNodeX = nextEdgeStartNode.x;
@@ -232,7 +253,7 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
     if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carId);
 
-      var nextEdgeId = carPositioning.getNextEdgeInRoute(carId);
+      var nextEdgeId = getNextEdgeInRoute(carId);
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
       carInfo._shouldChangeLane = needToChangeLane;
