@@ -255,11 +255,7 @@ function switchEdge(carId) {
   }, 100);
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
-<<<<<<< HEAD
-  //console.log(map.getEdgeObject(currentCar._currentEdgeId));
-=======
 
->>>>>>> master
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 

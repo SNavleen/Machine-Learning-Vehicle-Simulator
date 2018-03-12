@@ -144,7 +144,6 @@ module.exports = class carObject {
   addToRightBackSensor(value) {
     this._rbSensor.push(value);
   }
-
   clearFrontSensor(value) {
     this._fSensor.splice(0, this._fSensor.length);
   }
