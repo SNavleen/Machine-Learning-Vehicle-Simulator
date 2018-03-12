@@ -14,79 +14,58 @@ function drawCars() {
       var currentLane = data[i]._currentLane;
       var shouldChangeLane = data[i]._shouldChangeLane;
 
-      console.log(currentLane);
-
-      if (data[i]._orientation == 0) {
-        xPos = data[i]._xPos / ratio;
-        yPos = data[i]._yPos / ratio + 1;
-        if(currentLane==2){
-          yPos+=17;
-        }
-        else if(currentLane>1){
-          if(shouldChangeLane==2){
-            console.log("0 hit");
-            yPos+=0.1;
-          }
-          else if (shouldChangeLane ==1){
-            console.log("0 hit");
-            yPos-=0.1;
+      if (data[i]._orientation == 0) { //checks if the orientation is 0 degrees
+        xPos = data[i]._xPos / ratio; //divides the backend xpos value by the front end ratio
+        yPos = data[i]._yPos / ratio + 1; //adds + 1 to put it on the correct lane position
+        if (currentLane == 2) { // checks if its in a higherlane so that it can add to put it in the right lane
+          yPos += 17;
+        } else if (currentLane > 1) {//checks if it is lane changing since 1.1-1.9 is indicating lane change
+          if (shouldChangeLane == 2) {//checks if lane should be 2 so that it can increase to that lane
+            yPos += 0.1;
+          } else if (shouldChangeLane == 1) {//checks if lane should be 1 so that it can decrease to that lane
+            yPos -= 0.1;
           }
         }
 
-      } else if (data[i]._orientation == 90) {
-        //to make to along the line i added -10 because it looked like it was too far from the road
-        xPos = data[i]._xPos / ratio + 8.5;
-        yPos = data[i]._yPos / ratio;
-        if(currentLane==2){
-          xPos+=17;
-        }
-        else if(currentLane>1){
-          if(shouldChangeLane==2){
-            console.log("90 hit");
-            xPos+=0.1;
-          }
-          else if (shouldChangeLane ==1){
-            console.log("90 hit");
-            xPos-=0.1;
+      } else if (data[i]._orientation == 90) {//checks if the orientation is 90 degrees
+        xPos = data[i]._xPos / ratio + 8.5; //adds + 8.5 to put it on the correct lane position
+        yPos = data[i]._yPos / ratio; //divides the backend xpos value by the front end ratio
+        if (currentLane == 2) {// checks if its in a higherlane so that it can add to put it in the right lane
+          xPos += 17;
+        } else if (currentLane > 1) {//checks if it is lane changing since 1.1-1.9 is indicating lane change
+          if (shouldChangeLane == 2) {//checks if lane should be 2 so that it can increase to that lane
+            xPos += 0.1;
+          } else if (shouldChangeLane == 1) {//checks if lane should be 1 so that it can decrease to that lane
+            xPos -= 0.1;
           }
         }
 
-      } else if (data[i]._orientation == 180) {
-        xPos = data[i]._xPos / ratio;
-        yPos = data[i]._yPos / ratio - 17;
-        if(currentLane==2){
-          yPos-=17;
-        }
-        else if(currentLane>1){
-          if(shouldChangeLane==2){
-            console.log("180 hit");
-            xPos-=0.1;
-          }
-          else if (shouldChangeLane ==1){
-            console.log("180 hit");
-            xPos+=0.1;
+      } else if (data[i]._orientation == 180) {//checks if the orientation is 180 degrees
+        xPos = data[i]._xPos / ratio; //divides the backend xpos value by the front end ratio
+        yPos = data[i]._yPos / ratio - 17; //subtracts - 17 to put it on the correct lane position
+        if (currentLane == 2) {// checks if its in a higherlane so that it can subtract to put it in the right lane
+          yPos -= 17;
+        } else if (currentLane > 1) {//checks if it is lane changing since 1.1-1.9 is indicating lane change
+          if (shouldChangeLane == 2) {//checks if lane should be 2 so that it can decrease to that lane
+            xPos -= 0.1;
+          } else if (shouldChangeLane == 1) {//checks if lane should be 1 so that it can increase to that lane
+            xPos += 0.1;
           }
         }
-        //added -20 here to make it go against the line
-      } else if (data[i]._orientation == 270) {
-        //changed it to -30 so that it would look like its on the line
-        xPos = data[i]._xPos / ratio - 8.5;
-        yPos = data[i]._yPos / ratio;
-        if(currentLane==2){
-          xPos-=17;
-        }
-        else if(currentLane>1){
-          if(shouldChangeLane==2){
-            console.log("180 hit");
-            yPos-=0.1;
-          }
-          else if (shouldChangeLane ==1){
-            console.log("180 hit");
-            yPos+=0.1;
+
+      } else if (data[i]._orientation == 270) {//checks if the orientation is 270 degrees
+        xPos = data[i]._xPos / ratio - 8.5; //subtracts - 8.5 to put it on the correct lane position
+        yPos = data[i]._yPos / ratio; //divides the backend xpos value by the front end ratio
+        if (currentLane == 2) { // checks if its in a higherlane so that it can subtract to put it in the right lane
+          xPos -= 17;
+        } else if (currentLane > 1) {//checks if it is lane changing since 1.1-1.9 is indicating lane change
+          if (shouldChangeLane == 2) {//checks if lane should be 2 so that it can decrease to that lane
+            yPos -= 0.1;
+          } else if (shouldChangeLane == 1) {//checks if lane should be 1 so that it can increase to that lane
+            yPos += 0.1;
           }
         }
       }
-      //console.log("xpos " + xPos + " ypos " + yPos + " orientation " + data[i]._orientation);
       drawRotatedCar(xPos, yPos, carLength, carWidth, data[i]._orientation);
     }
   });

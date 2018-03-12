@@ -258,8 +258,6 @@ function switchEdge(carId) {
 
   currentCar._currentEdgeId = getNextEdgeInRoute(carId);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
-
-
 }
 
 // TODO This functionality might have to be changed a bit in the future. Once a road becomes free the car that has been waiting the longest should be the first to go (instead of getting sent to the back of the queue)
@@ -369,11 +367,12 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
     if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carId);
 
-      var nextEdgeId = getNextEdgeInRoute(carId);
+      var nextEdgeId = getNextEdgeInRoute(carId); //checks what the next edge is
+      //checks if a lane change is needed before the next intersection
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
+      //updates the _shouldChangeLane value
       carInfo._shouldChangeLane = needToChangeLane;
-      console.log(carInfo._shouldChangeLane);
     }
     // Checks if car is is approaching an intersection
     else if (approachingIntersection) {
@@ -413,15 +412,15 @@ function moveX(xPos, xDestination, speed) {
   return xPos;
 }
 
+//function that handles the car changing lane in the backend
 function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY) {
-  console.log("currentLane ", carInfo._currentLane, "shouldChangeLane ", shouldChangeLane);
   if (carInfo._currentLane != shouldChangeLane) {
     var startNodeId = map.getEdgeObject(carInfo._currentEdgeId).startNodeId;
     var startNodexPos = map.getStartNode(startNodeId).x;
     var startNodeyPos = map.getStartNode(startNodeId).y;
 
     if (carOrientation == 0) {
-      if(xPos >= (startNodexPos + instersectionOffsetX)){
+      if(xPos >= (startNodexPos + instersectionOffsetX)){ //checks if the car has left the start intersection
         if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
           carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
         } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
@@ -429,7 +428,7 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
         }
       }
     } else if (carOrientation == 180) {
-      if(xPos <= (startNodexPos - instersectionOffsetX)){
+      if(xPos <= (startNodexPos - instersectionOffsetX)){ //checks if the car has left the start intersection
         if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
           carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
         } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
@@ -437,7 +436,7 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
         }
       }
     } else if (carOrientation == 90) {
-      if(yPos >= startNodeyPos + instersectionOffsetY){
+      if(yPos >= startNodeyPos + instersectionOffsetY){ //checks if the car has left the start intersection
         if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
           carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
         } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
@@ -446,7 +445,7 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
       }
     }
      else if (carOrientation == 270) {
-      if(yPos <= startNodeyPos - instersectionOffsetY){
+      if(yPos <= startNodeyPos - instersectionOffsetY){ //checks if the car has left the start intersection
         if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
           carInfo._currentLane = precisionRound(carInfo._currentLane - 0.5, 2);
         } else if (shouldChangeLane == 2) {//increases currentLane from 1 to 2
@@ -454,9 +453,8 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
         }
       }
     }
-  } else {
-    console.log("done lane change");
-    carInfo._shouldChangeLane = -1;
+  } else {//once the lane change is done, set it to 0 
+    carInfo._shouldChangeLane = 0;
   }
 
 }
@@ -523,8 +521,8 @@ function moveCar(carInfo) {
   speed = precisionRound(carInfo._speed, 3); // Update speed from car object before moving
 
   var shouldChangeLane = carInfo._shouldChangeLane;
-
-  if (shouldChangeLane != -1) {
+  //if value is not 0 then it requires a lane change
+  if (shouldChangeLane != 0) {
     changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY);
   }
 

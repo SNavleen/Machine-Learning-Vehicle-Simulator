@@ -98,13 +98,10 @@ function generateDumbCar() {
   car._orientation = map.getEdgeObject(route.edgeIdStart).orientation;
   car._currentEdgeId = route.edgeIdStart;
 
-  var nextEdgeId = getNextEdgeInRoute(car);
-  console.log(nextEdgeId);
-
-  car._currentLane = 2;
+  var nextEdgeId = getNextEdgeInRoute(car); //gets the nextEdge in the route so that we can calculate what lane the car should spawn in
+  car._currentLane = 2; //sets the current lane to 2 so that we can see if it should stay in lane 2 or change to lane 2
   var lane = carPositioning.checkIfLaneChangeIsNeeded(car._currentLane, car._currentEdgeId, nextEdgeId);
-  console.log(lane);
-  if(lane==1){
+  if(lane==1){ //if carPositioning returns 1 the car should then spawn in lane 1 else it can stay in lane 2
     car._currentLane = 1;
   }
 
