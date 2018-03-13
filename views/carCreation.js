@@ -211,5 +211,6 @@ module.exports = {
   setCarArr,
   getFrontendCarArr,
   spliceFrontendCarArr,
-  getCar
+  getCar,
+  getNextEdgeInRoute
 };

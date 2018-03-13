@@ -17,7 +17,7 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
       if (currentEdgeOrientation == 0) { //for each current orientation check for left and right turns, becasue of our previous checks makes sure that each current orientation only has 2 possible turns
         if (nextEdgeOrientation == 90) { //if next edge is 90 then it next turn is a 1
           nextTurn = 1;
-        } else { //everything else meaning just 270 degrees is a left turn so 2
+        } else { //everything else meaning just 270 degrees is a right turn so 2
           nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 90) {
@@ -40,13 +40,13 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
         }
       }
       if (nextTurn == currentLane) { //if the next turn and currentlane is the same that means it doesnt need a lane change
-        return 0;
+        return -1;
       } else { //it will return the next turn meaning what lane lane it should change to as well
         return nextTurn;
       }
     }
   }
-  return 0;
+  return -1;
 }
 
 module.exports = {

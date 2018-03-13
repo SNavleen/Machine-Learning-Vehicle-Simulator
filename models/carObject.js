@@ -10,8 +10,8 @@ module.exports = class carObject {
     this.route = route;
 
     this.speed = 0;
-    //0 means its not changing lane, 1 means changing to the left lane, 2 means chaning to the right lane
-    this.shouldChangeLane=0;
+    //-1 means its not changing lane, 1 means changing to the left lane, 2 means chaning to the right lane
+    this.shouldChangeLane=-1;
     this.orientation;
     this.xPos;
     this.yPos;

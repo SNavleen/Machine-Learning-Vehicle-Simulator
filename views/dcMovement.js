@@ -256,7 +256,7 @@ function switchEdge(carId) {
 
   map.removeCarFromEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 
-  currentCar._currentEdgeId = getNextEdgeInRoute(carId);
+  currentCar._currentEdgeId = carCreation.getNextEdgeInRoute(currentCar);
   map.insertCarToEdge(currentCar.carId, currentCar._currentEdgeId, 1); // TODO Will have to update "0"
 }
 
@@ -264,7 +264,7 @@ function switchEdge(carId) {
 // Function to check if the next edge in the current vehicles path has space available to enter
 function isRoadBlocked(carId) {
   var currentCar = carCreation.getCar(carId);
-  var nextEdgeId = getNextEdgeInRoute(carId);
+  var nextEdgeId = carCreation.getNextEdgeInRoute(currentCar);
   var carsOnNextEdge = map.getCarsOnEdge(nextEdgeId, currentCar._currentLane);
   var nextEdgeStartNode = map.getStartNode(nextEdgeId);
   var nextEdgeStartNodeX = nextEdgeStartNode.x;
@@ -367,7 +367,8 @@ function intersectionHandling(carInfo, carOrientation, speed, finalEdge, withinS
     if (xDifference <= 500 && yDifference <= 500) {
       switchEdge(carId);
 
-      var nextEdgeId = getNextEdgeInRoute(carId); //checks what the next edge is
+      var currentCar = carCreation.getCar(carId);
+      var nextEdgeId = carCreation.getNextEdgeInRoute(currentCar); //checks what the next edge is
       //checks if a lane change is needed before the next intersection
       var needToChangeLane = carPositioning.checkIfLaneChangeIsNeeded(carInfo._currentLane, carInfo._currentEdgeId, nextEdgeId);
 
@@ -453,8 +454,8 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
         }
       }
     }
-  } else {//once the lane change is done, set it to 0 
-    carInfo._shouldChangeLane = 0;
+  } else {//once the lane change is done, set it to -1
+    carInfo._shouldChangeLane = -1;
   }
 
 }
@@ -522,7 +523,7 @@ function moveCar(carInfo) {
 
   var shouldChangeLane = carInfo._shouldChangeLane;
   //if value is not 0 then it requires a lane change
-  if (shouldChangeLane != 0) {
+  if (shouldChangeLane != -1) {
     changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY);
   }
 
