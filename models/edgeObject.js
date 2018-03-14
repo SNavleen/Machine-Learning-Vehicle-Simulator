@@ -23,16 +23,15 @@ function readNodeFile() {
 // Set the orientation of the edge
 function orientationOfEdge(node1, node2) {
   var deltaX = nodeArray[node2].x - nodeArray[node1].x;
-  var deltaY = nodeArray[node2].y - nodeArray[node1].y;
+  var deltaY = nodeArray[node1].y - nodeArray[node2].y;
   var rad = Math.atan2(deltaY, deltaX);
 
   var deg = rad * (180 / Math.PI);
 
-  // Flips degrees if negative
+  // Turn Negative Degrees to positive
   if (deg < 0) {
     deg = 360 + deg;
   }
-
   return deg;
 }
 
@@ -79,9 +78,11 @@ module.exports = class edgeObject {
     return nodeArray[this.endNodeId - 1];
   }
   addCarToEdge(carId, colNum) {
+    colNum = Math.round(colNum);
     this._listOfCars[colNum - 1].push(carId);
   }
   removeCarFromEdge(carId, colNum) {
+    colNum = Math.round(colNum);
     var index = this._listOfCars[colNum - 1].indexOf(carId);
     if (index > -1) {
       this._listOfCars[colNum - 1].splice(index, 1);

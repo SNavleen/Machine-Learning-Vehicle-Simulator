@@ -10,12 +10,13 @@ module.exports = class carObject {
     this.route = route;
 
     this.speed = 0;
+    //-1 means its not changing lane, 1 means changing to the left lane, 2 means chaning to the right lane
+    this.shouldChangeLane=-1;
     this.orientation;
     this.xPos;
     this.yPos;
     this.currentEdgeId;
     this.currentLane;
-
     // Sensors arrays and booleans
     // The sensor arrays will hold a list of carId that it know of
 
@@ -79,6 +80,9 @@ module.exports = class carObject {
   get rightBackSensor() {
     return this._rbSensor;
   }
+  get shouldChangeLane() {
+    return this._shouldChangeLane;
+  }
   set xPos(value) {
     this._xPos = value;
   }
@@ -101,7 +105,7 @@ module.exports = class carObject {
     this._lSensor = value;
   }
   set rSensor(value) {
-    this._rSensor = value; 
+    this._rSensor = value;
   }
   set fSensor(value) {
     this._fSensor = value;
@@ -140,7 +144,6 @@ module.exports = class carObject {
   addToRightBackSensor(value) {
     this._rbSensor.push(value);
   }
-
   clearFrontSensor(value) {
     this._fSensor.splice(0, this._fSensor.length);
   }
@@ -158,5 +161,8 @@ module.exports = class carObject {
   }
   clearRightBackSensor(value) {
     this._rbSensor.splice(0, this._rbSensor.length);
+  }
+  set shouldChangeLane(value) {
+    this._shouldChangeLane = (value);
   }
 }

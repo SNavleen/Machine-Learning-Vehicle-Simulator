@@ -90,6 +90,7 @@ module.exports = class graphObject {
     edgeArray[edgeId - 1].removeCarFromEdge(carId, colNum);
   }
   getCarsOnEdge(edgeId, colNum) {
+    colNum = Math.round(colNum);
     return edgeArray[edgeId - 1]._listOfCars[colNum - 1];
   }
   getOrientationOfEdge(edgeId) {
