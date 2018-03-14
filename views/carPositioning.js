@@ -2,6 +2,7 @@ var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 var carCreation = require('./carCreation.js');//TODO This is a second require of carCreation, we may need to move it?
 
+//TODO number line if possible 
 //function checks if the next edge in route and determins if its a left or right turn next and checks if its in the right lane to do that turn
 function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
   var startNode = map.getStartNode(currentEdgeId);

@@ -222,27 +222,6 @@ function collisionAvoidanceCheck(carId) {
   return shortestDistance;
 }
 
-// Returns the edgeId of the passed in cars next edge on it's current route
-function getNextEdgeInRoute(carId) {
-  var edgeArray = map.getEdgeArray();
-  var currentCar = carCreation.getCar(carId);
-  var currentEdgeEnd = map.getEdgeObject(currentCar._currentEdgeId).endNodeId;
-  var nextEdgeStart = currentEdgeEnd;
-
-  // Finds the ID of the next node in the route
-  if (nextEdgeStart != currentCar.route[currentCar.route.length - 1]) {
-    var nextEdgeEnd = currentCar.route[currentCar.route.indexOf(nextEdgeStart) + 1];
-
-    // Scan through all edges to find the next one on the route
-    for (var i = 1; i < edgeArray.length; i++) {
-      // Switch to this edge
-      if (edgeArray[i].startNodeId == nextEdgeStart && edgeArray[i].endNodeId == nextEdgeEnd) {
-        return edgeArray[i].edgeId;
-      }
-    }
-  }
-}
-
 // This moves the current car onto the next edge in its route
 function switchEdge(carId) {
   var currentCar = carCreation.getCar(carId);
