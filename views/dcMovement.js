@@ -5,7 +5,7 @@ var carPositioning = require('./carPositioning.js');
 
 carCreation.createDumbCars();
 var carArray = carCreation.getCarArr();
-
+var wireless = 1;
 // TODO See if io can be assigned to a var to move everything out of the export function
 // TODO Clean up code and remove everything out of socket function (only keep socket events)
 // TODO Create function to convert speed to km/h as an int
@@ -84,7 +84,7 @@ function laneChecker(currentCar,carsInLane){
         if(currentCar.xPos < nextCar.xPos){
           inFront.push(nextCarID);
         }
-        else{
+        else if(currentCar.xPos > nextCar.xPos){
           //current car is in front of next car
           behind.push(nextCarID);
         }
@@ -96,7 +96,7 @@ function laneChecker(currentCar,carsInLane){
           inFront.push(nextCarID);
         }
         //current car is in front of next car
-        else{
+        else if(currentCar.xPos < nextCar.xPos){
           behind.push(nextCarID);
         }
       }
@@ -106,7 +106,7 @@ function laneChecker(currentCar,carsInLane){
         if(currentCar.yPos > nextCar.yPos){
           inFront.push(nextCarID);
         }
-        else{
+        else if(currentCar.yPos < nextCar.yPos){
           //current car is in front of next car
           behind.push(nextCarID);
         }
@@ -118,7 +118,7 @@ function laneChecker(currentCar,carsInLane){
           inFront.push(nextCarID);
         }
         //current car is in front of next car
-        else{
+        else if(currentCar.yPos > nextCar.yPos){
           behind.push(nextCarID);
         }
       }
@@ -438,6 +438,49 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
   }
 
 }
+function loopSensorCheck(carInfo){
+  //  console.log("carID : ",carInfo.carId,"3;",carInfo._lbSensor);
+  // console.log("carID : ",nCar.carId,"4:",nCar._lbSensor);
+  //  console.log("carID : ",carInfo.carId,"1:",carInfo._lbSensor);
+  //  console.log("carID : ",nCar.carId,"2:",nCar._lbSensor);
+  if(Array.isArray(carInfo._fSensor) && carInfo._fSensor.length && carInfo._fSensor[carInfo._fSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._fSensor[carInfo._fSensor.length-1]);
+    if(Array.isArray(nCar._fSensor) && nCar._fSensor.length && nCar._fSensor[nCar._fSensor.length-1]){
+      carInfo._fSensor = carInfo._fSensor.concat(nCar._fSensor);
+    }
+  }
+  if(Array.isArray(carInfo._lfSensor) && carInfo._lfSensor.length && carInfo._lfSensor[carInfo._lfSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._lfSensor[carInfo._lfSensor.length-1]);
+    if(Array.isArray(nCar._lfSensor) && nCar._lfSensor.length && nCar._lfSensor[nCar._lfSensor.length-1]){
+      carInfo._lfSensor = carInfo._lfSensor.concat(nCar._lfSensor);
+    }
+  }
+  if(Array.isArray(carInfo._rfSensor) && carInfo._rfSensor.length && carInfo._rfSensor[carInfo._rfSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._rfSensor[carInfo._rfSensor.length-1]);
+    if(Array.isArray(nCar._rfSensor) && nCar._rfSensor.length && nCar._rfSensor[nCar._rfSensor.length-1]){
+      carInfo._rfSensor = carInfo._rfSensor.concat(nCar._rfSensor);
+    }
+  }
+  if(Array.isArray(carInfo._bSensor) && carInfo._bSensor.length && carInfo._bSensor[carInfo._bSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._bSensor[carInfo._bSensor.length-1]);
+    if(Array.isArray(nCar._bSensor) && nCar._bSensor.length && nCar._bSensor[nCar._bSensor.length-1]){
+      carInfo._bSensor = carInfo._bSensor.concat(nCar._bSensor);
+    }
+  }
+  if(Array.isArray(carInfo._rbSensor) && carInfo._rbSensor.length && carInfo._rbSensor[carInfo._rbSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._rbSensor[carInfo._rbSensor.length-1]);
+    if(Array.isArray(nCar._rbSensor) && nCar._rbSensor.length && nCar._rbSensor[nCar._rbSensor.length-1]){
+      carInfo._rbSensor = carInfo._rbSensor.concat(nCar._rbSensor);
+    }
+  }
+  if(Array.isArray(carInfo._lbSensor) && carInfo._lbSensor.length && carInfo._lbSensor[carInfo._lbSensor.length-1]){
+    var nCar = carCreation.getCar(carInfo._lbSensor[carInfo._lbSensor.length-1]);
+    if(Array.isArray(nCar._lbSensor) && nCar._lbSensor.length && nCar._lbSensor[nCar._lbSensor.length-1]){
+      carInfo._lbSensor = carInfo._lbSensor.concat(nCar._lbSensor);
+
+    }
+  }
+}
 
 function moveCar(carInfo) {
   // Get car information from the object
@@ -450,8 +493,15 @@ function moveCar(carInfo) {
   var finalEdge = false;
   var carOrientation = map.getEdgeObject(carInfo._currentEdgeId).orientation;
 //  var approachingIntersection = false;
-  //sensorCheck(carId);
 
+
+  if(wireless = 0){
+    sensorCheck(carId);
+  }
+  else{
+    sensorCheck(carId);
+    loopSensorCheck(carInfo);
+  }
 
   carInfo._orientation = carOrientation;
 
