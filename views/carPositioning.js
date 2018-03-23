@@ -2,7 +2,7 @@ var general = require('../views/general.js');
 var map = require('../views/mapCreate.js'); // TODO This is a second require of map, we may need to move it?
 var carCreation = require('./carCreation.js');//TODO This is a second require of carCreation, we may need to move it?
 
-//TODO number line if possible 
+//TODO number line if possible
 //function checks if the next edge in route and determins if its a left or right turn next and checks if its in the right lane to do that turn
 function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
   var startNode = map.getStartNode(currentEdgeId);
@@ -17,26 +17,34 @@ function checkIfLaneChangeIsNeeded(currentLane, currentEdgeId, nextEdgeId) {
     if (currentEdgeOrientation != nextEdgeOrientation) { //if the next orientation is the same then we dont need to change lane
       if (currentEdgeOrientation == 0) { //for each current orientation check for left and right turns, becasue of our previous checks makes sure that each current orientation only has 2 possible turns
         if (nextEdgeOrientation == 90) { //if next edge is 90 then it next turn is a 1
+          console.log("left turn");
           nextTurn = 1;
         } else { //everything else meaning just 270 degrees is a right turn so 2
+          console.log("right turn");
           nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 90) {
         if (nextEdgeOrientation == 180) {
+          console.log("left turn");
           nextTurn = 1;
         } else {
+          console.log("right turn");
           nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 180) {
         if (nextEdgeOrientation == 270) {
+          console.log("left turn");
           nextTurn = 1;
         } else {
+          console.log("right turn");
           nextTurn = 2;
         }
       } else if (currentEdgeOrientation == 270) {
         if (nextEdgeOrientation == 0) {
+          console.log("left turn");
           nextTurn = 1;
         } else {
+          console.log("right turn");
           nextTurn = 2;
         }
       }
