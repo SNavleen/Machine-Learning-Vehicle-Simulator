@@ -394,9 +394,7 @@ function moveX(xPos, xDestination, speed) {
 
 //function that handles the car changing lane in the backend
 function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, instersectionOffsetX, instersectionOffsetY) {
-  // instersectionOffsetX = instersectionOffsetX + 1000;
-  // instersectionOffsetY = instersectionOffsetY + 1000;
-  console.log("ShouldChangeLane Before: ", carInfo._shouldChangeLane);
+  console.log("orientation ", carOrientation, " ShouldChangeLane Before: ", carInfo._shouldChangeLane);
   if (carInfo._currentLane != shouldChangeLane) {
     var startNodeId = map.getEdgeObject(carInfo._currentEdgeId).startNodeId;
     var startNodexPos = map.getStartNode(startNodeId).x;
@@ -424,6 +422,7 @@ function changeLane(carInfo, xPos, yPos, shouldChangeLane, carOrientation, inste
         }
       }
     } else if (carOrientation == 90) {
+      console.log("ypos ",yPos," startNodeyPos ",startNodeyPos," instersectionOffsetY ",instersectionOffsetY);
       if(yPos >= startNodeyPos + instersectionOffsetY){ //checks if the car has left the start intersection
         if (shouldChangeLane == 1) {//reduces currentLane from 2 to 1
           carInfo._currentLane = precisionRound(currentLane - 0.1, 2);
@@ -491,6 +490,8 @@ function moveCar(carInfo) {
 
   var instersectionOffsetX = 27000; // Offset of how far the edge of the intersection is away from the actual end of the edge (center of intersection)
   var instersectionOffsetY = 23000;
+
+  //TODO need to change the intersecitonoffset to fix the lane change 
 
   // Finds shortest distance
   var closestVehicleDistance = collisionAvoidanceCheck(carId);
